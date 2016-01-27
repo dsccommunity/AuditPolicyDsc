@@ -1,6 +1,4 @@
-﻿cls
-
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.ps1", ".psm1")
+﻿$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.ps1", ".psm1")
 
 Import-Module "$PSScriptRoot\$sut" -Force
 
