@@ -12,12 +12,13 @@ xAuditOption
 
 
 ## xAuditCategory
-* Subcategory
+* **Subcategory:**
 
-* AuditFlag
+* **AuditFlag:**
 
 ## xAuditOption
-Name
+
+ * Name:
 # Versions
 
 ## 1.0.0.0
