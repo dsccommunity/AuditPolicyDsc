@@ -39,15 +39,6 @@ $AuditpolOptions = "CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects"
 
 #region Private Auditpol.exe functions
 
-<#
-    .SYNOPSIS Writes event to ETW
-    .PARAM
-        message Message to write to ETW
-    .PARAM 
-        chanel ETW channel where message should be stored
-    .EXAMPLE
-        New-EtwEvent -message "Attempting to connect to server" -chanel "debug"
-#>
 function Invoke_AuditPol
 {
     [CmdletBinding()]
@@ -372,6 +363,22 @@ function Get-AuditCategory
     return $subcategoryObject
 }
 
+<#
+    .SYNOPSIS 
+    Sets the audit flag state for a specifc subcategory. 
+
+    .PARAMETER SubCategory 
+    The name of the subcategory to set the audit flag on.
+
+    .PARAMETER AuditFlag 
+    The name of the Auditflag to set.
+    
+    .PARAMETER Ensure 
+    The name of the subcategory to get the audit flags from.
+        
+    .EXAMPLE
+    Set-AuditCategory -SubCategory 'Logon'
+#>
 function Set-AuditCategory
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -433,67 +440,6 @@ function Set-AuditOption
     )
  
     Set_AuditpolSubcommand @PSBoundParameters
-}
-
-#endregion
-
-#region AuditpolResourceSACL
-
-function Get-AuditGlobalObject
-{
-    [CmdletBinding()]
-    param
-    (
-        [parameter(Mandatory = $true)]
-        [ValidateSet("File","Key")]
-        [System.String]
-        $Type,
-        
-        [parameter(Mandatory = $true)]
-        [System.String]
-        $User
-    )
- 
-    $rawResourceSACL = Get_AuditpolSubcommand @PSBoundParameters
-
-    # remove blank lines and swap the : for the =. this makes it easy to convert the string to 
-    # a hashtable next
-    $resourceSACLString = ($rawResourceSACL | ForEach-Object {$_ -ne ""}) -replace ":"," ="
-
-    <# the raw output of the resourceSACAL looks like this
-        0 Entry
-        1 Resource Type 
-        2 User
-        3 Flags 
-        4 Condition 
-        5 Accesses #>
-
-    $resourceSACL = New-Object PSObject
-
-    For($i=0; $i -lt 5; $i++)  
-    {
-        # create an automatic hashtable from the current string data
-        $convertedString = ConvertFrom-StringData -stringdata $resourceSACLString[$i]
-        # add the current property and value
-        $resourceSACL | Add-Member -MemberType NoteProperty -Name $convertedString.keys[0]`
-                                   -Value $convertedString.Values[0]
-    }
-    
-    # subtract the last two lines because it is a confirmation message that is not needed. 
-    $resourceSACL | Add-Member -MemberType NoteProperty -Name Accesses  
-    -Value $resourceSACLString[6..(($resourceSACLString | Measure-Object).count -2)].trim()
- 
-    $resourceSACL
- }
-
-function Set-AuditGlobalObject
-{
-    [CmdletBinding(SupportsShouldProcess=$true)]
-    param
-    (
-        
-    )
-
 }
 
 #endregion

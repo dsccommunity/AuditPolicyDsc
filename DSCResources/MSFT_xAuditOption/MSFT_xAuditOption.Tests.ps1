@@ -5,9 +5,9 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.ps1", ".p
 Import-Module "$PSScriptRoot\$sut" -Force
 
 # set the audit option test strings to Mock
-$OptionName  = 'CrashOnAuditFail'
-$OptionState = 'Disabled'
-$OptionStateSwap = @{'Disabled'='Enabled';'Enabled'='Disabled'}
+$optionName  = 'CrashOnAuditFail'
+$optionState = 'Disabled'
+$optionStateSwap = @{'Disabled'='Enabled';'Enabled'='Disabled'}
 
 
 Describe "Get-TargetResource" {
@@ -15,34 +15,34 @@ Describe "Get-TargetResource" {
     Context "Unit testing" {
      
         # mock call to the helper module to isolate Get-TargetResource
-        Mock Get-AuditOption { return $OptionState } -ModuleName MSFT_xAuditOption
+        Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
 
-        $Get = Get-TargetResource -Name $OptionName
+        $get = Get-TargetResource -Name $optionName
 
         It "Return object is a hashtable" {
-            $isHashtable = $Get.GetType().Name -eq 'hashtable'
+            $isHashtable = $get.GetType().Name -eq 'hashtable'
         
             $isHashtable | Should Be $true
         }
 
         It " that has a 'Name' key" {
-            $ContainsNameKey = $get.ContainsKey('Name')
+            $containsNameKey = $get.ContainsKey('Name')
 
-            $ContainsNameKey | Should Be $true
+            $containsNameKey | Should Be $true
         }
     
-        It "  with a value of '$OptionName'" {
-            $RetrievedOptionName = $Get.Name 
-            $RetrievedOptionName | Should Be $OptionName
+        It "  with a value of '$optionName'" {
+            $retrievedOptionName = $get.Name 
+            $retrievedOptionName | Should Be $optionName
         }
 
         It " that has a 'Value' key" {
-            $ContainsValueKey = $get.ContainsKey('Value')
-            $ContainsValueKey | Should Be $true
+            $containsValueKey = $get.ContainsKey('Value')
+            $containsValueKey | Should Be $true
         }
     
-        It "  with a value of '$OptionState'" {
-            $Get.Value | Should Be $OptionState
+        It "  with a value of '$optionState'" {
+            $get.Value | Should Be $optionState
         }
     }
 }
@@ -54,11 +54,11 @@ Describe "Set-TargetResource" {
        # mock call to the helper module to isolate Set-TargetResource
         Mock Set-AuditOption {return } -ModuleName MSFT_xAuditOption
         
-        $Set = Set-TargetResource -Name $OptionName -Value $OptionState
+        $set = Set-TargetResource -Name $optionName -Value $optionState
 
         It " returns no object" {
         
-            $Set | Should BeNullOrEmpty
+            $set | Should BeNullOrEmpty
         }
     }
 }
@@ -70,26 +70,26 @@ Describe "Test-TargetResource unit tests" {
     Context "Unit Testing" {
 
         # mock call to the helper module to isolate Test-TargetResource
-        Mock Get-AuditOption { return $OptionState } -ModuleName MSFT_xAuditOption
+        Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
 
-        $Test = Test-TargetResource -Name $OptionName -Value $OptionState
+        $test = Test-TargetResource -Name $optionName -Value $optionState
 
         It "Return object is a Boolean" {
-            $IsBool = $Test.GetType().Name -eq "Boolean"
+            $isBool = $test.GetType().Name -eq "Boolean"
 
-            $IsBool | Should Be $true
+            $isBool | Should Be $true
         }
 
         It " that is true when matching" {
-            $ValueMatches = $test
+            $valueMatches = $test
         
-            $ValueMatches | Should Be $true
+            $valueMatches | Should Be $true
         }
 
         It " that is false when not matching" {
-            $ValueNotMatches = Test-TargetResource -Name $OptionName -Value $OptionStateSwap[$OptionState]
+            $valueNotMatches = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
         
-            $ValueNotMatches | Should Be $false
+            $valueNotMatches | Should Be $false
         }
     }
 }
