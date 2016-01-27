@@ -34,50 +34,6 @@ DATA localizedData
 '@
 }
 
-DATA AccessMaskToBit
-{
-    ConvertFrom-StringData @'
-        GR                     = 31
-        FR                     = 31
-        FILE_GENERIC_READ      = 31
-        KR                     = 31
-        KEY_READ               = 31
-        GW                     = 30
-        FW                     = 30
-        FILE_GENERIC_WRITE     = 30
-        KW                     = 30
-        KEY_WRITE              = 30
-        GE                     = 29
-        FILE_GENERIC_EXECUTE   = 29
-        FE                     = 29
-        KE                     = 29
-        GA                     = 28
-        FA                     = 28
-        FILE_ALL_ACCESS        = 28
-        KA                     = 28
-        KEY_ALL_ACCESS         = 28
-        WRITE_OWNER            = 19
-        WRITE_DAC              = 18
-        READ_CONTRO            = 17
-        DELETE                 = 16
-        FILE_WRITE_ATTRIBUTES  = 8
-        FILE_READ_ATTRIBUTES   = 7
-        FILE_DELETE_CHILD      = 6
-        FILE_EXECUTE           = 5
-        KEY_CREATE_LINK        = 5
-        FILE_WRITE_EA          = 4
-        KEY_NOTIFY             = 4
-        FILE_READ_EA           = 3
-        KEY_ENUMERATE_SUB_KEYS = 3
-        FILE_APPEND_DATA       = 2
-        KEY_CREATE_SUB_KEY     = 2
-        FILE_WRITE_DATA        = 1
-        KEY_SET_VALUE          = 1
-        FILE_READ_DATA         = 0
-        KEY_QUERY_VALUE        = 0
-'@
-}
-
 $AuditpolOptions = "CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects",
 "AuditBaseDirectories"
 
