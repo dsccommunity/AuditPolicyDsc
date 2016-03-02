@@ -255,13 +255,13 @@ function Set_AuditpolSubcommand
             # select the line needed from the auditpol output
             if($AuditFlag -eq 'Success')
             { 
-                $commandToExecute = "/set /subcategory:""$SubCategory"" `
-                    /success:$($auditState[$Ensure])"
+                [string]$commandToExecute = '/set /subcategory:"' +
+                $SubCategory + '" /success:' + $($auditState[$Ensure]) 
             }
             else   
             {
-                $commandToExecute = "/set /subcategory:""$SubCategory"" `
-                    /failure:$($auditState[$Ensure])"
+                [string]$commandToExecute = '/set /subcategory:"' +
+                $SubCategory + '" /failure:' + $($auditState[$Ensure]) 
             }
             
             if($PSCmdlet.ShouldProcess($Option))
