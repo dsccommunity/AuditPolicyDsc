@@ -33,3 +33,23 @@ The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption**
 # Examples
 
 In the Following example configuration, will set advanced Audit Policy
+
+# A configuration to audit Logon Failure but not logon success
+Configuration AuditPolicy
+{
+    Import-DscResource -ModuleName xAuditPolicy
+
+    xAuditCategory LogonSuccess
+    {
+        Subcategory = 'Logon'
+        AuditFlag   = 'Success'
+        Ensure      = 'Absent' 
+    } 
+
+    xAuditCategory LogonFailure
+    {
+        Subcategory = 'Logon'
+        AuditFlag   = 'Failure'
+        Ensure      = 'Present' 
+    } 
+}
