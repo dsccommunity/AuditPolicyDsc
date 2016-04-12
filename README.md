@@ -32,4 +32,4 @@ The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption**
 
 # Examples
 
-In the Following example configuration,
+In the Following example configuration, will set advanced Audit Policy
