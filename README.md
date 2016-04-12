@@ -27,7 +27,7 @@ The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption**
 
 ## 1.0.0.0
 * Initial release with the following resources:
-<<<<<<< HEAD
+
   * xAuditPolicy and xAuditOption   
 
 # Examples
