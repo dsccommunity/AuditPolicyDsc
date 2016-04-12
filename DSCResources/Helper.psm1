@@ -34,64 +34,11 @@ DATA localizedData
 '@
 }
 
-DATA AccessMaskToBit
-{
-    ConvertFrom-StringData @'
-        GR                     = 31
-        FR                     = 31
-        FILE_GENERIC_READ      = 31
-        KR                     = 31
-        KEY_READ               = 31
-        GW                     = 30
-        FW                     = 30
-        FILE_GENERIC_WRITE     = 30
-        KW                     = 30
-        KEY_WRITE              = 30
-        GE                     = 29
-        FILE_GENERIC_EXECUTE   = 29
-        FE                     = 29
-        KE                     = 29
-        GA                     = 28
-        FA                     = 28
-        FILE_ALL_ACCESS        = 28
-        KA                     = 28
-        KEY_ALL_ACCESS         = 28
-        WRITE_OWNER            = 19
-        WRITE_DAC              = 18
-        READ_CONTRO            = 17
-        DELETE                 = 16
-        FILE_WRITE_ATTRIBUTES  = 8
-        FILE_READ_ATTRIBUTES   = 7
-        FILE_DELETE_CHILD      = 6
-        FILE_EXECUTE           = 5
-        KEY_CREATE_LINK        = 5
-        FILE_WRITE_EA          = 4
-        KEY_NOTIFY             = 4
-        FILE_READ_EA           = 3
-        KEY_ENUMERATE_SUB_KEYS = 3
-        FILE_APPEND_DATA       = 2
-        KEY_CREATE_SUB_KEY     = 2
-        FILE_WRITE_DATA        = 1
-        KEY_SET_VALUE          = 1
-        FILE_READ_DATA         = 0
-        KEY_QUERY_VALUE        = 0
-'@
-}
-
 $AuditpolOptions = "CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects",
 "AuditBaseDirectories"
 
 #region Private Auditpol.exe functions
 
-<#
-    .SYNOPSIS Writes event to ETW
-    .PARAM
-        message Message to write to ETW
-    .PARAM 
-        chanel ETW channel where message should be stored
-    .EXAMPLE
-        New-EtwEvent -message "Attempting to connect to server" -chanel "debug"
-#>
 function Invoke_AuditPol
 {
     [CmdletBinding()]
@@ -308,13 +255,13 @@ function Set_AuditpolSubcommand
             # select the line needed from the auditpol output
             if($AuditFlag -eq 'Success')
             { 
-                $commandToExecute = "/set /subcategory:""$SubCategory"" `
-                    /success:$($auditState[$Ensure])"
+                [string]$commandToExecute = '/set /subcategory:"' +
+                $SubCategory + '" /success:' + $($auditState[$Ensure]) 
             }
             else   
             {
-                $commandToExecute = "/set /subcategory:""$SubCategory"" `
-                    /failure:$($auditState[$Ensure])"
+                [string]$commandToExecute = '/set /subcategory:"' +
+                $SubCategory + '" /failure:' + $($auditState[$Ensure]) 
             }
             
             if($PSCmdlet.ShouldProcess($Option))
@@ -416,6 +363,22 @@ function Get-AuditCategory
     return $subcategoryObject
 }
 
+<#
+    .SYNOPSIS 
+    Sets the audit flag state for a specifc subcategory. 
+
+    .PARAMETER SubCategory 
+    The name of the subcategory to set the audit flag on.
+
+    .PARAMETER AuditFlag 
+    The name of the Auditflag to set.
+    
+    .PARAMETER Ensure 
+    The name of the subcategory to get the audit flags from.
+        
+    .EXAMPLE
+    Set-AuditCategory -SubCategory 'Logon'
+#>
 function Set-AuditCategory
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -477,67 +440,6 @@ function Set-AuditOption
     )
  
     Set_AuditpolSubcommand @PSBoundParameters
-}
-
-#endregion
-
-#region AuditpolResourceSACL
-
-function Get-AuditGlobalObject
-{
-    [CmdletBinding()]
-    param
-    (
-        [parameter(Mandatory = $true)]
-        [ValidateSet("File","Key")]
-        [System.String]
-        $Type,
-        
-        [parameter(Mandatory = $true)]
-        [System.String]
-        $User
-    )
- 
-    $rawResourceSACL = Get_AuditpolSubcommand @PSBoundParameters
-
-    # remove blank lines and swap the : for the =. this makes it easy to convert the string to 
-    # a hashtable next
-    $resourceSACLString = ($rawResourceSACL | ForEach-Object {$_ -ne ""}) -replace ":"," ="
-
-    <# the raw output of the resourceSACAL looks like this
-        0 Entry
-        1 Resource Type 
-        2 User
-        3 Flags 
-        4 Condition 
-        5 Accesses #>
-
-    $resourceSACL = New-Object PSObject
-
-    For($i=0; $i -lt 5; $i++)  
-    {
-        # create an automatic hashtable from the current string data
-        $convertedString = ConvertFrom-StringData -stringdata $resourceSACLString[$i]
-        # add the current property and value
-        $resourceSACL | Add-Member -MemberType NoteProperty -Name $convertedString.keys[0]`
-                                   -Value $convertedString.Values[0]
-    }
-    
-    # subtract the last two lines because it is a confirmation message that is not needed. 
-    $resourceSACL | Add-Member -MemberType NoteProperty -Name Accesses  
-    -Value $resourceSACLString[6..(($resourceSACLString | Measure-Object).count -2)].trim()
- 
-    $resourceSACL
- }
-
-function Set-AuditGlobalObject
-{
-    [CmdletBinding(SupportsShouldProcess=$true)]
-    param
-    (
-        
-    )
-
 }
 
 #endregion
