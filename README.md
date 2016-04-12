@@ -33,6 +33,3 @@ The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption**
 # Examples
 
 In the Following example configuration, Advanced Audit Policy is set. 
-=======
-  * xAuditPolicy and xAuditOption   
->>>>>>> 1e6e6878477847659ed008fb376a0673abc7212e
