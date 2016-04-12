@@ -32,9 +32,9 @@ The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption**
 
 # Examples
 
-In the Following example configuration, will set advanced Audit Policy
+In the Following example configuration, will set Advanced Audit Policy
 
-    # A configuration to audit Logon Failure but not logon success
+    # A configuration to audit Logon Failure but not Success
 
     Configuration AuditPolicy
     {
