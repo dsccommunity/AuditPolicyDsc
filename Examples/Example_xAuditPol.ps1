@@ -1,6 +1,6 @@
 ﻿cls
 
-configuration AuditPolicy
+Configuration AuditPolicy
 {
     Import-DscResource -ModuleName xAuditPolicy
 
