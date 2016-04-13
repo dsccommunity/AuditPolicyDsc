@@ -5,37 +5,37 @@ The **xAuditPolicy** DSC resources allow you to configure and manage the advance
 ## Contributing
 Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
 
-# Resources
+## Resources
 
 * **xAuditCategory** configures the advanced audit policy Subcategories audit flags. 
 
 * **xAuditOption** manages the auditpol options available in the auditpol.exe utility. 
 
 
-## xAuditCategory
-* **Subcategory:** Name of the subcategory in the advanced audit policy.
+### xAuditCategory
+* **Subcategory**: Name of the subcategory in the advanced audit policy.
 
-* **AuditFlag:** The name of the audit flag to apply to the subcategory. This is can be either Success or Failure.
+* **AuditFlag**: The name of the audit flag to apply to the subcategory. This is can be either Success or Failure.
 
-## xAuditOption
+### xAuditOption
 
- * **Name:** The name of the option to configure. 
+ * **Name**: The name of the option to configure. 
  
- * **Vaule:** The value to apply to the option. This can be either Enabled or Disabled. 
+ * **Vaule**: The value to apply to the option. This can be either Enabled or Disabled. 
  
-# Versions
+## Versions
 
-## Unreleased
+### Unreleased
 
-## 1.0.0.0
+### 1.0.0.0
 * Initial release with the following resources:
 
   * xAuditPolicy 
   * xAuditOption   
 
-# Examples
+## Examples
 
-Example 1 Audit Logon Success and Failure
+### Example 1 Audit Logon Success and Failure
 ```powershells
     Configuration AuditPolicy
     {
@@ -57,7 +57,7 @@ Example 1 Audit Logon Success and Failure
     }
 ```
 
-Example 2 Audit Logon Failure only
+### Example 2 Audit Logon Failure only
 ```powershell
     Configuration AuditPolicy
     {
@@ -79,7 +79,7 @@ Example 2 Audit Logon Failure only
     }
 ```
 
-Example 3 Enable the option AuditBaseDirectories
+### Example 3 Enable the option AuditBaseDirectories
 ```powershell
     Configuration AuditPolicy
     {
