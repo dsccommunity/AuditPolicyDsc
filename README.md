@@ -5,6 +5,10 @@ The **xAuditPolicy** DSC resources allow you to configure and manage the advance
 # Description
 
 The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption** DSC Resources. These DSC Resources allow you to configure the advanced audit policies in all currently supported versions of Windows.
+
+## Contributing
+Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
+
 # Resources
 
 * **xAuditCategory** configures the advanced audit policy Subcategories audit flags. 
@@ -25,17 +29,42 @@ The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption**
  
 # Versions
 
+## Unreleased
+
 ## 1.0.0.0
 * Initial release with the following resources:
 
-  * xAuditPolicy and xAuditOption   
+  * xAuditPolicy 
+  * xAuditOption   
 
 # Examples
 
-In the Following example configuration, will set Advanced Audit Policy
+Example 1 Audit Logon Success and Failure
 ```powershell
     # A configuration to audit Logon Failure but not Success
+    Configuration AuditPolicy
+    {
+        Import-DscResource -ModuleName xAuditPolicy
 
+        xAuditCategory LogonSuccess
+        {
+            Subcategory = 'Logon'
+            AuditFlag   = 'Success'
+            Ensure      = 'Present' 
+        } 
+
+        xAuditCategory LogonFailure
+        {
+            Subcategory = 'Logon'
+            AuditFlag   = 'Failure'
+            Ensure      = 'Present' 
+        } 
+    }
+```
+
+Example 2 Audit Logon Failure only
+```powershell
+    # A configuration to audit Logon Failure but not Success
     Configuration AuditPolicy
     {
         Import-DscResource -ModuleName xAuditPolicy
