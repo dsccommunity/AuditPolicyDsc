@@ -33,7 +33,7 @@ The **xAuditPolicy** module contains the **xAuditCategory** and **xAuditOption**
 # Examples
 
 In the Following example configuration, will set Advanced Audit Policy
-
+```powershell
     # A configuration to audit Logon Failure but not Success
 
     Configuration AuditPolicy
@@ -54,3 +54,4 @@ In the Following example configuration, will set Advanced Audit Policy
             Ensure      = 'Present' 
         } 
     }
+```
