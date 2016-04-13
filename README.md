@@ -84,3 +84,18 @@ Example 2 Audit Logon Failure only
         } 
     }
 ```
+
+Example 3 Enable the option AuditBaseDirectories
+```powershell
+    # A configuration to audit Logon Failure but not Success
+    Configuration AuditPolicy
+    {
+        Import-DscResource -ModuleName xAuditPolicy
+
+        xAuditOption AuditBaseDirectories
+        {
+            Name  = 'AuditBaseDirectories'
+            Value = 'Enabled'
+        }
+    }
+```
