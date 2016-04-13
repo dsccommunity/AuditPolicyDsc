@@ -41,7 +41,6 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 Example 1 Audit Logon Success and Failure
 ```powershell
-    # A configuration to audit Logon Failure but not Success
     Configuration AuditPolicy
     {
         Import-DscResource -ModuleName xAuditPolicy
@@ -64,7 +63,6 @@ Example 1 Audit Logon Success and Failure
 
 Example 2 Audit Logon Failure only
 ```powershell
-    # A configuration to audit Logon Failure but not Success
     Configuration AuditPolicy
     {
         Import-DscResource -ModuleName xAuditPolicy
@@ -87,7 +85,6 @@ Example 2 Audit Logon Failure only
 
 Example 3 Enable the option AuditBaseDirectories
 ```powershell
-    # A configuration to audit Logon Failure but not Success
     Configuration AuditPolicy
     {
         Import-DscResource -ModuleName xAuditPolicy
