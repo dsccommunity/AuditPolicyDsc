@@ -4,7 +4,7 @@
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot) 
 
 # get the module name to import
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.ps1", ".psm1")
+$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".tests.ps1", ".psm1")
 
 Import-Module "$moduleRoot\DSCResources\$sut" -Force
 
