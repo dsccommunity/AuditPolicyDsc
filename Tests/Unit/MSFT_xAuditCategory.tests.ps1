@@ -32,7 +32,11 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Unit 
 #endregion
 
-# TODO: Other Optional Init Code Goes Here...
+# the audit option to use in the tests
+$Subcategory   = 'logon'
+$AuditFlag     = 'Failure'
+$MockAuditFlags = 'Success','Failure','SuccessandFailure','NoAuditing'
+$AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
 
 # Begin Testing
 try
@@ -51,14 +55,157 @@ try
 
         #region Function Get-TargetResource
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
-            # TODO: Complete Tests...
+            
+            Context "Return object " {
+                
+                # mock call to the helper module to isolate Get-TargetResource
+                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlag} } -ModuleName MSFT_xAuditCategory
+
+                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+
+                    It " is a hashtable that has the following keys:" {
+                        $isHashtable = $Get.GetType().Name -eq 'hashtable'
+
+                        $isHashtable | Should Be $true
+                    }
+            
+                    It "  Subcategory" {
+                        $ContainsSubcategoryKey = $Get.ContainsKey('Subcategory') 
+                
+                        $ContainsSubcategoryKey | Should Be $true
+                    }
+
+                    It "  AuditFlag" {
+                        $ContainsAuditFlagKey = $Get.ContainsKey('AuditFlag') 
+                
+                        $ContainsAuditFlagKey | Should Be $true
+                    }
+
+                    It "  Ensure" {
+                        $ContainsEnsureKey = $Get.ContainsKey('Ensure') 
+                
+                        $ContainsEnsureKey| Should Be $true
+                    }
+            }
+
+            Context "Submit '$AuditFlag' and return '$AuditFlag'" {
+
+                # mock call to the helper module to isolate Get-TargetResource
+                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlag} } -ModuleName MSFT_xAuditCategory
+
+                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+
+                It " 'Subcategory' = '$Subcategory'" {
+                    $RetrievedSubcategory =  $Get.Subcategory 
+                
+                    $RetrievedSubcategory | Should Be $Subcategory
+                }
+                    
+                It " 'AuditFlag' = '$AuditFlag'" {
+                    $RetrievedAuditFlag = $Get.AuditFlag 
+                
+                    $RetrievedAuditFlag | Should Match $AuditFlag
+                }
+
+                It " 'Ensure' = 'Present'" {
+                    $RetrievedEnsure = $Get.Ensure 
+                
+                    $RetrievedEnsure | Should Be 'Present'
+                }
+            }
+
+            Context "Submit '$AuditFlag' and return '$($AuditFlagSwap[$AuditFlag])'" {
+            
+                # mock call to the helper module to isolate Get-TargetResource
+                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlagSwap[$AuditFlag]} } -ModuleName MSFT_xAuditCategory
+
+                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+
+                It " 'Subcategory' = '$Subcategory'" {
+                    $RetrievedSubcategory =  $Get.Subcategory 
+                
+                    $RetrievedSubcategory | Should Be $Subcategory
+                }
+                    
+                It " 'AuditFlag' != '$AuditFlag'" {
+                    $RetrievedAuditFlag = $Get.AuditFlag 
+                
+                    $RetrievedAuditFlag | Should Not Match $AuditFlag
+                }
+
+                It " 'Ensure' = 'Absent'" {
+                    $RetrievedEnsure = $Get.Ensure 
+                
+                    $RetrievedEnsure | Should Be 'Absent'
+                }
+            }
+
+            Context "Submit '$AuditFlag' and return 'NoAuditing'" {
+
+                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'='NoAuditing'} } -ModuleName MSFT_xAuditCategory
+
+                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+            
+                It " 'Subcategory' = '$Subcategory'" {
+                    $RetrievedSubcategory =  $Get.Subcategory 
+                
+                    $RetrievedSubcategory | Should Be $Subcategory
+                }
+
+                It " 'AuditFlag' != '$AuditFlag'" {
+                    $RetrievedAuditFlag = $Get.AuditFlag 
+                
+                    $RetrievedAuditFlag | Should Not Match $AuditFlag
+                }
+
+
+                It " 'Ensure' = 'Absent'" {
+                    $RetrievedEnsure = $Get.Ensure 
+                
+                    $RetrievedEnsure | Should Be 'Absent'
+                }
+
+            }
+
+            Context "Submit '$AuditFlag' and return 'SuccessandFailure'" {
+
+                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'='SuccessandFailure'} } -ModuleName MSFT_xAuditCategory
+
+                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+            
+                It " 'Subcategory' = '$Subcategory'" {
+                    $RetrievedSubcategory =  $Get.Subcategory 
+                
+                    $RetrievedSubcategory | Should Be $Subcategory
+                }
+
+                It " 'AuditFlag' = '$AuditFlag'" {
+                    $RetrievedAuditFlag = $Get.AuditFlag 
+                
+                    $RetrievedAuditFlag | Should Be $AuditFlag
+                }
+
+
+                It " 'Ensure' = 'Present'" {
+                    $RetrievedEnsure = $Get.Ensure 
+                
+                    $RetrievedEnsure | Should Be 'Present'
+                }
+
+            }
         }
         #endregion
 
 
         #region Function Test-TargetResource
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
-            # TODO: Complete Tests...
+             
+            $Test = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+    
+            It "Returns a boolean" {
+                $isBool = $Test.GetType().Name -eq 'Boolean'
+                $isBool | Should Be $true
+            }
         }
         #endregion
 
