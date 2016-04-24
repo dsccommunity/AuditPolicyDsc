@@ -9,15 +9,17 @@
 .NOTES
 #>
 
+configuration 'MSFT_xAuditOption_config' {
 
-# TODO: Modify ResourceName
-configuration 'MSFT_<ResourceName>_config' {
-    Import-DscResource -Name 'MSFT_<ResourceName>'
+    Import-DscResource -Name 'xAuditOption'
+
     node localhost {
-       # TODO: Modify ResourceName
-       <ResourceName> Integration_Test {
-            # TODO: Fill Configuration Code Here
-       }
+
+        xAuditOption Integration_Test 
+        {
+            Name = 'AuditBaseDirectories'
+            Value = 'Enabled'
+        }
     }
 }
 
