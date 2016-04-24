@@ -35,6 +35,8 @@ $TestEnvironment = Initialize-TestEnvironment `
 #endregion
 
 # Other Init Code Goes Here...
+$optionName  = 'AuditBaseDirectories'
+$optionValue = 'Enabled'
 
 # Using try/finally to always cleanup even if something awful happens.
 try
@@ -55,22 +57,25 @@ try
 
         It 'Should be able to call Get-DscConfiguration without throwing' {
             { 
-                Get-DscConfiguration -Verbose -ErrorAction Stop -OutVariable DscConfiguration
+                Get-DscConfiguration -Verbose -ErrorAction Stop
             } | Should Not throw
         }
         #endregion
 
         Context 'Should have set the resource and all the parameters should match' {
             
-            It 'AuditOption configured is AuditBaseDirectories '{
-                $DscConfiguration.Name | Should Match 'AuditBaseDirectories'
+            Get-DscConfiguration -OutVariable DscConfiguration
+
+            It "AuditOption configured is $optionName " {
+                $DscConfiguration.Name | Should Be $optionName
             }
 
-            It 'AuditBaseDirectories is set to Enabled'{
-                $DscConfiguration.Value | Should Match 'Enabled'
+            It "$optionName is set to $optionValue"{
+                $DscConfiguration.Value | Should Be $optionValue
             }
 
         }
+
         It 'Test-DscConfiguration should equal True' {
             { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
         }

@@ -10,15 +10,18 @@
 #>
 
 
-# TODO: Modify ResourceName
-configuration 'MSFT_<ResourceName>_config' {
-    Import-DscResource -Name 'MSFT_<ResourceName>'
+configuration 'MSFT_xAuditCategory_config' {
+    
+    Import-DscResource -Name 'MSFT_xAuditCategory'
+    
     node localhost {
-       # TODO: Modify ResourceName
-       <ResourceName> Integration_Test {
-            # TODO: Fill Configuration Code Here
-       }
+       
+        xAuditCategory Integration_Test
+        {
+            Subcategory = $Subcategory
+            AuditFlag   = $AuditFlag
+            Ensure      = $AuditFlagEnsure
+        }
     }
 }
 
-# TODO: (Optional): Add More Configuration Templates

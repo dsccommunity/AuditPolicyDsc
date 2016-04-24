@@ -17,8 +17,8 @@ configuration 'MSFT_xAuditOption_config' {
 
         xAuditOption Integration_Test 
         {
-            Name = 'AuditBaseDirectories'
-            Value = 'Enabled'
+            Name  = $optionName
+            Value = $optionValue
         }
     }
 }
