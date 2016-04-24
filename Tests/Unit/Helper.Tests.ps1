@@ -1,9 +1,12 @@
-﻿
+﻿#requires -RunAsAdministrator
+
+# get the root path of the resourse
+[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot) 
+
+# get the module name to import
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.ps1", ".psm1")
 
-Import-Module "$PSScriptRoot\$sut" -Force
-
-# cd 'C:\Program Files\WindowsPowerShell\Modules\xAuditPolicy\1.0.0.0\DSCResources'
+Import-Module "$moduleRoot\DSCResources\$sut" -Force
 
 #region Generate data
 
