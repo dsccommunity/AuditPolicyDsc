@@ -193,6 +193,23 @@ try
                 }
 
             }
+
+            Context "Validate support function(s) in helper module" {
+
+                $Function = ((Get-Module -All 'Helper').ExportedCommands['Get-AuditCategory'])
+
+                It " Found function 'Get-AuditCategory'" {
+                    $FunctionName = $Function.Name
+        
+                    $FunctionName | Should Be 'Get-AuditCategory'
+                }
+
+                It " Found parameter 'Subcategory'" {
+                    $Subcategory = $Function.Parameters['Subcategory'].name
+        
+                    $Subcategory | Should Be 'Subcategory'
+                }
+            }
         }
         #endregion
 
@@ -203,35 +220,81 @@ try
             # mock call to the helper module to isolate Get-TargetResource
             Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlag} } -ModuleName MSFT_xAuditCategory
             
-            $Test = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Present"
+            $testResult = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Present"
     
             It "Returns an Object of type Boolean" {
-                $isBool = $Test.GetType().Name -eq 'Boolean'
+                
+                $isBool = $testResult.GetType().Name -eq 'Boolean'
                 $isBool | Should Be $true
             }
 
-            It "Returns True when the Audit flag is Present and should be Present" {
+            It " that is True when the Audit flag is Present and should be Present" {
                 
-                $Test | Should Be $true
+                $testResult | Should Be $true
             }
 
-            $Test = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Absent"
-
-            It "Returns False when the Audit flag is Absent and should be Present" {
+            It " and False when the Audit flag is Absent and should be Present" {
                 
-                $Test | Should Be $false
+                $testResult = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Absent"
+                $testResult | Should Be $false
+
+                Assert-MockCalled Get-AuditCategory -Exactly 1 -Scope It
             }
+
+            
         }
         #endregion
 
 
         #region Function Set-TargetResource
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
-            # TODO: Complete Tests...
+            
+            Mock Set-AuditCategory { return }
+
+            Context 'Return object' {
+                $set = Set-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+
+                It 'is Empty' {
+                    $set | Should BeNullOrEmpty
+                }
+            }
+
+            Context 'Mandatory parameters' {
+                
+                It 'AuditFlag is mandatory ' {
+                    {
+                        Set-TargetResource -Subcategory $Subcategory -AuditFlag
+                    } | Should Throw
+                }
+
+                It 'Subcategory is mandatory ' {
+                    {
+                        Set-TargetResource -Subcategory  -AuditFlag $AuditFlag
+                    } | Should Throw
+                }
+            }
+
+            Context "Validate support function(s) in helper module" {
+                
+                $functionName = 'Set-AuditCategory'
+                $Function = ((Get-Module -All 'Helper').ExportedCommands[$functionName])
+
+                It " Found function $functionName" {
+                    $FunctionName = $Function.Name
+        
+                    $FunctionName | Should Be $functionName
+                }
+
+                It " Found parameter 'Subcategory'" {
+                    $Subcategory = $Function.Parameters['Subcategory'].name
+        
+                    $Subcategory | Should Be 'Subcategory'
+                }
+            }
         }
         #endregion
 
-        # TODO: Pester Tests for any Helper Cmdlets
+        # Pester Tests for any Helper Cmdlets
 
     }
     #endregion
