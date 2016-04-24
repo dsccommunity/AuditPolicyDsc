@@ -199,12 +199,27 @@ try
 
         #region Function Test-TargetResource
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
-             
-            $Test = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+
+            # mock call to the helper module to isolate Get-TargetResource
+            Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlag} } -ModuleName MSFT_xAuditCategory
+            
+            $Test = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Present"
     
-            It "Returns a boolean" {
+            It "Returns an Object of type Boolean" {
                 $isBool = $Test.GetType().Name -eq 'Boolean'
                 $isBool | Should Be $true
+            }
+
+            It "Returns True when the Audit flag is Present and should be Present" {
+                
+                $Test | Should Be $true
+            }
+
+            $Test = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Absent"
+
+            It "Returns False when the Audit flag is Absent and should be Present" {
+                
+                $Test | Should Be $false
             }
         }
         #endregion
