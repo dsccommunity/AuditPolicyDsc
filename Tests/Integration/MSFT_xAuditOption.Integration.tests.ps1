@@ -1,6 +1,7 @@
 <#
 .Synopsis
    Template for creating DSC Resource Integration Tests
+
 .DESCRIPTION
    To Use:
      1. Copy to \Tests\Integration\ folder and rename MSFT_x<ResourceName>.Integration.tests.ps1
@@ -33,7 +34,9 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Integration 
 #endregion
 
-# TODO: Other Init Code Goes Here...
+# Other Init Code Goes Here...
+$optionName  = 'AuditBaseDirectories'
+$optionValue = 'Enabled'
 
 # Using try/finally to always cleanup even if something awful happens.
 try
@@ -48,17 +51,33 @@ try
             {
                 Invoke-Expression -Command "$($Global:DSCResourceName)_Config -OutputPath `$TestEnvironment.WorkingFolder"
                 Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
-                    -ComputerName localhost -Wait -Verbose -Force
+                    -Wait -Verbose -Force
             } | Should not throw
         }
 
-        It 'should be able to call Get-DscConfiguration without throwing' {
-            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+        It 'Should be able to call Get-DscConfiguration without throwing' {
+            { 
+                Get-DscConfiguration -Verbose -ErrorAction Stop
+            } | Should Not throw
         }
         #endregion
 
-        It 'Should have set the resource and all the parameters should match' {
-            # TODO: Validate the Config was Set Correctly Here...
+        Context 'Should have set the resource and all the parameters should match' {
+            
+            Get-DscConfiguration -OutVariable DscConfiguration
+
+            It "AuditOption configured is $optionName " {
+                $DscConfiguration.Name | Should Be $optionName
+            }
+
+            It "$optionName is set to $optionValue"{
+                $DscConfiguration.Value | Should Be $optionValue
+            }
+
+        }
+
+        It 'Test-DscConfiguration should equal True' {
+            { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
         }
     }
     #endregion
@@ -70,5 +89,5 @@ finally
     Restore-TestEnvironment -TestEnvironment $TestEnvironment
     #endregion
 
-    # TODO: Other Optional Cleanup Code Goes Here...
+    # Other Optional Cleanup Code Goes Here...
 }

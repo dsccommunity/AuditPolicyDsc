@@ -54,39 +54,38 @@ try
 
         #region Function Get-TargetResource
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
-            
-            Context "Unit testing" {
-     
-                # mock call to the helper module to isolate Get-TargetResource
-                Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
 
-                $get = Get-TargetResource -Name $optionName
+            # mock call to the helper module to isolate Get-TargetResource
+            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
 
-                It "Return object is a hashtable" {
-                    $isHashtable = $get.GetType().Name -eq 'hashtable'
+            $get = Get-TargetResource -Name $optionName
+
+            Assert-MockCalled Get-AuditOption -Exactly 1 -Scope Describe
+
+            It "Return object is a hashtable" {
+                $isHashtable = $get.GetType().Name -eq 'hashtable'
                 
-                    $isHashtable | Should Be $true
-                }
+                $isHashtable | Should Be $true
+            }
 
-                It " that has a 'Name' key" {
-                    $containsNameKey = $get.ContainsKey('Name')
+            It " that has a 'Name' key" {
+                $containsNameKey = $get.ContainsKey('Name')
 
-                    $containsNameKey | Should Be $true
-                }
+                $containsNameKey | Should Be $true
+            }
             
-                It "  with a value of '$optionName'" {
-                    $retrievedOptionName = $get.Name 
-                    $retrievedOptionName | Should Be $optionName
-                }
+            It "  with a value of '$optionName'" {
+                $retrievedOptionName = $get.Name 
+                $retrievedOptionName | Should Be $optionName
+            }
 
-                It " that has a 'Value' key" {
-                    $containsValueKey = $get.ContainsKey('Value')
-                    $containsValueKey | Should Be $true
-                }
+            It " that has a 'Value' key" {
+                $containsValueKey = $get.ContainsKey('Value')
+                $containsValueKey | Should Be $true
+            }
             
-                It "  with a value of '$optionState'" {
-                    $get.Value | Should Be $optionState
-                }
+            It "  with a value of '$optionState'" {
+                $get.Value | Should Be $optionState
             }
         }
         #endregion
@@ -94,50 +93,51 @@ try
 
         #region Function Test-TargetResource
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
-             
-             Context "Unit Testing" {
+            
+            # mock call to the helper module to isolate Test-TargetResource
+            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
 
-                # mock call to the helper module to isolate Set-TargetResource
-                Mock Set-AuditOption {return } -ModuleName MSFT_xAuditOption
-                
-                $set = Set-TargetResource -Name $optionName -Value $optionState
+            $test = Test-TargetResource -Name $optionName -Value $optionState
 
-                It " returns no object" {
-                
-                    $set | Should BeNullOrEmpty
-                }
+            It "Return object is a Boolean" {
+                $isBool = $test.GetType().Name -eq "Boolean"
+
+                $isBool | Should Be $true
             }
+
+            It " that is true when matching" {
+                $valueMatches = $test
+                
+                $valueMatches | Should Be $true
+            }
+
+            It " and is false when not matching" {
+                $valueNotMatches = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
+                
+                $valueNotMatches | Should Be $false
+
+                Assert-MockCalled Get-AuditOption -Exactly 1 -Scope It
+            }
+
+            
         }
         #endregion
 
 
         #region Function Set-TargetResource
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
-             Context "Unit Testing" {
 
-                # mock call to the helper module to isolate Test-TargetResource
-                Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
-
-                $test = Test-TargetResource -Name $optionName -Value $optionState
-
-                It "Return object is a Boolean" {
-                    $isBool = $test.GetType().Name -eq "Boolean"
-
-                    $isBool | Should Be $true
-                }
-
-                It " that is true when matching" {
-                    $valueMatches = $test
+            # mock call to the helper module to isolate Set-TargetResource
+            Mock Set-AuditOption { return } -ModuleName MSFT_xAuditOption
                 
-                    $valueMatches | Should Be $true
-                }
+            $set = Set-TargetResource -Name $optionName -Value $optionState
 
-                It " that is false when not matching" {
-                    $valueNotMatches = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
+            It " returns no object" {
                 
-                    $valueNotMatches | Should Be $false
-                }
-            }
+                $set | Should BeNullOrEmpty
+            } 
+
+            Assert-MockCalled Set-AuditOption 1
         }
         #endregion
 

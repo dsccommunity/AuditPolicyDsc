@@ -33,7 +33,11 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Integration 
 #endregion
 
-# TODO: Other Init Code Goes Here...
+# Other Init Code Goes Here...
+
+$Subcategory     = 'Logon'
+$AuditFlag       = 'Failure'
+$AuditFlagEnsure = 'Present'
 
 # Using try/finally to always cleanup even if something awful happens.
 try
@@ -57,8 +61,24 @@ try
         }
         #endregion
 
-        It 'Should have set the resource and all the parameters should match' {
-            # TODO: Validate the Config was Set Correctly Here...
+        Context 'Should have set the resource and all the parameters should match' {
+            
+            Get-DscConfiguration -OutVariable DscConfiguration
+
+            It "Subcategory Should be $Subcategory" {
+            
+                $DscConfiguration.Subcategory | Should be $Subcategory
+            }
+            
+            It "AuditFlag Should be $AuditFlag" {
+            
+                $DscConfiguration.AuditFlag | Should be $AuditFlag
+            }
+
+            It "Ensure Should be $AuditFlagEnsure" {
+            
+                $DscConfiguration.Ensure | Should be $AuditFlagEnsure
+            }
         }
     }
     #endregion
