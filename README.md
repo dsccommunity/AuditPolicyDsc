@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/g5cnt1iunmwn2jd8?svg=true)](https://ci.appveyor.com/project/athaynes/xauditpolicy)
+
 # xAuditPolicy
 
 The **xAuditPolicy** DSC resources allow you to configure and manage the advanced audit policy on all currently supported versions of Windows.
