@@ -1,4 +1,4 @@
-﻿
+
 [ClassVersion("1.0.0.0"), FriendlyName("xAuditOption")]
 class MSFT_xAuditOption : OMI_BaseResource
 {
