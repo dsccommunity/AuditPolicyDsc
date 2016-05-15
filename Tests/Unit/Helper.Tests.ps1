@@ -434,3 +434,4 @@ Describe -Tags Set, Option, Integration 'Set-AuditOption integration tests' {
         }
     }
 }
+
