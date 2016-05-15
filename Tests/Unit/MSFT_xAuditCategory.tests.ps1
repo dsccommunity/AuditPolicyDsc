@@ -32,12 +32,6 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Unit 
 #endregion
 
-# the audit option to use in the tests
-$Subcategory   = 'logon'
-$AuditFlag     = 'Failure'
-$MockAuditFlags = 'Success','Failure','SuccessandFailure','NoAuditing'
-$AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
-
 # Begin Testing
 try
 {
@@ -49,7 +43,11 @@ try
     InModuleScope $Global:DSCResourceName {
 
         #region Pester Test Initialization
-        # TODO: Optopnal Load Mock for use in Pester tests here...
+        # the audit option to use in the tests
+        $Subcategory   = 'Logon'
+        $AuditFlag     = 'Failure'
+        $MockAuditFlags = 'Success','Failure','SuccessandFailure','NoAuditing'
+        $AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
         #endregion
 
 

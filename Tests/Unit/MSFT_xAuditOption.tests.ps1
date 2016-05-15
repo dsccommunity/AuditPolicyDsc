@@ -40,7 +40,6 @@ $optionStateSwap = @{'Disabled'='Enabled';'Enabled'='Disabled'}
 # Begin Testing
 try
 {
-
     #region Pester Tests
 
     # The InModuleScope command allows you to perform white-box unit testing on the internal
