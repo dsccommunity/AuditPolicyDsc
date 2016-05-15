@@ -1,4 +1,4 @@
-﻿
+
 [ClassVersion("1.0.0.0"), FriendlyName("xAuditCategory")]
 class MSFT_xAuditCategory : OMI_BaseResource
 {
