@@ -7,7 +7,10 @@
 ####################################################################################################
 DATA localizedData
 {
+    # culture="en-US"
     ConvertFrom-StringData @'                
+        disabled                  = disabled
+        enabled                   = enabled
         AuditpolNotFound          = (ERROR) auditpol.exe was not found on the system
         RequiredPrivilegeMissing  = (ERROR) A required privilege is not held by the client
         IncorrectParameter        = (ERROR) The parameter is incorrect
@@ -35,6 +38,26 @@ DATA localizedData
 }
 
 #region Private Auditpol.exe functions
+
+<#
+.SYNOPSIS
+    Invoke_Auditpol is a private function that wraps the auditpol.exe.   
+.DESCRIPTION
+    The function will accept a string to pass to auditpol.exe for execution. Any 'get' or
+    'set' opertions can be passed to the central wrapper to execute, so that all of the 
+    nuances of auditpol.exe can be further broken out into specalized functions that 
+    call Invoke_AuditPol.   
+    
+    Since Invoke-Expression is being used, the input is restricted to only execute
+    against auditpol.exe. Any input that is an invalid flag or parameter in 
+    auditpol.exe will return an error to prevent abuse of the Invoke-Expression cmdlet. 
+.INPUTS
+    The funcion accepts a string to execute against auditpol.exe 
+.OUTPUTS
+    The raw string output of auditpol.exe   
+.EXAMPLE
+    Invoke_AuditPol -CommandToExecute "/get /category:*"
+#>
 
 function Invoke_AuditPol
 {
@@ -72,6 +95,26 @@ function Invoke_AuditPol
         $localizedData.UnknownError
     }
 }
+
+
+<#
+.SYNOPSIS
+    Get_AuditpolSubcommand is a private function that generates the specifc parameters 
+    and switches in the form of a string to be passed to Invoke_Auditpol to Get a 
+    specific audit policy setting.    
+.DESCRIPTION
+     In the absense of a PS module, this function is designed to extract the most 
+     precise string from the advanced audit policy in Windows using auditpol.exe.
+
+    While this function does not use aduitpol directly, it does generate a string that
+    auditpol.exe will consume and return the correct result and then passes it to 
+    Invoke_Auditpol 
+.INPUTS
+    auditpol.exe has 3 areas of mangement; Categories, ResourceSACL's, and Options
+    There is a parameterset that coincides with each one.  
+.OUTPUTS
+    A string that is further processed by the public version of this function. 
+#>
 
 function Get_AuditpolSubcommand
 {
@@ -135,6 +178,8 @@ function Get_AuditpolSubcommand
         {
             # the /type switch is case sensitive, so it needs to be validated 
             # and corrected before use. 
+            
+            <#  Future version
             switch($Type)
             {
                 {$ResourceSACLType -eq "file"} {$type="File"}
@@ -155,6 +200,8 @@ function Get_AuditpolSubcommand
             }
 
             Break
+            
+            #>
         }
 
         "Option"  
@@ -172,6 +219,26 @@ function Get_AuditpolSubcommand
         }
     }
 }
+
+
+<#
+.SYNOPSIS
+    Get_AuditpolSubcommand is a private function that generates the specifc parameters 
+    and switches in the form of a string to be passed to Invoke_Auditpol to Set a 
+    specific audit policy setting. 
+.DESCRIPTION
+     In the absense of a PS module, this function is designed to extract the most 
+     precise string from the advanced audit policy in Windows using auditpol.exe.
+
+    While this function does not use aduitpol directly, it does generate a string that
+    auditpol.exe will consume and return the correct result and then passes it to 
+    Invoke_Auditpol  
+.INPUTS
+    auditpol.exe has 3 areas of mangement; Categories, ResourceSACL's, and Options
+    There is a parameterset that coincides with each one.  
+.OUTPUTS
+    A string that is further processed by the public version of this function. 
+#>
 
 function Set_AuditpolSubcommand
 {
@@ -330,14 +397,17 @@ function Set_AuditpolSubcommand
 
 #region Public Category functions
 
-<#
-    .SYNOPSIS 
-    Gets the audit flag state for a specifc subcategory. 
 
-    .PARAMETER SubCategory 
+<#
+.SYNOPSIS 
+    Gets the audit flag state for a specifc subcategory. 
+.DESCRIPTION
+    Ths is one of the public functions that calls into Get_AuditpolSubcommand.
+    This function enforces parameters that will be passed through to the 
+    Get_AuditpolSubcommand function and aligns to a specifc parameterset. 
+.PARAMETER SubCategory 
     The name of the subcategory to get the audit flags from.
-    
-    .EXAMPLE
+.EXAMPLE
     Get-AuditCategory -SubCategory 'Logon'
 #>
 function Get-AuditCategory
@@ -361,20 +431,18 @@ function Get-AuditCategory
 }
 
 <#
-    .SYNOPSIS 
+.SYNOPSIS 
     Sets the audit flag state for a specifc subcategory. 
-
-    .PARAMETER SubCategory 
+.PARAMETER SubCategory 
     The name of the subcategory to set the audit flag on.
-
-    .PARAMETER AuditFlag 
+.PARAMETER AuditFlag 
     The name of the Auditflag to set.
-    
-    .PARAMETER Ensure 
+.PARAMETER Ensure 
     The name of the subcategory to get the audit flags from.
-        
-    .EXAMPLE
+.EXAMPLE
     Set-AuditCategory -SubCategory 'Logon'
+.OUTPUTS
+    None
 #>
 function Set-AuditCategory
 {
@@ -401,6 +469,23 @@ function Set-AuditCategory
 
 #region Public Option functions
 
+
+<#
+.SYNOPSIS
+    Gets the audit policy option state.
+     
+.DESCRIPTION
+    Ths is one of the public functions that calls into Get_AuditpolSubcommand.
+    This function enforces parameters that will be passed through to the 
+    Get_AuditpolSubcommand function and aligns to a specifc parameterset. 
+
+.INPUTS
+    The option name 
+    
+.OUTPUTS
+    A string that is the state of the option (Enabled|Disables). 
+#>
+
 function Get-AuditOption
 {
     [CmdletBinding()]
@@ -421,6 +506,20 @@ function Get-AuditOption
 
     $auditpolStrings
 }
+
+
+<#
+.SYNOPSIS
+    Sets an audit policy option to enabled or disabled
+.DESCRIPTION
+    Ths is one of the public functions that calls into Set_AuditpolSubcommand.
+    This function enforces parameters that will be passed through to the 
+    Set_AuditpolSubcommand function and aligns to a specifc parameterset. 
+.INPUTS
+    The option name and state it will be set to. 
+.OUTPUTS
+    None
+#>
 
 function Set-AuditOption
 {
