@@ -446,3 +446,4 @@ function Set-AuditOption
 
 # all internal functions are named with "_" vs. "-"
 Export-ModuleMember -Function *-* -Variable localizedData
+
