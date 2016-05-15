@@ -32,11 +32,6 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Unit 
 #endregion
 
-# set the audit option test strings to Mock
-$optionName  = 'CrashOnAuditFail'
-$optionState = 'Disabled'
-$optionStateSwap = @{'Disabled'='Enabled';'Enabled'='Disabled'}
-
 # Begin Testing
 try
 {
@@ -47,7 +42,10 @@ try
     InModuleScope $Global:DSCResourceName {
 
         #region Pester Test Initialization
-        # TODO: Optopnal Load Mock for use in Pester tests here...
+        # set the audit option test strings to Mock
+        $optionName  = 'CrashOnAuditFail'
+        $optionState = 'Disabled'
+        $optionStateSwap = @{'Disabled'='Enabled';'Enabled'='Disabled'}
         #endregion
 
 
