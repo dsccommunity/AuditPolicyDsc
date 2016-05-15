@@ -11,7 +11,7 @@
 
 configuration 'MSFT_xAuditOption_config' {
 
-    Import-DscResource -Name 'MSFT_xAuditOption'
+    Import-DscResource -ModuleName 'xAuditPolicy'
 
     node localhost {
 

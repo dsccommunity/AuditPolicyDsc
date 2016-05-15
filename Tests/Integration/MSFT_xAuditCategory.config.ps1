@@ -12,7 +12,7 @@
 
 configuration 'MSFT_xAuditCategory_config' {
     
-    Import-DscResource -Name 'xAuditPolicy'
+    Import-DscResource -ModuleName 'xAuditPolicy'
     
     node localhost {
        
