@@ -10,7 +10,7 @@
 #>
 
 
-configuration 'MSFT_xAuditCategory_config' {
+configuration 'MSFT_xAuditCategory_Config' {
     
     Import-DscResource -ModuleName 'xAuditPolicy'
     
