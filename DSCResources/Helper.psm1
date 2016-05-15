@@ -34,9 +34,6 @@ DATA localizedData
 '@
 }
 
-$AuditpolOptions = "CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects",
-"AuditBaseDirectories"
-
 #region Private Auditpol.exe functions
 
 function Invoke_AuditPol
@@ -49,7 +46,7 @@ function Invoke_AuditPol
         $CommandToExecute 
     )
 
-    Write-Debug ($localizedData.ExecuteAuditpolCommand -f $CommandToExecute)
+    Write-Debug -Message ($localizedData.ExecuteAuditpolCommand -f $CommandToExecute)
 
     try
     {
@@ -57,14 +54,14 @@ function Invoke_AuditPol
         
         if($LASTEXITCODE -eq 87)
         {
-            Throw New-Object System.ArgumentException $localizedData.IncorrectParameter
+            Throw New-Object -TypeName System.ArgumentException $localizedData.IncorrectParameter
         }
         $return
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
         # catch error if the auditpol command is not found on the system
-        Write-Error $localizedData.AuditpolNotFound 
+        Write-Error -Message $localizedData.AuditpolNotFound 
     }
     catch [System.ArgumentException]
     {
@@ -355,7 +352,7 @@ function Get-AuditCategory
  
     $split = (Get_AuditpolSubcommand @PSBoundParameters) -split ","
 
-    $subcategoryObject = New-Object PSObject
+    $subcategoryObject = New-Object -TypeName PSObject
     $subcategoryObject | Add-Member -MemberType NoteProperty -Name Name -Value $split[2]
     # remove the spaces from 'Success and Failure' to prevent any wierd sting problems later. 
     $subcategoryObject | Add-Member -MemberType NoteProperty -Name AuditFlag `
