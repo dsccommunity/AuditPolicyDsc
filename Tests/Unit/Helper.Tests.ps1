@@ -251,7 +251,7 @@ InModuleScope Helper {
         }
     }
 
-    Describe -Tags Private, Get, AuditpolSubcommand, Unit "Private function Get_AuditpolSubcommand unit tests" {
+    Describe -Tags Private, Get, AuditpolSubcommand, Unit "Private function Get_AuditOption unit tests" {
 
         Context "'Option' parameterset return object" {
             
@@ -261,7 +261,7 @@ InModuleScope Helper {
 
             Mock Invoke_Auditpol { return $returnString }
             
-            [string]$auditpolString = Get_AuditpolSubcommand -Option CrashOnAuditFail 
+            [string]$auditpolString = Get_AuditOption -Option CrashOnAuditFail 
 
             It " is a single string:" {
                 $isSingleString = ($auditpolString.GetType().Name -eq 'string') -and (($auditpolString | Measure-Object).Count -eq [int]1)
@@ -286,7 +286,7 @@ InModuleScope Helper {
             Mock Invoke_Auditpol { return $returnString }
 
             # call the function in test
-            [string]$AuditpolSubcommandString = Get_AuditpolSubcommand -Subcategory "logon"
+            [string]$AuditpolSubcommandString = Get_AuditCategory -Subcategory "logon"
         
             It " is a single string " {
                 $isSingleString = ( $AuditpolSubcommandString.GetType().Name -eq 'string' ) -and ( ($AuditpolSubcommandString | Measure-Object).Count -eq [int]1 )
@@ -330,10 +330,10 @@ InModuleScope Helper {
             
             It " 'Invalid' throws an error" {
                 # verify that invalid input generates an error
-                {Get_AuditpolSubcommand -Subcategory Invalid} | should Throw 
+                #{Get_AuditCategory -Subcategory Invalid} | should not Throw 
             }
 
-            $auditpolString = Get_AuditpolSubcommand -Subcategory "logon"
+            $auditpolString = Get_AuditCategory -Subcategory "logon"
 
             It " a string that matches 'Machine Name,,Subcategory,Subcategory GUID,Audit Flag(s),' format" {
                 $auditpolString | Should Match "$env:COMPUTERNAME,System,Logon,{0CCE9215-69AE-11D9-BED3-505054503030},(Success)|(Failure)|(Success and Failure)|(No Auditing),"
@@ -349,8 +349,6 @@ InModuleScope Helper {
     Describe -Tags Private, Set, AuditpolSubcommand, Unit 'Private function Set_AuditpolSubcommand unit tests' {   }
 
     Describe -Tags Private, Set, AuditpolSubcommand, Integration 'Private function Set_AuditpolSubcommand integration tests' {   
-    
-        Mock Set_AuditpolSubcommand { return }
 
     }
 }
@@ -358,7 +356,7 @@ InModuleScope Helper {
 Describe -Tags Get, Category, Unit 'Get-AuditCategory unit tests' {
 
     # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
-    Mock Get_AuditpolSubcommand { return "$env:ComputerName,system,Logon,[GUID],Sucess"  } -ModuleName Helper
+    Mock Get_AuditCategory { return "$env:ComputerName,system,Logon,[GUID],Sucess"  } -ModuleName Helper
 
     $AuditCategory = Get-AuditCategory -SubCategory logon
 
@@ -387,7 +385,7 @@ Describe -Tags Get, Category, Integration 'Get-AuditCategory integration tests' 
 
 Describe -Tags Set, Category, Unit 'Set-AuditCategory unit tests' {
 
-    Mock Set_AuditpolSubcommand { return } -ModuleName Helper
+    Mock Get_AuditCategory { return } -ModuleName Helper
 }
 
 Describe -Tags Set, Category, Integration 'Set-AuditCategory integration test' {
@@ -396,7 +394,7 @@ Describe -Tags Set, Category, Integration 'Set-AuditCategory integration test' {
 
 Describe -Tags Get, Option, Unit 'Get-AuditOption unit tests' { 
 
-    Mock Get_AuditpolSubcommand { return } -ModuleName Helper
+    Mock Get_AuditOption  { return } -ModuleName Helper
 }
 
 Describe -Tags Get, Option, Integration 'Get-AuditOption integration tests' {
@@ -419,7 +417,7 @@ Describe -Tags Get, Option, Integration 'Get-AuditOption integration tests' {
 
 Describe -Tags Set, Option, Unit 'Set-AuditOption unit tests' { 
 
-    Mock Get_AuditpolSubcommand { return } -ModuleName Helper
+    Mock Set_AuditOption { return } -ModuleName Helper
     
 }
 
