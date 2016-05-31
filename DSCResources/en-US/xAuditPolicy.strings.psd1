@@ -1,8 +1,7 @@
-﻿
-DATA localizedData
+﻿DATA localizedData
 {
     # culture="en-US"
-    ConvertFrom-StringData @'                
+    ConvertFrom-StringData @'
         disabled                  = disabled
         enabled                   = enabled
         AuditpolNotFound          = (ERROR) auditpol.exe was not found on the system
@@ -23,10 +22,11 @@ DATA localizedData
         TestAuditpolSubcategoryCorrect   = '{0}':'{1}' is '{2}'
         TestAuditpolSubcategoryIncorrect = '{0}':'{1}' is NOT '{2}' 
         GetAuditpolResourceSACLSucceed      =
-        GetAuditpolResourceSACLFailed       = 
-        SetAuditpolResourceSACLSucceed      = 
-        SetAuditpolResourceSACLFailed       = 
-        TestAuditpolResourceSACLCorrect     = 
+        GetAuditpolResourceSACLFailed       =
+        SetAuditpolResourceSACLSucceed      =
+        SetAuditpolResourceSACLFailed       =
+        TestAuditpolResourceSACLCorrect     =
         TestAuditpolResourceSACLIncorrect   =
 '@
 }
+

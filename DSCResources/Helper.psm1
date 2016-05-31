@@ -4,7 +4,7 @@
 # It enables querying, creation, removal and update of Windows advanced audit policies through 
 # Get, Set and Test operations on DSC managed nodes.
 
-Import-LocalizedData -BindingVariable LocalizedData -Filename xAuditPolicy.psd1
+Import-LocalizedData -BindingVariable LocalizedData -Filename xAuditPolicy.strings.psd1
 
 
 <#
