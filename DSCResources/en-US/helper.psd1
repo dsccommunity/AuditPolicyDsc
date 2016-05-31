@@ -1,7 +1,7 @@
-﻿DATA localizedData
-{
-    # culture="en-US"
-    ConvertFrom-StringData @'
+﻿data LocalizedData
+{       
+        # culture="en-US"
+        ConvertFrom-StringData -StringData @'
         disabled                            = disabled
         enabled                             = enabled
         AuditpolNotFound                    = (ERROR) auditpol.exe was not found on the system
@@ -30,3 +30,4 @@
 '@
 }
 
+Get-ExecutionPolicy
