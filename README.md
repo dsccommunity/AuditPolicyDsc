@@ -1,25 +1,25 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/g5cnt1iunmwn2jd8?svg=true)](https://ci.appveyor.com/project/athaynes/xauditpolicy)
+[![Build status](https://ci.appveyor.com/api/projects/status/g5cnt1iunmwn2jd8?svg=true)](https://ci.appveyor.com/project/athaynes/AuditPolicyDsc)
 
-# xAuditPolicy
+# AuditPolicyDsc
 
-The **xAuditPolicy** DSC resources allow you to configure and manage the advanced audit policy on all currently supported versions of Windows.
+The **AuditPolicyDsc** DSC resources allow you to configure and manage the advanced audit policy on all currently supported versions of Windows.
 
 ## Contributing
 Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
 
 ## Resources
 
-* **xAuditCategory** configures the advanced audit policy Subcategories audit flags. 
+* **AuditPolicy** configures the advanced audit policy Subcategories audit flags. 
 
-* **xAuditOption** manages the auditpol options available in the auditpol.exe utility. 
+* **AuditOption** manages the auditpol options available in the auditpol.exe utility. 
 
 
-### xAuditCategory
+### AuditPolicy
 * **Subcategory**: Name of the subcategory in the advanced audit policy.
 
 * **AuditFlag**: The name of the audit flag to apply to the subcategory. This is can be either Success or Failure.
 
-### xAuditOption
+### AuditOption
 
  * **Name**: The name of the option to configure. 
  
@@ -32,8 +32,8 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 ### 1.0.0.0
 * Initial release with the following resources:
 
-  * xAuditPolicy 
-  * xAuditOption   
+  * AuditPolicyDsc 
+  * AuditOption   
 
 ## Examples
 
@@ -41,16 +41,16 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 ```powershell
     Configuration AuditPolicy
     {
-        Import-DscResource -ModuleName xAuditPolicy
+        Import-DscResource -ModuleName AuditPolicyDsc
 
-        xAuditCategory LogonSuccess
+        AuditPolicy LogonSuccess
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Success'
             Ensure      = 'Present' 
         } 
 
-        xAuditCategory LogonFailure
+        AuditPolicy LogonFailure
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Failure'
@@ -63,16 +63,16 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 ```powershell
     Configuration AuditPolicy
     {
-        Import-DscResource -ModuleName xAuditPolicy
+        Import-DscResource -ModuleName AuditPolicyDsc
 
-        xAuditCategory LogonSuccess
+        AuditPolicy LogonSuccess
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Success'
             Ensure      = 'Absent' 
         } 
 
-        xAuditCategory LogonFailure
+        AuditPolicy LogonFailure
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Failure'
@@ -85,9 +85,9 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 ```powershell
     Configuration AuditPolicy
     {
-        Import-DscResource -ModuleName xAuditPolicy
+        Import-DscResource -ModuleName AuditPolicyDsc
 
-        xAuditOption AuditBaseDirectories
+        AuditOption AuditBaseDirectories
         {
             Name  = 'AuditBaseDirectories'
             Value = 'Enabled'
