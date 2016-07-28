@@ -13,8 +13,8 @@
    DSCResource.Tools in Future and therefore should not be altered if possible.
 #>
 
-$Global:DSCModuleName      = 'xAuditPolicy'
-$Global:DSCResourceName    = 'MSFT_xAuditOption'
+$Global:DSCModuleName      = 'AuditPolicyDsc'
+$Global:DSCResourceName    = 'MSFT_AuditOption'
 
 #region HEADER
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))

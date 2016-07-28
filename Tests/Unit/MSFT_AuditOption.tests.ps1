@@ -11,8 +11,8 @@
    Future and therefore should not be altered if possible.
 #>
 
-$Global:DSCModuleName      = 'xAuditPolicy'
-$Global:DSCResourceName    = 'MSFT_xAuditOption'
+$Global:DSCModuleName      = 'AuditPolicyDsc'
+$Global:DSCResourceName    = 'MSFT_AuditOption'
 
 #region HEADER
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
@@ -53,7 +53,7 @@ try
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
 
             # mock call to the helper module to isolate Get-TargetResource
-            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
+            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditOption
 
             $get = Get-TargetResource -Name $optionName
 
@@ -92,7 +92,7 @@ try
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
             
             # mock call to the helper module to isolate Test-TargetResource
-            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_xAuditOption
+            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditOption
 
             $test = Test-TargetResource -Name $optionName -Value $optionState
 
@@ -125,7 +125,7 @@ try
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
 
             # mock call to the helper module to isolate Set-TargetResource
-            Mock Set-AuditOption { return } -ModuleName MSFT_xAuditOption
+            Mock Set-AuditOption { return } -ModuleName MSFT_AuditOption
                 
             $set = Set-TargetResource -Name $optionName -Value $optionState
 

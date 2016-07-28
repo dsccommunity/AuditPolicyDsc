@@ -7,10 +7,10 @@ $Value = New-xDscResourceProperty -Name Value -Type String -Attribute Write -Des
 
 
 $AuditPol = @{
-    Name = 'MSFT_xAuditOption'
+    Name = 'MSFT_AuditOption'
     Property = $Name,$Value
-    FriendlyName = 'xAuditOption'
-    ModuleName = 'xAuditPolicy'
+    FriendlyName = 'AuditOption'
+    ModuleName = 'AuditPolicyDsc'
     Path = 'C:\Program Files\WindowsPowerShell\Modules\'
 }
 

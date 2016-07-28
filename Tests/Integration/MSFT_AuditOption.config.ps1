@@ -9,13 +9,13 @@
 .NOTES
 #>
 
-configuration 'MSFT_xAuditOption_config' {
+configuration 'MSFT_AuditOption_config' {
 
-    Import-DscResource -ModuleName 'xAuditPolicy'
+    Import-DscResource -ModuleName 'AuditPolicyDsc'
 
     node localhost {
 
-        xAuditOption Integration_Test 
+        AuditOption Integration_Test 
         {
             Name  = $optionName
             Value = $optionValue
