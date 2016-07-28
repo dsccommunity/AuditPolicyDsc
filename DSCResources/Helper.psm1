@@ -1,4 +1,4 @@
-﻿#Requires -Version 4.0
+#Requires -Version 4.0
 
 # This PS module contains functions for Desired State Configuration (DSC) xAuditPolicy provider. 
 # It enables querying, creation, removal and update of Windows advanced audit policies through 
@@ -256,13 +256,13 @@ function Set_AuditCategory
         [string]$commandToExecute = '/set /subcategory:"' +
         $SubCategory + '" /success:' + $($auditState[$Ensure]) 
     }
-	else   
+    else   
     {
         [string]$commandToExecute = '/set /subcategory:"' +
         $SubCategory + '" /failure:' + $($auditState[$Ensure]) 
     }
                 
-	Invoke_Auditpol -CommandToExecute $commandToExecute
+    Invoke_Auditpol -CommandToExecute $commandToExecute
 }
 
 
@@ -349,7 +349,7 @@ function Set_AuditOption
     # present tense the hashtable corrects the tense for the input.  
     $valueHashTable = @{"Enabled"="enable";"Disabled"="disable"}
 
-	Invoke_Auditpol -CommandToExecute "/set /option:$Name /value:$($valueHashTable[$value])"
+    Invoke_Auditpol -CommandToExecute "/set /option:$Name /value:$($valueHashTable[$value])"
 
 }
 
