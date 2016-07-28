@@ -2,16 +2,16 @@
 
 # AuditPolicyDsc
 
-The **AuditPolicyDsc** DSC resources allow you to configure and manage the advanced audit policy on all currently supported versions of Windows.
+The **AuditPolicyDsc** module allows you to configure and manage the advanced audit policy on all currently supported versions of Windows.
 
 ## Contributing
 Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
 
 ## Resources
 
-* **AuditPolicy** configures the advanced audit policy Subcategories audit flags. 
+* **AuditPolicy** configures the advanced audit policy Subcategory audit flags. 
 
-* **AuditOption** manages the auditpol options available in the auditpol.exe utility. 
+* **AuditOption** manages the audit policy options available in the auditpol.exe utility. 
 
 
 ### AuditPolicy
@@ -32,7 +32,7 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 ### 1.0.0.0
 * Initial release with the following resources:
 
-  * AuditPolicyDsc 
+  * AuditCategory 
   * AuditOption   
 
 ## Examples
