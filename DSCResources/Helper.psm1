@@ -31,6 +31,7 @@ Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
 function Invoke_AuditPol
 {
     [CmdletBinding()]
+    [OutputType([String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -42,13 +43,12 @@ function Invoke_AuditPol
 
     try
     {
-        $return = Invoke-Expression -Command "$env:SystemRoot\System32\auditpol.exe $CommandToExecute" 2>&1
+        $return = & "$env:SystemRoot\System32\auditpol.exe $CommandToExecute" 2>&1
         
         if($LASTEXITCODE -eq 87)
         {
             Throw New-Object -TypeName System.ArgumentException $localizedData.IncorrectParameter
         }
-        $return
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
@@ -63,6 +63,8 @@ function Invoke_AuditPol
     {
         $localizedData.UnknownError
     }
+
+    $return
 }
 
 
@@ -87,6 +89,7 @@ function Invoke_AuditPol
 function Get_AuditCategory
 {
     [CmdletBinding()]
+    [OutputType([String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -94,8 +97,8 @@ function Get_AuditCategory
         $SubCategory
     )
     
-    (Invoke_Auditpol -CommandToExecute "/get /subcategory:""$SubCategory"" /r" | 
-    Select-String -Pattern $env:ComputerName)
+    ( Invoke_Auditpol -CommandToExecute "/get /subcategory:""$SubCategory"" /r" | 
+    Select-String -Pattern $env:ComputerName )
 
 }
 
@@ -115,28 +118,10 @@ function Get_AuditCategory
 function Get-AuditCategory
 {
     [CmdletBinding()]
+    [OutputType([String])]
     param
     (
         [parameter(Mandatory = $true)]
-        [ValidateSet("Security System Extension","System Integrity","IPsec Driver",
-        "Other System Events","Security State Change","Logon","Logoff","Account Lockout",
-        "IPsec Main Mode","IPsec Quick Mode","IPsec Extended Mode","Special Logon",
-        "Other Logon/Logoff Events","Network Policy Server","User / Device Claims",
-        "Group Membership","File System","Registry","Kernel Object","SAM","Certification Services",
-        "Application Generated","Handle Manipulation","File Share","Filtering Platform Packet Drop",
-        "Filtering Platform Connection","Other Object Access Events","Detailed File Share",
-        "Removable Storage","Central Policy Staging","Non Sensitive Privilege Use",
-        "Other Privilege Use Events","Sensitive Privilege Use","Process Creation",
-        "Process Termination","DPAPI Activity","RPC Events","Plug and Play Events",
-        "Authentication Policy Change","Authorization Policy Change",
-        "MPSSVC Rule-Level Policy Change","Filtering Platform Policy Change",
-        "Other Policy Change Events","Audit Policy Change","User Account Management",
-        "Computer Account Management","Security Group Management","Distribution Group Management",
-        "Application Group Management","Other Account Management Events",
-        "Directory Service Changes","Directory Service Replication",
-        "Detailed Directory Service Replication","Directory Service Access",
-        "Kerberos Service Ticket Operations","Other Account Logon Events",
-        "Kerberos Authentication Service","Credential Validation")]
         [System.String]
         $SubCategory
     )
@@ -173,6 +158,7 @@ function Get-AuditCategory
 function Get_AuditOption
 {
     [CmdletBinding()]
+    [OutputType([String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -202,6 +188,7 @@ function Get_AuditOption
 function Get-AuditOption
 {
     [CmdletBinding()]
+    [OutputType([String])]
     param
     (
         [Parameter(Mandatory=$true)]
@@ -243,7 +230,8 @@ function Get-AuditOption
 
 function Set_AuditCategory
 {
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding()]
+    [OutputType([String])]
     param
     (
         [Parameter(Mandatory=$true)]
@@ -268,21 +256,13 @@ function Set_AuditCategory
         [string]$commandToExecute = '/set /subcategory:"' +
         $SubCategory + '" /success:' + $($auditState[$Ensure]) 
     }
-        else   
+	else   
     {
         [string]$commandToExecute = '/set /subcategory:"' +
         $SubCategory + '" /failure:' + $($auditState[$Ensure]) 
     }
                 
-    if($PSCmdlet.ShouldProcess($Option))
-    {
-        Invoke_Auditpol -CommandToExecute $commandToExecute
-    }
-        else
-    {
-        # Return a sting when the -whatif switch is set 
-        "Set $SubCategory $AuditFlag to $($auditState[$Ensure])"
-    }
+	Invoke_Auditpol -CommandToExecute $commandToExecute
 }
 
 
@@ -303,46 +283,27 @@ function Set_AuditCategory
 
 function Set-AuditCategory
 {
-    [CmdletBinding()]
+    [CmdletBinding( SupportsShouldProcess=$true )]
     param
     (
-        [parameter(Mandatory = $true,
-                   ParameterSetName="SubCategory")]
-        [ValidateSet("Security System Extension","System Integrity","IPsec Driver",
-        "Other System Events","Security State Change","Logon","Logoff","Account Lockout",
-        "IPsec Main Mode","IPsec Quick Mode","IPsec Extended Mode","Special Logon",
-        "Other Logon/Logoff Events","Network Policy Server","User / Device Claims",
-        "Group Membership","File System","Registry","Kernel Object","SAM","Certification Services",
-        "Application Generated","Handle Manipulation","File Share","Filtering Platform Packet Drop",
-        "Filtering Platform Connection","Other Object Access Events","Detailed File Share",
-        "Removable Storage","Central Policy Staging","Non Sensitive Privilege Use",
-        "Other Privilege Use Events","Sensitive Privilege Use","Process Creation",
-        "Process Termination","DPAPI Activity","RPC Events","Plug and Play Events",
-        "Authentication Policy Change","Authorization Policy Change",
-        "MPSSVC Rule-Level Policy Change","Filtering Platform Policy Change",
-        "Other Policy Change Events","Audit Policy Change","User Account Management",
-        "Computer Account Management","Security Group Management","Distribution Group Management",
-        "Application Group Management","Other Account Management Events",
-        "Directory Service Changes","Directory Service Replication",
-        "Detailed Directory Service Replication","Directory Service Access",
-        "Kerberos Service Ticket Operations","Other Account Logon Events",
-        "Kerberos Authentication Service","Credential Validation")]
+        [parameter( Mandatory = $true )]
         [System.String]
         $SubCategory,
         
-        [parameter(Mandatory = $true,
-                   ParameterSetName="SubCategory")]
-        [ValidateSet("Success","Failure")]
+        [parameter( Mandatory = $true )]
+        [ValidateSet( "Success","Failure" )]
         [System.String]
         $AuditFlag,
         
-        [parameter(Mandatory = $true,
-                   ParameterSetName="SubCategory")]
+        [parameter( Mandatory = $true )]
         [System.String]
         $Ensure
     )
  
-    Set_AuditCategory @PSBoundParameters
+    if( $pscmdlet.ShouldProcess( "$SubCategory","Set AuditFlag '$AuditFlag'" ) ) 
+    {
+        Set_AuditCategory @PSBoundParameters
+    }
 }
 
 
@@ -366,7 +327,8 @@ function Set-AuditCategory
 
 function Set_AuditOption
 {
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding()]
+    [OutputType([String])]
     param
     (
         [parameter(Mandatory = $true,
@@ -387,16 +349,8 @@ function Set_AuditOption
     # present tense the hashtable corrects the tense for the input.  
     $valueHashTable = @{"Enabled"="enable";"Disabled"="disable"}
 
-    if($PSCmdlet.ShouldProcess($Name))
-    {
-        Invoke_Auditpol `
-        -CommandToExecute "/set /option:$Name /value:$($valueHashTable[$value])"
-    }
-    else
-    {
-        # Return a sting when the -whatif switch is set 
-        "Set $Name to $Value"
-    }
+	Invoke_Auditpol -CommandToExecute "/set /option:$Name /value:$($valueHashTable[$value])"
+
 }
 
 
@@ -413,7 +367,6 @@ function Set_AuditOption
     None
 #>
 
-
 function Set-AuditOption
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -427,11 +380,14 @@ function Set-AuditOption
         [System.String]
         $Value
     )
- 
-    Set_AuditOption @PSBoundParameters
+
+    if( $pscmdlet.ShouldProcess(  "$Name","Set $Value"  ) ) 
+    {
+        Set_AuditOption @PSBoundParameters
+    }
 }
 
 
-# all internal functions are named with "_" vs. "-"
+# all private functions are named with "_" vs. "-"
 Export-ModuleMember -Function *-* -Variable localizedData
 
