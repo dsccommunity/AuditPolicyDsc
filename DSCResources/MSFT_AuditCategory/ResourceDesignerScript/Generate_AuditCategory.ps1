@@ -21,10 +21,10 @@ $Ensure = New-xDscResourceProperty -Name Ensure -Type String -Attribute Write -D
 
 
 $AuditPol = @{
-    Name = 'MSFT_xAuditCategory'
+    Name = 'MSFT_AuditCategory'
     Property = $Name,$Setting,$Ensure
-    FriendlyName = 'xAuditCategory'
-    ModuleName = 'xAuditPolicy'
+    FriendlyName = 'AuditCategory'
+    ModuleName = 'AuditPolicyDsc'
     Path = 'C:\Program Files\WindowsPowerShell\Modules\'
 }
 

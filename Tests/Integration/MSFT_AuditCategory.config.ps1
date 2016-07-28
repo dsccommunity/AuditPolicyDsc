@@ -10,13 +10,13 @@
 #>
 
 
-configuration 'MSFT_xAuditCategory_Config' {
+configuration 'MSFT_AuditCategory_Config' {
     
-    Import-DscResource -ModuleName 'xAuditPolicy'
+    Import-DscResource -ModuleName 'AuditPolicyDsc'
     
     node localhost {
        
-        xAuditCategory Integration_Test
+        AuditCategory Integration_Test
         {
             Subcategory = $Subcategory
             AuditFlag   = $AuditFlag
