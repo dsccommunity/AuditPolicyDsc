@@ -1,23 +1,22 @@
-cls
 
 Configuration AuditPolicy
 {
-    Import-DscResource -ModuleName xAuditPolicy
+    Import-DscResource -ModuleName AuditPolicyDsc
 
-    xAuditOption AuditBaseDirectories
+    AuditOption AuditBaseDirectories
     {
         Name  = 'AuditBaseDirectories'
         Value = 'Enabled'
     }
 
-    xAuditCategory LogonSuccess
+    AuditCategory LogonSuccess
     {
         Subcategory = 'Logon'
         AuditFlag   = 'Success'
         Ensure      = 'Absent' 
     } 
 
-    xAuditCategory LogonFailure
+    AuditCategory LogonFailure
     {
         Subcategory = 'Logon'
         AuditFlag   = 'Failure'
