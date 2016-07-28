@@ -24,7 +24,6 @@ Configuration AuditPolicy
     } 
 }
 
-
 AuditPolicy
 
 # Test-DscConfiguration -Path .\AuditPolicy
