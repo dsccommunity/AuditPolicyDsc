@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/g5cnt1iunmwn2jd8?svg=true)](https://ci.appveyor.com/project/athaynes/AuditPolicyDsc)
+[![Build status](https://ci.appveyor.com/api/projects/status/urjs5g2l5kt71msb?svg=true)](https://ci.appveyor.com/project/athaynes/auditpolicydsc)
 
 # AuditPolicyDsc
 
