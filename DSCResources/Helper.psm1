@@ -43,12 +43,8 @@ function Invoke_AuditPol
 
     try
     {
-        $return = & "$env:SystemRoot\System32\auditpol.exe $CommandToExecute" 2>&1
-        
-        if($LASTEXITCODE -eq 87)
-        {
-            Throw New-Object -TypeName System.ArgumentException $localizedData.IncorrectParameter
-        }
+        # Use the call operator to process the auditpol command
+        $return = & "$env:SystemRoot\System32\auditpol.exe" ( $CommandToExecute -split " " ) 2>&1
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
@@ -57,11 +53,12 @@ function Invoke_AuditPol
     }
     catch [System.ArgumentException]
     {
-        $localizedData.IncorrectParameter 
+        # we should never be here since the calling function validates the input
+        Write-Error -Message $localizedData.IncorrectParameter 
     }
     catch
     {
-        $localizedData.UnknownError
+        Write-Error -Message $localizedData.UnknownError
     }
 
     $return
