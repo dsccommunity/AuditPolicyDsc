@@ -6,7 +6,6 @@
 
 Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
 
-
 <#
 .SYNOPSIS
     Invoke_Auditpol is a private function that wraps the auditpol.exe to provide a 
@@ -43,7 +42,10 @@ function Invoke_AuditPol
 
     try
     {
-        # Use the call operator to process the auditpol command
+        <# 
+            Use the call operator to process the auditpol command
+            The call operator will not parse the parameters, so they need to be split
+        #>
         $return = & "$env:SystemRoot\System32\auditpol.exe" ( $CommandToExecute -split " " ) 2>&1
     }
     catch [System.Management.Automation.CommandNotFoundException]
@@ -51,14 +53,16 @@ function Invoke_AuditPol
         # catch error if the auditpol command is not found on the system
         Write-Error -Message $localizedData.AuditpolNotFound 
     }
-    catch [System.ArgumentException]
+    catch
+    {
+        Write-Error -Message ( $localizedData.UnknownError -f $error[0] )
+    }
+
+    if( $return -eq 87 )
     {
         # we should never be here since the calling function validates the input
         Write-Error -Message $localizedData.IncorrectParameter 
-    }
-    catch
-    {
-        Write-Error -Message $localizedData.UnknownError
+        return
     }
 
     $return
