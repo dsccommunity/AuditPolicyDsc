@@ -61,7 +61,7 @@ function Invoke_AuditPol
     # add the /r if it is a get command
     if ( $Command -eq 'Get') 
     { 
-	    $commandString = $commandString + " /r"
+        $commandString = $commandString + " /r"
     }
 
     try
@@ -82,7 +82,7 @@ function Invoke_AuditPol
         # catch error if the auditpol command is not found on the system
         Write-Error -Message $localizedData.AuditpolNotFound
     }
-	catch [System.ArgumentException]
+    catch [System.ArgumentException]
     {
         # catch the error thrown if the lastexitcode is not 0 
         [string] $errorString = $error[0].Exception
@@ -276,9 +276,9 @@ function Set_AuditCategory
     
     # translate $ensure=present to enable and $ensure=absent to disable
     $auditState = @{
-	    "Present"="enable";
-	    "Absent"="disable"
-	}
+        "Present"="enable";
+        "Absent"="disable"
+    }
             
     # select the line needed from the auditpol output
     if( $AuditFlag -eq 'Success' )
@@ -372,9 +372,9 @@ function Set_AuditOption
     # the output text of auditpol is in simple past tense, but the input is in simple 
     # present tense the hashtable corrects the tense for the input.  
     $valueHashTable = @{
-	    "Enabled" ="enable";
-	    "Disabled"="disable"
-	}
+        "Enabled" ="enable";
+        "Disabled"="disable"
+    }
 
     Invoke_Auditpol -Command "Set" -SubCommand "Option:$Name /value:$($valueHashTable[$value])"
 }
