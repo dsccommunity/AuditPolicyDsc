@@ -1,4 +1,4 @@
-﻿
+
 Import-Module $PSScriptRoot\..\Helper.psm1 -Verbose:0
 
 function Get-TargetResource
@@ -109,12 +109,12 @@ function Set-TargetResource
     {
         Set-AuditCategory -SubCategory $Subcategory -AuditFlag $AuditFlag -Ensure $Ensure
         Write-Verbose ( $localizedData.SetAuditpolSubcategorySucceed `
-	                    -f $Subcategory,$AuditFlag,$Ensure )
+                        -f $Subcategory,$AuditFlag,$Ensure )
     }
     catch 
     {
         Write-Verbose ( $localizedData.SetAuditpolSubcategoryFailed `
-	                    -f $Subcategory,$AuditFlag,$Ensure )
+                        -f $Subcategory,$AuditFlag,$Ensure )
     }
 }
 

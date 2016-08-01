@@ -1,4 +1,4 @@
-﻿
+
 $Name = New-xDscResourceProperty -Name Name -Type String -Attribute Key -Description "Sets the audit policy for the CrashOnAuditFail, FullPrivilegeAuditing, AuditBaseObjects, or AuditBaseDirectories options." `
 -ValidateSet "CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects","AuditBaseDirectories"
 

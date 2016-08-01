@@ -1,4 +1,4 @@
-﻿
+
 $Name = New-xDscResourceProperty -Name Subcategory -Type String -Attribute Key -Description "The Category to be configured" `
 -ValidateSet "Security System Extension","System Integrity","IPsec Driver","Other System Events","Security State Change",
 "Logon","Logoff","Account Lockout","IPsec Main Mode","IPsec Quick Mode","IPsec Extended Mode","Special Logon",

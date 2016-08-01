@@ -1,4 +1,4 @@
-﻿ConvertFrom-StringData -StringData @'
+ConvertFrom-StringData -StringData @'
         disabled                            = disabled
         enabled                             = enabled
         AuditpolNotFound                    = (ERROR) auditpol.exe was not found on the system
