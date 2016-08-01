@@ -1,4 +1,4 @@
-﻿#requires -RunAsAdministrator
+#requires -RunAsAdministrator
 
 # get the root path of the resourse
 [String]$moduleRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot) 
@@ -254,7 +254,7 @@ Describe "Private function Get_AuditCategory" `
             $command | Should Be $command 
         }
 
-	    It 'With output type "String"' {
+        It 'With output type "String"' {
 
             $command.OutputType | Should Be 'System.String'
         }
@@ -264,7 +264,7 @@ Describe "Private function Get_AuditCategory" `
             $command.Parameters[$parameter].Name | Should Be $parameter
         }
 
-	    It 'Of type "String"' {
+        It 'Of type "String"' {
 
             $command.Parameters[$parameter].ParameterType | Should Be 'String'
         }
@@ -275,14 +275,14 @@ Describe "Private function Get_AuditCategory" `
             $SubCategory = 'logon'
             # partial result from auditpol, but in the correct multi line format
             [string[]] $auditpolReturn = "Machine Name,Policy Target,Subcategory,"
-	        $auditpolReturn += " "
-	        $auditpolReturn += "$env:COMPUTERNAME,System,$SubCategory,"
+            $auditpolReturn += " "
+            $auditpolReturn += "$env:COMPUTERNAME,System,$SubCategory,"
 
             mock Invoke_AuditPol { $auditpolReturn }
             mock Invoke_AuditPol { @('','','Leading Backslash') } `
                  -ParameterFilter { $Subcommand.StartsWith("/") }
-	        
-	        $Get_AuditCategory = Get_AuditCategory -SubCategory "$SubCategory"
+            
+            $Get_AuditCategory = Get_AuditCategory -SubCategory "$SubCategory"
 
             It 'Calls Invoke_Auditpol exactly once'  {
 
@@ -306,31 +306,31 @@ Describe 'Public function Get-AuditCategory' `
 -Tags Public, Get, Category  {
     
     $command = Get-Command Get-AuditCategory
-	$parameter = 'SubCategory'
+    $parameter = 'SubCategory'
         
-	It "Should Exist" {
+    It "Should Exist" {
 
-	    $command | Should Be $command 
-	}
+        $command | Should Be $command 
+    }
 
-	It 'With output type set to "String"' {
+    It 'With output type set to "String"' {
 
-	    $command.OutputType | Should Be 'System.String'
-	}
+        $command.OutputType | Should Be 'System.String'
+    }
 
-	It "Has a parameter '$parameter'" {
+    It "Has a parameter '$parameter'" {
 
-	    $command.Parameters[$parameter].Name | Should Be $parameter
-	}
+        $command.Parameters[$parameter].Name | Should Be $parameter
+    }
 
-	It 'Of type "String"' {
+    It 'Of type "String"' {
 
-	    $command.Parameters[$parameter].ParameterType | Should Be 'String'
-	}
+        $command.Parameters[$parameter].ParameterType | Should Be 'String'
+    }
 
     InModuleScope Helper {
 
-	    Context 'Get-AuditCategory with Mock ( Get_AuditCategory -SubCategory "Logon" ) returning "Success"' {
+        Context 'Get-AuditCategory with Mock ( Get_AuditCategory -SubCategory "Logon" ) returning "Success"' {
 
             [string] $subCategory = 'Logon'
             [string] $auditFlag   = 'Success'
@@ -372,7 +372,7 @@ Describe "Private function Get_AuditOption" `
             $command | Should Be $command 
         }
         
-	    It 'With output type "String"' {
+        It 'With output type "String"' {
 
             $command.OutputType | Should Be 'System.String'
         }
@@ -381,7 +381,7 @@ Describe "Private function Get_AuditOption" `
             $command.Parameters[$parameter].Name | Should Be $parameter
         }
 
-	    It 'Of type "String"' {
+        It 'Of type "String"' {
 
             $command.Parameters[$parameter].ParameterType | Should Be 'String'
         }
@@ -422,31 +422,31 @@ Describe 'Public function Get-AuditOption' `
 -Tags Public, Get, Option  { 
 
     $command = Get-Command Get-AuditOption
-	$parameter = 'Name'
+    $parameter = 'Name'
         
-	It "Should Exist" {
+    It "Should Exist" {
 
-	    $command | Should Be $command 
-	}
+        $command | Should Be $command 
+    }
 
-	It 'With output type set to "String"' {
+    It 'With output type set to "String"' {
 
-	    $command.OutputType | Should Be 'System.String'
-	}
+        $command.OutputType | Should Be 'System.String'
+    }
 
-	It "Has a parameter '$parameter'" {
+    It "Has a parameter '$parameter'" {
 
-	    $command.Parameters[$parameter].Name | Should Be $parameter
-	}
+        $command.Parameters[$parameter].Name | Should Be $parameter
+    }
 
-	It 'Of type "String"' {
+    It 'Of type "String"' {
 
-	    $command.Parameters[$parameter].ParameterType | Should Be 'String'
-	}
+        $command.Parameters[$parameter].ParameterType | Should Be 'String'
+    }
 
-	InModuleScope Helper {
+    InModuleScope Helper {
 
-	    Context 'Get-AuditOption with Mock ( Get_AuditOption -Name "CrashOnAuditFail" ) returning "Enabled"' {
+        Context 'Get-AuditOption with Mock ( Get_AuditOption -Name "CrashOnAuditFail" ) returning "Enabled"' {
 
             [string] $name  = 'CrashOnAuditFail'
             [string] $value = 'Enabled'
@@ -455,15 +455,15 @@ Describe 'Public function Get-AuditOption' `
 
             $auditOption = Get-AuditOption -Name $name
 
-	        It 'Calls Get_AuditOption exactly once'  {
+            It 'Calls Get_AuditOption exactly once'  {
 
                 Assert-MockCalled Get_AuditOption -Exactly 1 -Scope Context  
             }
 
-	        It "The option $name returns $value" {
+            It "The option $name returns $value" {
 
-	            $auditOption | should Be $value
-	        }
+                $auditOption | should Be $value
+            }
         }
     }
 }
@@ -476,11 +476,11 @@ Describe 'Private function Set_AuditCategory' `
         $command = Get-Command Set_AuditCategory
 
         # parameters listed in the Hashtable name = type, Mandatory, validateSet
-	    $parameters = @{
+        $parameters = @{
                             'SubCategory' = @('String')
                             'AuditFlag'   = @('String')
                             'Ensure'      = @('String')
-	                    }  
+                        }  
 
         It "Should Exist" {
 
@@ -527,29 +527,29 @@ Describe 'Public function Set-AuditCategory' `
 -Tags Public, Set, Category {
 
     $command = Get-Command Set-AuditCategory
-	$parameter = 'SubCategory'
+    $parameter = 'SubCategory'
         
-	It "Should Exist" {
+    It "Should Exist" {
 
-	    $command | Should Be $command 
-	}
+        $command | Should Be $command 
+    }
 
-	It "With output type set to 'String'" {
+    It "With output type set to 'String'" {
 
-	    $command.OutputType | Should Be 'System.String'
-	}
+        $command.OutputType | Should Be 'System.String'
+    }
 
-	It "Has a parameter '$parameter'" {
+    It "Has a parameter '$parameter'" {
 
-	    $command.Parameters[$parameter].Name | Should Be $parameter
-	}
+        $command.Parameters[$parameter].Name | Should Be $parameter
+    }
 
-	It 'Of type "String"' {
+    It 'Of type "String"' {
 
-	    $command.Parameters[$parameter].ParameterType | Should Be 'String'
-	}
+        $command.Parameters[$parameter].ParameterType | Should Be 'String'
+    }
 
-	Context 'Set-AuditCategory with Mock ( Set_AuditCategory -SubCategory "Logon" ) returning "Success"' {
+    Context 'Set-AuditCategory with Mock ( Set_AuditCategory -SubCategory "Logon" ) returning "Success"' {
         
         InModuleScope Helper {  
 
@@ -596,7 +596,7 @@ Describe 'Private function Set_AuditOption' `
             $command.Parameters[$parameter].ParameterType | Should Be 'String'
         }
 
-	    Context "Set_AuditOption with Mock ( Invoke_Auditpol )" {
+        Context "Set_AuditOption with Mock ( Invoke_Auditpol )" {
             $valueHashTable = @{
                 "Enabled"="enable";
                 "Disabled"="disable"
@@ -621,12 +621,12 @@ Describe 'Private function Set_AuditOption' `
                 Assert-MockCalled Invoke_Auditpol -Exactly 1 -Scope It  
             }
 
-	        It 'Calls Invoke_Auditpol -SubCommand without leading backslash (/)'  {
+            It 'Calls Invoke_Auditpol -SubCommand without leading backslash (/)'  {
 
                 Set_AuditOption -Name $name -Value $value | Should Not Be "/" 
             }
 
-	        It "Calls Invoke_Auditpol -SubCommand with 'Option:`$Name /value:`$value'"  {
+            It "Calls Invoke_Auditpol -SubCommand with 'Option:`$Name /value:`$value'"  {
 
                 Set_AuditOption -Name $name -Value $value | Should Be $true 
             }
@@ -638,31 +638,31 @@ Describe 'Public function Set-AuditOption' `
 -Tags Public, Set, Option { 
 
     $command = Get-Command Set-AuditOption
-	$parameter = 'Name'
+    $parameter = 'Name'
         
-	It "Should Exist" {
+    It "Should Exist" {
 
-	    $command | Should Be $command 
-	}
+        $command | Should Be $command 
+    }
 
-	It "With output type set to 'String'" {
+    It "With output type set to 'String'" {
 
-	    $command.OutputType | Should Be 'System.String'
-	}
+        $command.OutputType | Should Be 'System.String'
+    }
 
-	It "Has a parameter '$parameter'" {
+    It "Has a parameter '$parameter'" {
 
-	    $command.Parameters[$parameter].Name | Should Be $parameter
-	}
+        $command.Parameters[$parameter].Name | Should Be $parameter
+    }
 
-	It 'Of type "String"' {
+    It 'Of type "String"' {
 
-	    $command.Parameters[$parameter].ParameterType | Should Be 'String'
-	}
+        $command.Parameters[$parameter].ParameterType | Should Be 'String'
+    }
 
     InModuleScope Helper {
 
-	    Context "Set-AuditOption with Mock ( Set_AuditOption -Name 'CrashOnAuditFail' -Value 'disable' )" {
+        Context "Set-AuditOption with Mock ( Set_AuditOption -Name 'CrashOnAuditFail' -Value 'disable' )" {
 
             Mock Set_AuditOption { } 
 
@@ -676,7 +676,7 @@ Describe 'Public function Set-AuditOption' `
 
                 Assert-MockCalled Set_AuditOption -Exactly 1 -Scope Context  
             }
-	    }
+        }
     }
 }
 
