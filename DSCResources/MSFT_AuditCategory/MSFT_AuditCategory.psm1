@@ -38,19 +38,19 @@ function Get-TargetResource
 
     try
     {
-        $auditpolSubcategory = Get-AuditCategory -SubCategory $Subcategory
-        Write-Verbose ($localizedData.GetAuditpolSubcategorySucceed -f $Subcategory,$AuditFlag)
+        $currentAuditFlag = Get-AuditCategory -SubCategory $Subcategory
+        Write-Verbose ( $localizedData.GetAuditpolSubcategorySucceed -f $Subcategory, $AuditFlag )
     }
     catch
     {
-        Write-Verbose ($localizedData.GetAuditPolSubcategoryFailed -f $Subcategory,$AuditFlag)
+        Write-Verbose ( $localizedData.GetAuditPolSubcategoryFailed -f $Subcategory, $AuditFlag )
     }
 
-    # The auditType property returned from Get-Auditpol can be either 'Success', 'Failure', or 
+    # The auditType property returned from Get-AuditCategory can be either 'Success', 'Failure', or 
     # 'Success and Failure'. Using the match operator will return the correct state if both are set. 
-    if($auditpolSubcategory.AuditFlag -match $AuditFlag)
+    if( $currentAuditFlag -match $AuditFlag )
     {
-        $auditpolSubcategory.AuditFlag = $AuditFlag
+        $currentAuditFlag = $AuditFlag
         $ensure = 'Present'
     }
     else
@@ -59,8 +59,8 @@ function Get-TargetResource
     }
 
     $returnValue = @{
-        Subcategory = $auditpolSubcategory.Name
-        AuditFlag   = $auditpolSubcategory.AuditFlag
+        Subcategory = $Subcategory
+        AuditFlag   = $currentAuditFlag 
         Ensure      = $ensure
     }
 
@@ -108,13 +108,13 @@ function Set-TargetResource
     try
     {
         Set-AuditCategory -SubCategory $Subcategory -AuditFlag $AuditFlag -Ensure $Ensure
-        Write-Verbose ($localizedData.SetAuditpolSubcategorySucceed `
-                                      -f $Subcategory,$AuditFlag,$Ensure)
+        Write-Verbose ( $localizedData.SetAuditpolSubcategorySucceed `
+	                    -f $Subcategory,$AuditFlag,$Ensure )
     }
     catch 
     {
-        Write-Verbose ($localizedData.SetAuditpolSubcategoryFailed `
-                                      -f $Subcategory,$AuditFlag,$Ensure)
+        Write-Verbose ( $localizedData.SetAuditpolSubcategoryFailed `
+	                    -f $Subcategory,$AuditFlag,$Ensure )
     }
 }
 
@@ -159,35 +159,35 @@ function Test-TargetResource
 
     try
     {
-        $auditpolSubcategory = Get-AuditCategory -SubCategory $Subcategory
-        Write-Verbose ($localizedData.GetAuditpolSubcategorySucceed -f $Subcategory,$AuditFlag)
+        $currentAuditFlag = Get-AuditCategory -SubCategory $Subcategory
+        Write-Verbose ( $localizedData.GetAuditpolSubcategorySucceed -f $Subcategory, $AuditFlag )
     }
     catch
     {
-        Write-Verbose ($localizedData.GetAuditPolSubcategoryFailed -f $Subcategory,$AuditFlag)
+        Write-Verbose ( $localizedData.GetAuditPolSubcategoryFailed -f $Subcategory, $AuditFlag )
     }
 
     # if the setting should be present look for a match, otherwise look for a notmatch
-    if($Ensure -eq 'Present')
+    if( $Ensure -eq 'Present' )
     {
-        $return = $auditpolSubcategory.AuditFlag -match $AuditFlag
+        $return = $currentAuditFlag -match $AuditFlag
     }
     else
     { 
-        $return = $auditpolSubcategory.AuditFlag -notmatch $AuditFlag
+        $return = $currentAuditFlag -notmatch $AuditFlag
     }
 
     # the audit type can be true in either a match or non-match state. If the audit type matches the
     # ensure property return the setting correct message, else return the setting incorrect message
-    if($return)
+    if( $return )
     {
-        Write-Verbose ($localizedData.TestAuditpolSubcategoryCorrect `
-            -f $Subcategory,$AuditFlag,$Ensure)
+        Write-Verbose ( $localizedData.TestAuditpolSubcategoryCorrect `
+                        -f $Subcategory,$AuditFlag,$Ensure )
     }
     else
     {
         Write-Verbose ($localizedData.TestAuditpolSubcategoryIncorrect `
-            -f $Subcategory,$AuditFlag,$Ensure)
+                       -f $Subcategory,$AuditFlag,$Ensure)
     }
 
     $return
