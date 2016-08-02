@@ -10,7 +10,7 @@ Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
 
 <#
  .SYNOPSIS
-    Invoke_Auditpol is a private function that wraps auditpol.exe to provide a 
+    Invoke_Auditpol is a private function that wraps auditpol.exe providing a 
     centralized function to mange access to and the output of auditpol.exe    
  .DESCRIPTION
     The function will accept a string to pass to auditpol.exe for execution. Any 'get' or
@@ -22,22 +22,23 @@ Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
     against auditpol.exe. Any input that is an invalid flag or parameter in 
     auditpol.exe will return an error to prevent abuse of the call.
     The call operator will not parse the parameters, so they are split in the fuction 
- .INPUTS
-    The function accepts strings to control the execution against auditpol.exe 
+ .PARAMETER Command 
+    The action that audtipol should take on the subcommand.
+ .PARAMETER SubCommand 
+    The The subcommand the execute
  .OUTPUTS
     The raw string output of auditpol.exe with the /r switch to return a CSV string  
  .EXAMPLE
-    Invoke_AuditPol -Command "Get" -SubCommand "Subcategory:logon"
+    Invoke_AuditPol -Command 'Get' -SubCommand 'Subcategory:Logon'
 #>
-
 function Invoke_AuditPol
 {
     [CmdletBinding()]
-    [OutputType([String])]
+    [OutputType([System.String])]
     param
     (
         [parameter(Mandatory = $true)]
-        [ValidateSet("Get", "Set")]
+        [ValidateSet('Get', 'Set')]
         [System.String]
         $Command,
 
@@ -45,8 +46,6 @@ function Invoke_AuditPol
         [System.String]
         $SubCommand
     )
-
-    Write-Debug -Message ($localizedData.ExecuteAuditpolCommand -f $CommandToExecute)
 
     <# 
         The raw auditpol data with the /r switch is a 3 line CSV
@@ -64,13 +63,15 @@ function Invoke_AuditPol
         $commandString = $commandString + " /r"
     }
 
+    Write-Debug -Message ( $localizedData.ExecuteAuditpolCommand -f $commandString )
+
     try
     {
         # Use the call operator to process the auditpol command
         $return = & "auditpol" ( $commandString -split " " ) 2>&1
 
         # auditpol does not thrown exceptions, so test the results and throw if needed
-        if( $LASTEXITCODE -ne 0 )
+        if ( $LASTEXITCODE -ne 0 )
         {
             throw New-Object System.ArgumentException
         }
@@ -110,17 +111,15 @@ function Invoke_AuditPol
     While this function does not use aduitpol directly, it does generate a string that
     auditpol.exe will consume and return the correct result and then passes it to 
     Invoke_Auditpol 
- .INPUTS
-    The nme os an audit subcategory in the forma of a String that has be validated
-    by the public function  
+ .PARAMETER SubCategory 
+    The name of the subcategory to get the audit flags from.
  .OUTPUTS
-    A string that is further processed by the public version of this function. 
+    The third string of the auditpol results 
 #>
-
 function Get_AuditCategory
 {
     [CmdletBinding()]
-    [OutputType([String])]
+    [OutputType([System.String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -129,27 +128,27 @@ function Get_AuditCategory
     )
     
     # For auditpol format deatils see Invoke_Auditpol
-    
     ( Invoke_Auditpol -Command "Get" -SubCommand "Subcategory:$SubCategory" )[2]
 }
+
 
 <#
  .SYNOPSIS 
     Gets the audit flag state for a specifc subcategory. 
  .DESCRIPTION
-    Ths is one of the public functions that calls into Get_AuditCategory.
-    This function enforces parameters that will be passed through to the 
-    Get_AuditCategory function and aligns to a specifc parameterset. 
+    Ths is the public function that calls into Get_AuditCategory. This function enforces
+    parameters that will be passed to Get_AuditCategory. 
  .PARAMETER SubCategory 
     The name of the subcategory to get the audit flags from.
+ .OUTPUTS
+    A string with the flags that are set for the specificed subcategory 
  .EXAMPLE
     Get-AuditCategory -SubCategory 'Logon'
 #>
-
 function Get-AuditCategory
 {
     [CmdletBinding()]
-    [OutputType([string])]
+    [OutputType([System.String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -161,10 +160,10 @@ function Get-AuditCategory
         Get_AuditCategory returns a singel string in the following CSV format 
         Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting
     #>
-    $split = ( Get_AuditCategory @PSBoundParameters ) -split ","
+    $split = ( Get_AuditCategory @PSBoundParameters ) -split ','
     
     # remove the spaces from 'Success and Failure' to prevent any wierd string problems later
-    [string] $auditFlag = $split[4] -replace " ",""
+    [string] $auditFlag = $split[4] -replace ' ',''
     
     $auditFlag
 }
@@ -181,17 +180,16 @@ function Get-AuditCategory
     While this function does not use aduitpol directly, it does generate a string that
     auditpol.exe will consume and return the correct result and then passes it to 
     Invoke_Auditpol 
- .INPUTS
-    The nme of an audit option in the form of a String that has be validated
+ .PARAMETER Option 
+    The name of an audit option in the form of a String that has be validated
     by the public function  
  .OUTPUTS
     A string that is further processed by the public version of this function. 
 #>
-
 function Get_AuditOption
 {
     [CmdletBinding()]
-    [OutputType([String])]
+    [OutputType([System.String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -203,26 +201,23 @@ function Get_AuditOption
     ( Invoke_Auditpol -Command "Get" -SubCommand "Option:$Option" )[2]    
 }
 
+
 <#
-.SYNOPSIS
+ .SYNOPSIS
     Gets the audit policy option state.
-     
-.DESCRIPTION
+ .DESCRIPTION
     Ths is one of the public functions that calls into Get_AuditOption.
     This function enforces parameters that will be passed through to the 
     Get_AuditOption function and aligns to a specifc parameterset. 
-
-.INPUTS
-    The option name 
-    
-.OUTPUTS
+ .PARAMETER Option 
+    The name of an audit option.
+ .OUTPUTS
     A string that is the state of the option (Enabled|Disables). 
 #>
-
 function Get-AuditOption
 {
     [CmdletBinding()]
-    [OutputType([String])]
+    [OutputType([System.String])]
     param
     (
         [Parameter(Mandatory=$true)]
@@ -230,10 +225,11 @@ function Get-AuditOption
         $Name
     )
  
-    # Get_AuditOption returns a single string with the Option and value on a single line
-    # so we simply return the matched value. 
-
-    ( ( Get_AuditOption -Option $Name ) -split "," )[4]
+    <# 
+        Get_AuditOption returns a single string with the Option and value on a single line
+        so we simply return the matched value. 
+    #>
+    ( ( Get_AuditOption -Option $Name ) -split ',' )[4]
 }
 
 
@@ -248,20 +244,24 @@ function Get-AuditOption
     While this function does not use aduitpol directly, it does generate a string that
     auditpol.exe will consume and return the correct result and then passes it to 
     Invoke_Auditpol 
- .INPUTS
-    The nme of an audit category in the form of a String that has be validated
-    by the public function  
+ .PARAMETER SubCategory
+    The name of an audit category to set
+ .PARAMETER AuditFlag
+    The specifc flag to set (Success|Failure)
+ .PARAMETER Ensure 
+    The action to take on the flag
+ .EXAMPLE
+    Set_AuditCategory -SubCategory 'Logon' -AuditFlag 'Success' -Ensure 'Present'
  .OUTPUTS
-    A string that is further processed by the public version of this function. 
+    None 
 #>
-
 function Set_AuditCategory
 {
     [CmdletBinding()]
-    [OutputType([String])]
+    [OutputType([System.String])]
     param
     (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SubCategory,
 
@@ -276,12 +276,12 @@ function Set_AuditCategory
     
     # translate $ensure=present to enable and $ensure=absent to disable
     $auditState = @{
-        "Present"="enable";
-        "Absent"="disable"
+        'Present' = 'enable'
+        'Absent'  = 'disable'
     }
             
     # select the line needed from the auditpol output
-    if( $AuditFlag -eq 'Success' )
+    if ( $AuditFlag -eq 'Success' )
     { 
         [string] $subcommand = "subcategory:$SubCategory /success:$($auditState[$Ensure])" 
     }
@@ -290,25 +290,26 @@ function Set_AuditCategory
         [string] $subcommand = "subcategory:$SubCategory /failure:$($auditState[$Ensure])"
     }
                 
-    Invoke_Auditpol -Command "Set" -Subcommand $subcommand
+    Invoke_Auditpol -Command 'Set' -Subcommand $subcommand
 }
 
 
 <#
-.SYNOPSIS 
+ .SYNOPSIS 
     Sets the audit flag state for a specifc subcategory. 
-.PARAMETER SubCategory 
-    The name of the subcategory to set the audit flag on.
-.PARAMETER AuditFlag 
-    The name of the Auditflag to set.
-.PARAMETER Ensure 
-    The name of the subcategory to get the audit flags from.
-.EXAMPLE
-    Set-AuditCategory -SubCategory 'Logon'
-.OUTPUTS
-    None
+ .DESCRIPTION
+    Calls the private function to execute a set operation on the given subcategory
+ .PARAMETER SubCategory
+    The name of an audit category to set
+ .PARAMETER AuditFlag
+    The specifc flag to set (Success|Failure)
+ .PARAMETER Ensure 
+    The action to take on the flag
+ .EXAMPLE
+    Set-AuditCategory -SubCategory 'Logon' -AuditFlag 'Success' -Ensure 'Present'
+ .OUTPUTS
+    None 
 #>
-
 function Set-AuditCategory
 {
     [CmdletBinding( SupportsShouldProcess=$true )]
@@ -320,7 +321,7 @@ function Set-AuditCategory
         $SubCategory,
         
         [parameter( Mandatory = $true )]
-        [ValidateSet( "Success","Failure" )]
+        [ValidateSet( 'Success','Failure' )]
         [System.String]
         $AuditFlag,
         
@@ -329,7 +330,7 @@ function Set-AuditCategory
         $Ensure
     )
  
-    if( $pscmdlet.ShouldProcess( "$SubCategory","Set AuditFlag '$AuditFlag'" ) ) 
+    if ( $pscmdlet.ShouldProcess( "$SubCategory","Set AuditFlag '$AuditFlag'" ) ) 
     {
         Set_AuditCategory @PSBoundParameters
     }
@@ -337,27 +338,29 @@ function Set-AuditCategory
 
 
 <#
-.SYNOPSIS
+ .SYNOPSIS
     Set_AuditOption is a private function that generates the specifc parameters 
     and switches to be passed to Invoke_Auditpol to Set a specific audit option.    
-.DESCRIPTION
+ .DESCRIPTION
      In the absense of a PS module, this function is designed to extract the most 
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
     auditpol.exe will consume and return the correct result and then passes it to 
     Invoke_Auditpol 
-.INPUTS
-    The nme of an audit option in the form of a String that has be validated
-    by the public function  
-.OUTPUTS
-    A string that is further processed by the public version of this function. 
+ .PARAMETER Name
+    The specifc Option to set
+ .PARAMETER Value 
+    The value to set on the provided Option
+ .EXAMPLE
+    Set_AuditOption -Name 'CrashOnAuditFail' -Value 'enabled'
+ .OUTPUTS
+    None 
 #>
-
 function Set_AuditOption
 {
     [CmdletBinding()]
-    [OutputType([String])]
+    [OutputType([System.String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -369,11 +372,13 @@ function Set_AuditOption
         $Value
     )
  
-    # the output text of auditpol is in simple past tense, but the input is in simple 
-    # present tense the hashtable corrects the tense for the input.  
+    <# 
+        The output text of auditpol is in simple past tense, but the input is in simple 
+        present tense the hashtable corrects the tense for the input.  
+    #>
     $valueHashTable = @{
-        "Enabled" ="enable";
-        "Disabled"="disable"
+        'Enabled'  ='enable'
+        'Disabled' ='disable'
     }
 
     Invoke_Auditpol -Command "Set" -SubCommand "Option:$Name /value:$($valueHashTable[$value])"
@@ -392,7 +397,6 @@ function Set_AuditOption
 .OUTPUTS
     None
 #>
-
 function Set-AuditOption
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -408,13 +412,12 @@ function Set-AuditOption
         $Value
     )
 
-    if( $pscmdlet.ShouldProcess(  "$Name","Set $Value"  ) ) 
+    if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
     {
         Set_AuditOption @PSBoundParameters
     }
 }
 
 
-# all private functions are named with "_" vs. "-"
+# all private functions are named with '_' vs. '-'
 Export-ModuleMember -Function *-* -Variable localizedData
-

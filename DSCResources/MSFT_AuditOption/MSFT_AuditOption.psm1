@@ -8,8 +8,8 @@ function Get-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
-        [ValidateSet("CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects",
-        "AuditBaseDirectories")]
+        [ValidateSet('CrashOnAuditFail', 'FullPrivilegeAuditing', 'AuditBaseObjects',
+        'AuditBaseDirectories')]
         [System.String]
         $Name
     )
@@ -17,7 +17,7 @@ function Get-TargetResource
     # get the option's current value 
     $optionValue = Get-AuditOption @PSBoundParameters
 
-    Write-Verbose ($localizedData.GetAuditpolOptionSucceed -f $Name)
+    Write-Verbose ( $localizedData.GetAuditpolOptionSucceed -f $Name )
 
     $returnValue = @{
         Name   = $Name
@@ -34,12 +34,12 @@ function Set-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
-        [ValidateSet("CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects",
-        "AuditBaseDirectories")]
+        [ValidateSet('CrashOnAuditFail', 'FullPrivilegeAuditing', 'AuditBaseObjects',
+        'AuditBaseDirectories')]
         [System.String]
         $Name,
 
-        [ValidateSet("Enabled","Disabled")]
+        [ValidateSet('Enabled', 'Disabled')]
         [System.String]
         $Value
     )
@@ -47,11 +47,11 @@ function Set-TargetResource
     try 
     {
         Set-AuditOption @PSBoundParameters
-        Write-Verbose ($localizedData.SetAuditpolOptionSucceed -f $Name, $Value)
+        Write-Verbose ( $localizedData.SetAuditpolOptionSucceed -f $Name, $Value )
     }
     catch
     {
-        Write-Verbose ($localizedData.SetAuditpolOptionFailed -f $Name, $Value)
+        Write-Verbose ( $localizedData.SetAuditpolOptionFailed -f $Name, $Value )
     }
 }
 
@@ -63,24 +63,24 @@ function Test-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
-        [ValidateSet("CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects",
-        "AuditBaseDirectories")]
+        [ValidateSet('CrashOnAuditFail', 'FullPrivilegeAuditing', 'AuditBaseObjects',
+        'AuditBaseDirectories')]
         [System.String]
         $Name,
 
-        [ValidateSet("Enabled","Disabled")]
+        [ValidateSet('Enabled', 'Disabled')]
         [System.String]
         $Value
     )
 
-    if((Get-AuditOption -Name $Name) -eq $Value)
+    if ( ( Get-AuditOption -Name $Name ) -eq $Value )
     {
-        Write-Verbose ($localizedData.TestAuditpolOptionCorrect -f $Name,$value)
+        Write-Verbose ( $localizedData.TestAuditpolOptionCorrect -f $Name,$value )
         $return = $true
     }
     else
     {
-        Write-Verbose ($localizedData.TestAuditpolOptionIncorrect -f $Name,$value)
+        Write-Verbose ( $localizedData.TestAuditpolOptionIncorrect -f $Name,$value )
         $return = $false
     }
 
@@ -89,4 +89,3 @@ function Test-TargetResource
 
 
 Export-ModuleMember -Function *-TargetResource
-
