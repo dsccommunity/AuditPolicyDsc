@@ -487,9 +487,9 @@ Describe 'Private function Set_AuditCategory' `
             $command | Should Be $command 
         }
 
-        It "With output type 'String'" {
+        It "With no output" {
 
-            $command.OutputType | Should Be 'System.String'
+            $command.OutputType | Should BeNullOrEmpty
         }
 
         # verify all of ther parameters are correct
@@ -509,15 +509,41 @@ Describe 'Private function Set_AuditCategory' `
         }
 
         context 'Set_AuditCategory with Mock ( Invoke_Auditpol )' {
-            
-            Mock Invoke_Auditpol { } 
 
-            $setAuditCategory = Set_AuditCategory -SubCategory "Logon" `
-                                -AuditFlag "Success" -Ensure "Present"
+            $auditState = @{
+                'Present' = 'enable'
+                'Absent'  = 'disable'
+            }
+            # parameters to splat 
+	        $comamnd = @{
+                SubCategory = "Logon"
+                AuditFlag = "success"
+                Ensure = "Present"
+            }
 
-            It 'Calls Invoke_Auditpol exactly once'  {
+            Mock Invoke_Auditpol { } -Verifiable -ParameterFilter { 
+                $Command.Equals("Set") -and `
+                $SubCommand.Equals("Subcategory:$($comamnd.subcategory) /$($comamnd.AuditFlag):$($auditState[$comamnd.Ensure])") 
+            }
 
-                Assert-MockCalled Invoke_Auditpol -Exactly 1 -Scope Context  
+            It "Does not thrown an error" {
+
+                { $AuditCategory = Set_AuditCategory @comamnd } | Should Not Throw
+            }
+
+	        It "Should not return a value" {
+
+                $AuditCategory | Should BeNullOrEmpty
+            }
+
+            It 'Calls Invoke_Auditpol exactly once' {
+
+                Assert-MockCalled Invoke_Auditpol -Exactly 1 -Scope Context
+            }
+
+            It "Calls Invoke_Auditpol in the correct format ( 'Subcategory:`$Subcategory /Success:`$AuditFlag' )" {
+
+                Assert-VerifiableMocks
             }
         }
     }
@@ -534,9 +560,9 @@ Describe 'Public function Set-AuditCategory' `
         $command | Should Be $command 
     }
 
-    It "With output type set to 'String'" {
+    It "With no output" {
 
-        $command.OutputType | Should Be 'System.String'
+        $command.OutputType | Should BeNullOrEmpty
     }
 
     It "Has a parameter '$parameter'" {
@@ -554,15 +580,27 @@ Describe 'Public function Set-AuditCategory' `
         InModuleScope Helper {  
 
             Mock Set_AuditCategory { } 
+            
+            $comamnd = @{
+                SubCategory = "Logon"
+                AuditFlag = "Success"
+                Ensure = "Present"
+            }
 
-            $setAuditCategory = Set-AuditCategory -SubCategory "Logon" `
-                                -AuditFlag "Success" -Ensure "Present" 
+            It 'Should not throw an error' {
+
+                { $AuditCategory = Set-AuditCategory @comamnd } | Should Not Throw 
+            }
+
+	        It "Should not return a value"  {
+
+                $AuditCategory | Should BeNullOrEmpty
+            }
 
             It 'Calls Set_AuditCategory exactly once'  {
 
                 Assert-MockCalled Set_AuditCategory -Exactly 1 -Scope Context  
             }
-
         }
     }
 
@@ -581,9 +619,9 @@ Describe 'Private function Set_AuditOption' `
             $command | Should Be $command 
         }
 
-        It "With output type set to 'String'" {
+        It "With no output" {
 
-            $command.OutputType | Should Be 'System.String'
+            $command.OutputType | Should BeNullOrEmpty
         }
 
         It "Has a parameter '$parameter'" {
@@ -597,6 +635,7 @@ Describe 'Private function Set_AuditOption' `
         }
 
         Context "Set_AuditOption with Mock ( Invoke_Auditpol )" {
+
             $valueHashTable = @{
                 "Enabled"="enable";
                 "Disabled"="disable"
@@ -604,31 +643,31 @@ Describe 'Private function Set_AuditOption' `
 
             [string] $name  = "CrashOnAuditFail"
             [string] $value = "Disable"
-            Mock Invoke_Auditpol { } 
 
-            Mock Invoke_Auditpol { "/" } -ParameterFilter { 
-                $command.Equals("Set") -and $SubCommand.StartsWith("/")     
+            Mock Invoke_Auditpol { } -Verifiable -ParameterFilter { 
+                $command.Equals("Set") -and `
+                $SubCommand.Equals("Option:$Name /value:$($valueHashTable[$value])") 
             }
 
-            Mock Invoke_Auditpol { $true } -ParameterFilter { 
-                $command.Equals("Set") -and $SubCommand.Equals("Option:$Name /value:$($valueHashTable[$value])") 
+            It "Does not thrown an error"  {
+
+                { $AuditOption = Set_AuditOption -Name $name -Value $value } | 
+                Should Not Throw
             }
 
+	        It "Should not return a value"  {
+
+                $AuditOption | Should BeNullOrEmpty
+            }
 
             It 'Calls Invoke_Auditpol exactly once'  {
 
-                $setAuditOption = Set_AuditOption -Name $name -Value $value
-                Assert-MockCalled Invoke_Auditpol -Exactly 1 -Scope It  
+                Assert-MockCalled Invoke_Auditpol -Exactly 1 -Scope Context
             }
 
-            It 'Calls Invoke_Auditpol -SubCommand without leading backslash (/)'  {
+            It "Calls Invoke_Auditpol in the correct format ( 'Option:`$Name /value:`$value' )"  {
 
-                Set_AuditOption -Name $name -Value $value | Should Not Be "/" 
-            }
-
-            It "Calls Invoke_Auditpol -SubCommand with 'Option:`$Name /value:`$value'"  {
-
-                Set_AuditOption -Name $name -Value $value | Should Be $true 
+                Assert-VerifiableMocks
             }
         }
     }
@@ -645,10 +684,10 @@ Describe 'Public function Set-AuditOption' `
         $command | Should Be $command 
     }
 
-    It "With output type set to 'String'" {
+        It "With no output" {
 
-        $command.OutputType | Should Be 'System.String'
-    }
+            $command.OutputType | Should BeNullOrEmpty
+        }
 
     It "Has a parameter '$parameter'" {
 
@@ -664,14 +703,22 @@ Describe 'Public function Set-AuditOption' `
 
         Context "Set-AuditOption with Mock ( Set_AuditOption -Name 'CrashOnAuditFail' -Value 'disable' )" {
 
+	        [string] $name  = "CrashOnAuditFail"
+            [string] $value = "Disable"
+
             Mock Set_AuditOption { } 
 
             It "Does not thrown an error" {
                 
-                { $setAuditOption =  Set-AuditOption -Name "CrashOnAuditFail" -Value "Disabled" } |
+                { $setAuditOption =  Set-AuditOption -Name $name -Value $value } |
                 Should Not Throw
-
             }    
+
+	        It "Should not return a value"  {
+
+                $setAuditOption | Should BeNullOrEmpty
+            }
+
             It 'Calls Set_AuditOption exactly once'  {
 
                 Assert-MockCalled Set_AuditOption -Exactly 1 -Scope Context  
