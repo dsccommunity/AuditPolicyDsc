@@ -1,10 +1,10 @@
 #requires -RunAsAdministrator
 
 # get the root path of the resourse
-[String]$moduleRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot) 
+[String] $moduleRoot = Split-Path -Parent ( Split-Path -Parent $PSScriptRoot ) 
 
 # get the module name to import
-[string]$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path)  -Replace "\.tests\.ps1", ".psm1"
+[string] $sut = ( Split-Path -Leaf $MyInvocation.MyCommand.Path )  -Replace "\.tests\.ps1", ".psm1"
 
 Import-Module "$moduleRoot\DSCResources\$sut" -Force
 
@@ -24,7 +24,7 @@ function Get-AuditpolCategories
     $auditpol | Where-Object {$_ -notlike 'Category/Subcategory*'} | ForEach-Object `
     {
         # the categories do not have any space in front of them, but the subcategories do.
-        if( $_ -notlike " *" )
+        if ( $_ -notlike " *" )
         {
             $Categories += $_.Trim()
         }
