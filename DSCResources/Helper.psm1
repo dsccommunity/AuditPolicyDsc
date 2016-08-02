@@ -55,7 +55,7 @@ function Invoke_AuditPol
     #>
 
     # set the base commans to execute
-    $commandString = "/$Command /$SubCommand"
+    [string] $commandString = "/$Command /$SubCommand"
     
     # add the /r if it is a get command
     if ( $Command -eq 'Get') 
