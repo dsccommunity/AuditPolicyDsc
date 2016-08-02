@@ -156,12 +156,18 @@ function Get-AuditCategory
         $SubCategory
     )
 
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings
+        a condition will be placed here to use native PowerShell cmdlets to return
+        the category details. 
+    #>
+
     <# 
-        Get_AuditCategory returns a singel string in the following CSV format 
+        Get_AuditCategory returns a single string in the following CSV format 
         Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting
     #>
     $split = ( Get_AuditCategory @PSBoundParameters ) -split ','
-    
+
     # remove the spaces from 'Success and Failure' to prevent any wierd string problems later
     [string] $auditFlag = $split[4] -replace ' ',''
     
@@ -178,8 +184,7 @@ function Get-AuditCategory
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume and return the correct result and then passes it to 
-    Invoke_Auditpol 
+    auditpol.exe will consume in Invoke_Auditpol.
  .PARAMETER Option 
     The name of an audit option in the form of a String that has be validated
     by the public function  
@@ -198,7 +203,7 @@ function Get_AuditOption
     )
     
     # For auditpol format deatils see Invoke_Auditpol
-    ( Invoke_Auditpol -Command "Get" -SubCommand "Option:$Option" )[2]    
+    ( Invoke_Auditpol -Command "Get" -SubCommand "Option:$Option" )[2]   
 }
 
 
@@ -224,7 +229,13 @@ function Get-AuditOption
         [System.String]
         $Name
     )
- 
+
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings
+        a condition will be placed here to use native PowerShell cmdlets to return
+        the option details. 
+    #>
+
     <# 
         Get_AuditOption returns a single string with the Option and value on a single line
         so we simply return the matched value. 
@@ -242,8 +253,7 @@ function Get-AuditOption
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume and return the correct result and then passes it to 
-    Invoke_Auditpol 
+    auditpol.exe will consume in Invoke_Auditpol.
  .PARAMETER SubCategory
     The name of an audit category to set
  .PARAMETER AuditFlag
@@ -258,7 +268,6 @@ function Get-AuditOption
 function Set_AuditCategory
 {
     [CmdletBinding()]
-    [OutputType([System.String])]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -283,14 +292,14 @@ function Set_AuditCategory
     # select the line needed from the auditpol output
     if ( $AuditFlag -eq 'Success' )
     { 
-        [string] $subcommand = "subcategory:$SubCategory /success:$($auditState[$Ensure])" 
+        [string] $subcommand = "Subcategory:$SubCategory /success:$($auditState[$Ensure])" 
     }
     else   
     {
-        [string] $subcommand = "subcategory:$SubCategory /failure:$($auditState[$Ensure])"
+        [string] $subcommand = "Subcategory:$SubCategory /failure:$($auditState[$Ensure])"
     }
                 
-    Invoke_Auditpol -Command 'Set' -Subcommand $subcommand
+    Invoke_Auditpol -Command 'Set' -Subcommand $subcommand | Out-Null
 }
 
 
@@ -313,7 +322,6 @@ function Set_AuditCategory
 function Set-AuditCategory
 {
     [CmdletBinding( SupportsShouldProcess=$true )]
-    [OutputType([String])]
     param
     (
         [parameter( Mandatory = $true )]
@@ -329,7 +337,13 @@ function Set-AuditCategory
         [System.String]
         $Ensure
     )
- 
+
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings
+        a condition will be placed here to use native PowerShell cmdlets to set
+        the subcategory details. 
+    #>
+
     if ( $pscmdlet.ShouldProcess( "$SubCategory","Set AuditFlag '$AuditFlag'" ) ) 
     {
         Set_AuditCategory @PSBoundParameters
@@ -346,8 +360,7 @@ function Set-AuditCategory
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume and return the correct result and then passes it to 
-    Invoke_Auditpol 
+    auditpol.exe will consume in Invoke_Auditpol. 
  .PARAMETER Name
     The specifc Option to set
  .PARAMETER Value 
@@ -380,12 +393,9 @@ function Set_AuditOption
         'Disabled' ='disable'
     }
     
-    $command = @{
-        Command = "Set" 
-        SubCommand = "Option:$Name /value:$($valueHashTable[$value])"
-    }
+    $SubCommand = "Option:$Name /value:$($valueHashTable[$value])"
 
-    Invoke_Auditpol @command | Out-Null
+    Invoke_Auditpol -Command "Set" -SubCommand $SubCommand | Out-Null
 }
 
 
@@ -393,11 +403,12 @@ function Set_AuditOption
  .SYNOPSIS
     Sets an audit policy option to enabled or disabled
  .DESCRIPTION
-    Ths is one of the public functions that calls into Set_AuditpolSubcommand.
-    This function enforces parameters that will be passed through to the 
-    Set_AuditpolSubcommand function and aligns to a specifc parameterset. 
- .INPUTS
-    The option name and state it will be set to. 
+    Ths public function that calls Set_AuditOption. This function enforces parameters 
+    that will be passed to Set_AuditOption and aligns to a specifc parameterset. 
+ .PARAMETER Name
+    The specifc Option to set
+ .PARAMETER Value 
+    The value to set on the provided Option
  .OUTPUTS
     None
 #>
@@ -414,6 +425,12 @@ function Set-AuditOption
         [System.String]
         $Value
     )
+
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings
+        a condition will be placed here to use native PowerShell cmdlets to set
+        the option details. 
+    #>
 
     if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
     {
