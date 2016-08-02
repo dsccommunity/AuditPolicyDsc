@@ -109,8 +109,7 @@ function Invoke_AuditPol
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume and return the correct result and then passes it to 
-    Invoke_Auditpol 
+    auditpol.exe will consume in Invoke_Auditpol.
  .PARAMETER SubCategory 
     The name of the subcategory to get the audit flags from.
  .OUTPUTS
@@ -237,8 +236,8 @@ function Get-AuditOption
     #>
 
     <# 
-        Get_AuditOption returns a single string with the Option and value on a single line
-        so we simply return the matched value. 
+        Get_AuditOption returns a single string with the Option in a CSV list, so 
+        get the 5th item in the list and return it
     #>
     ( ( Get_AuditOption -Option $Name ) -split ',' )[4]
 }
@@ -289,7 +288,7 @@ function Set_AuditCategory
         'Absent'  = 'disable'
     }
             
-    # select the line needed from the auditpol output
+    # create the line needed auditpol to set the category flag
     if ( $AuditFlag -eq 'Success' )
     { 
         [string] $subcommand = "Subcategory:$SubCategory /success:$($auditState[$Ensure])" 
@@ -389,8 +388,8 @@ function Set_AuditOption
         present tense the hashtable corrects the tense for the input.  
     #>
     $valueHashTable = @{
-        'Enabled'  ='enable'
-        'Disabled' ='disable'
+        'Enabled'  = 'enable'
+        'Disabled' = 'disable'
     }
     
     $SubCommand = "Option:$Name /value:$($valueHashTable[$value])"
