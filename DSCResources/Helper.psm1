@@ -360,7 +360,6 @@ function Set-AuditCategory
 function Set_AuditOption
 {
     [CmdletBinding()]
-    [OutputType([System.String])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -380,27 +379,31 @@ function Set_AuditOption
         'Enabled'  ='enable'
         'Disabled' ='disable'
     }
+    
+    $command = @{
+        Command = "Set" 
+        SubCommand = "Option:$Name /value:$($valueHashTable[$value])"
+    }
 
-    Invoke_Auditpol -Command "Set" -SubCommand "Option:$Name /value:$($valueHashTable[$value])"
+    Invoke_Auditpol @command | Out-Null
 }
 
 
 <#
-.SYNOPSIS
+ .SYNOPSIS
     Sets an audit policy option to enabled or disabled
-.DESCRIPTION
+ .DESCRIPTION
     Ths is one of the public functions that calls into Set_AuditpolSubcommand.
     This function enforces parameters that will be passed through to the 
     Set_AuditpolSubcommand function and aligns to a specifc parameterset. 
-.INPUTS
+ .INPUTS
     The option name and state it will be set to. 
-.OUTPUTS
+ .OUTPUTS
     None
 #>
 function Set-AuditOption
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
-    [OutputType([String])]
     param
     (
         [Parameter(Mandatory=$true)]
