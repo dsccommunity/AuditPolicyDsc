@@ -31,7 +31,7 @@ function Get-TargetResource
         $Subcategory,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet('Success','Failure')]
+        [ValidateSet('Success', 'Failure')]
         [System.String]
         $AuditFlag
     )
@@ -100,11 +100,11 @@ function Set-TargetResource
         $Subcategory,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet('Success','Failure')]
+        [ValidateSet('Success', 'Failure')]
         [System.String]
         $AuditFlag,
 
-        [ValidateSet('Present','Absent')]
+        [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure
     )
@@ -113,12 +113,12 @@ function Set-TargetResource
     {
         Set-AuditCategory -SubCategory $Subcategory -AuditFlag $AuditFlag -Ensure $Ensure
         Write-Verbose ( $localizedData.SetAuditpolSubcategorySucceed `
-                        -f $Subcategory,$AuditFlag,$Ensure )
+                        -f $Subcategory, $AuditFlag, $Ensure )
     }
     catch 
     {
         Write-Verbose ( $localizedData.SetAuditpolSubcategoryFailed `
-                        -f $Subcategory,$AuditFlag,$Ensure )
+                        -f $Subcategory, $AuditFlag, $Ensure )
     }
 }
 
@@ -153,11 +153,11 @@ function Test-TargetResource
         $Subcategory,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet('Success','Failure')]
+        [ValidateSet('Success', 'Failure')]
         [System.String]
         $AuditFlag,
 
-        [ValidateSet('Present','Absent')]
+        [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure
     )
@@ -190,12 +190,12 @@ function Test-TargetResource
     if ( $return )
     {
         Write-Verbose ( $localizedData.TestAuditpolSubcategoryCorrect `
-                        -f $Subcategory,$AuditFlag,$Ensure )
+                        -f $Subcategory, $AuditFlag, $Ensure )
     }
     else
     {
         Write-Verbose ( $localizedData.TestAuditpolSubcategoryIncorrect `
-                       -f $Subcategory,$AuditFlag,$Ensure )
+                       -f $Subcategory, $AuditFlag, $Ensure )
     }
 
     $return
