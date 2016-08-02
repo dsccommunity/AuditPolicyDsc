@@ -515,7 +515,7 @@ Describe 'Private function Set_AuditCategory' `
                 'Absent'  = 'disable'
             }
             # parameters to splat 
-	        $comamnd = @{
+            $comamnd = @{
                 SubCategory = "Logon"
                 AuditFlag = "success"
                 Ensure = "Present"
@@ -531,7 +531,7 @@ Describe 'Private function Set_AuditCategory' `
                 { $AuditCategory = Set_AuditCategory @comamnd } | Should Not Throw
             }
 
-	        It "Should not return a value" {
+            It "Should not return a value" {
 
                 $AuditCategory | Should BeNullOrEmpty
             }
@@ -592,7 +592,7 @@ Describe 'Public function Set-AuditCategory' `
                 { $AuditCategory = Set-AuditCategory @comamnd } | Should Not Throw 
             }
 
-	        It "Should not return a value"  {
+            It "Should not return a value"  {
 
                 $AuditCategory | Should BeNullOrEmpty
             }
@@ -655,7 +655,7 @@ Describe 'Private function Set_AuditOption' `
                 Should Not Throw
             }
 
-	        It "Should not return a value"  {
+            It "Should not return a value"  {
 
                 $AuditOption | Should BeNullOrEmpty
             }
@@ -703,7 +703,7 @@ Describe 'Public function Set-AuditOption' `
 
         Context "Set-AuditOption with Mock ( Set_AuditOption -Name 'CrashOnAuditFail' -Value 'disable' )" {
 
-	        [string] $name  = "CrashOnAuditFail"
+            [string] $name  = "CrashOnAuditFail"
             [string] $value = "Disable"
 
             Mock Set_AuditOption { } 
@@ -714,7 +714,7 @@ Describe 'Public function Set-AuditOption' `
                 Should Not Throw
             }    
 
-	        It "Should not return a value"  {
+            It "Should not return a value"  {
 
                 $setAuditOption | Should BeNullOrEmpty
             }
