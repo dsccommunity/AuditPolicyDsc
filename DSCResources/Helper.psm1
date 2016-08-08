@@ -11,7 +11,7 @@ DATA localizedData
         AuditpolNotFound          = (ERROR) auditpol.exe was not found on the system
         RequiredPrivilegeMissing  = (ERROR) A required privilege is not held by the client
         IncorrectParameter        = (ERROR) The parameter is incorrect
-        UnknownError              = (ERROR) An unknow error has occured
+        UnknownError              = (ERROR) An unknown error has occured
         ExecuteAuditpolCommand    = Executing 'auditpol.exe {0}'
         GetAuditpolOptionSucceed     = (GET) '{0}'
         GetAuditpolOptionFailed      = (ERROR) getting '{0}'
@@ -31,6 +31,15 @@ DATA localizedData
         SetAuditpolResourceSACLFailed       = 
         TestAuditpolResourceSACLCorrect     = 
         TestAuditpolResourceSACLIncorrect   =
+        FileNotFound     = (ERROR) File '{0}' not found
+        GetCsvSucceed    = (GET) '{0}'
+        GetCsvFailed     = (ERROR) getting '{0}'
+        TestCsvSucceed   = '{0}' is '{1}'
+        TestCsvFailed    = '{0}' is NOT in desired state
+        SetCsvSucceed    =  (SET) '{0}' to '{1}'
+        SetCsvFailed     = (ERROR) setting '{0}' to value '{1}'
+        ExportFailed     = (ERROR) Failed to create temporary file at '{0}'
+        ImportFailed     = (ERROR) Failed to import CSV '{0}'
 '@
 }
 
@@ -398,6 +407,76 @@ function Set-AuditCategory
     )
  
     Set_AuditpolSubcommand @PSBoundParameters
+}
+
+<#
+    .SYNOPSIS 
+    Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
+
+    .PARAMETER Action 
+    The action to take, either Import or Export.
+
+    .PARAMETER Path 
+    The path to a CSV file to either create or import.
+        
+    .EXAMPLE
+    Invoke-SecurityCmdlet -Action Import -Path .\test.csv
+#>
+function Invoke-SecurityCmdlet
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [ValidateSet("Import","Export")]
+        [System.String]
+        $Action,
+        
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path 
+    )
+    #test if cmdlet is present
+
+    if (!(Get-Module -ListAvailable -Name "SecurityCmdlets"))
+    {
+
+        if ($Action -eq "Import")
+        {
+            #TODO: figure out the actual syntax
+            Invoke_AuditPol "Import $path"
+        }
+        elseif ($Action -eq "Export")
+        {
+            #TODO: figure out the actual syntax
+            Invoke_AuditPol "Export $path"
+        }
+    }
+    else
+    {
+
+        if (! (Get-Module SecurityCmdlets)  )
+        {
+
+            Import-Module SecurityCmdlets
+        }
+        if ($Action -eq "Import")
+        {
+
+            Restore-AuditPolicy $Path
+        }
+        elseif ($Action -eq "Export")
+        {
+            #no force option on Backup ?
+            if (Test-Path $path)
+            {
+                Remove-Item $path -force
+            }
+
+            Backup-AuditPolicy $Path
+        }
+
+    }
 }
 
 #endregion
