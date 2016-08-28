@@ -444,12 +444,13 @@ function Invoke-SecurityCmdlet
         if ($Action -eq "Import")
         {
             #TODO: figure out the actual syntax
-            Invoke_AuditPol "Import $path"
+            #Invoke_AuditPol "/clear"
+            Invoke_AuditPol "/restore:$path"
         }
         elseif ($Action -eq "Export")
         {
             #TODO: figure out the actual syntax
-            Invoke_AuditPol "Export $path"
+            Invoke_AuditPol "/backup:$path"
         }
     }
     else
@@ -462,7 +463,7 @@ function Invoke-SecurityCmdlet
         }
         if ($Action -eq "Import")
         {
-
+            Invoke_AuditPol "/clear"
             Restore-AuditPolicy $Path
         }
         elseif ($Action -eq "Export")
