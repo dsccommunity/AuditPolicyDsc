@@ -443,14 +443,14 @@ function Invoke-SecurityCmdlet
 
         if ($Action -eq "Import")
         {
-            #TODO: figure out the actual syntax
-            #Invoke_AuditPol "/clear"
-            Invoke_AuditPol "/restore:$path"
+            #Ignore output
+            Invoke_AuditPol "/clear"
+            Invoke_AuditPol "/restore /file:$path" | Out-Null
         }
         elseif ($Action -eq "Export")
         {
             #TODO: figure out the actual syntax
-            Invoke_AuditPol "/backup:$path"
+            Invoke_AuditPol "/backup /file:$path" | Out-Null
         }
     }
     else
@@ -463,8 +463,8 @@ function Invoke-SecurityCmdlet
         }
         if ($Action -eq "Import")
         {
-            Invoke_AuditPol "/clear"
-            Restore-AuditPolicy $Path
+            Invoke_AuditPol "/clear" | Out-Null
+            Restore-AuditPolicy $Path | Out-Null
         }
         elseif ($Action -eq "Export")
         {
@@ -474,7 +474,7 @@ function Invoke-SecurityCmdlet
                 Remove-Item $path -force
             }
 
-            Backup-AuditPolicy $Path
+            Backup-AuditPolicy $Path | Out-Null
         }
 
     }
