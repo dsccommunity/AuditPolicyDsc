@@ -443,8 +443,6 @@ function Invoke-SecurityCmdlet
         if ($Action -eq "Import")
         {
             #Ignore output - causes return values we don't want
-            #import should clear existing policy before writing new policy
-            Invoke_AuditPol "/clear" |Out-Null 
             Invoke_AuditPol "/restore /file:$path" | Out-Null
         }
         elseif ($Action -eq "Export")
@@ -464,8 +462,6 @@ function Invoke-SecurityCmdlet
         if ($Action -eq "Import")
         {
             #Ignore output - causes return values we don't want
-            #import should clear existing policy before writing new policy
-            Invoke_AuditPol "/clear" | Out-Null
             Restore-AuditPolicy $Path | Out-Null
         }
         elseif ($Action -eq "Export")

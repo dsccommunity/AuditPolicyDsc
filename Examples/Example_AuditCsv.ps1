@@ -1,4 +1,4 @@
-﻿$cred = get-credential
+﻿<# $cred = get-credential
 $ConfigurationData = @{
     AllNodes = @(
         @{
@@ -12,7 +12,7 @@ $ConfigurationData = @{
         }
         )
 }
-
+#>
 Configuration AuditPolicy
 {
     Import-DscResource -ModuleName xAuditPolicy
@@ -21,14 +21,13 @@ Configuration AuditPolicy
         xAuditCsv auditPolicy
         {
             CsvPath = "C:\Users\Administrator\Documents\examples\test.csv"
-            #issue: can't consistently run auditpol /clear from system context?
-            PsDscRunAsCredential  = $cred
+
         }
     
     }
 }
-AuditPolicy -ConfigurationData $ConfigurationData
+AuditPolicy
 
-#Invoke-DscResource xAuditCsv -Method Set -Property @{CsvPath = "C:\Users\Administrator\Documents\examples\audit.csv"} -ModuleName xAuditPolicy -verbose
+Invoke-DscResource xAuditCsv -Method Set -Property @{CsvPath = "C:\Users\Administrator\Documents\examples\audit.csv"} -ModuleName xAuditPolicy -verbose
 
 Start-DscConfiguration -Wait -verbose -path .\AuditPolicy -force
