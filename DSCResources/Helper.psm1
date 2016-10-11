@@ -331,6 +331,74 @@ function Set_AuditpolSubcommand
 
 #endregion
 
+<#
+    .SYNOPSIS 
+    Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
+
+    .PARAMETER Action 
+    The action to take, either Import or Export. Import will clear existing policy before writing.
+
+    .PARAMETER Path 
+    The path to a CSV file to either create or import.
+        
+    .EXAMPLE
+    Invoke-SecurityCmdlet -Action Import -Path .\test.csv
+#>
+function Invoke-SecurityCmdlet
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [ValidateSet("Import","Export")]
+        [System.String]
+        $Action,
+        
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path 
+    )
+    #test if cmdlet is present. if not, use auditpol directly.
+    if (!(Get-Module -ListAvailable -Name "SecurityCmdlets"))
+    {
+
+        if ($Action -eq "Import")
+        {
+            #Ignore output - causes return values we don't want
+            Invoke_AuditPol "/restore /file:$path" | Out-Null
+        }
+        elseif ($Action -eq "Export")
+        {
+
+            Invoke_AuditPol "/backup /file:$path" | Out-Null
+        }
+    }
+    else
+    {
+        #cmdlet is present, see if it's loaded, and start using it
+        if (! (Get-Module SecurityCmdlets)  )
+        {
+
+            Import-Module SecurityCmdlets
+        }
+        if ($Action -eq "Import")
+        {
+            #Ignore output - causes return values we don't want
+            Restore-AuditPolicy $Path | Out-Null
+        }
+        elseif ($Action -eq "Export")
+        {
+            #no force option on Backup, manually check for file and delete it so we can write back again
+            if (Test-Path $path)
+            {
+                Remove-Item $path -force
+            }
+            Backup-AuditPolicy $Path | Out-Null
+        }
+
+    }
+}
+
 #region Public Category functions
 
 <#
