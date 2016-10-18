@@ -1,4 +1,4 @@
-﻿#Requires -Version 4.0
+#Requires -Version 4.0
 
 # This PS module contains functions for Desired State Configuration (DSC) xAuditPolicy provider. 
 # It enables querying, creation, removal and update of Windows advanced audit policies through 
@@ -329,8 +329,6 @@ function Set_AuditpolSubcommand
     }
 }
 
-#endregion
-
 <#
     .SYNOPSIS 
     Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
@@ -398,6 +396,8 @@ function Invoke-SecurityCmdlet
 
     }
 }
+
+#endregion
 
 #region Public Category functions
 
