@@ -27,11 +27,14 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
  
 ## Versions
 
-### 1.0.0.0
-* Initial release with the following resources:
+### Unreleased
 
-  * AuditCategory 
-  * AuditOption   
+### 1.0.0.0
+
+* Initial release with the following resources:
+ 
+  * AuditCategory
+  * AuditOption
 
 ## Examples
 
