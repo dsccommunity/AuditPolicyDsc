@@ -33,8 +33,6 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
   * AuditCategory 
   * AuditOption   
 
-### Unreleased
-
 ## Examples
 
 ### Example 1 Audit Logon Success and Failure
