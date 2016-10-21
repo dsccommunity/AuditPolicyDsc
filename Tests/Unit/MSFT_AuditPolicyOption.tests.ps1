@@ -80,7 +80,7 @@ try
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
             
             # mock call to the helper module to isolate Test-TargetResource
-            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditOption
+            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditPolicyOption
 
             $test = Test-TargetResource -Name $optionName -Value $optionState
 
@@ -113,7 +113,7 @@ try
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
 
             # mock call to the helper module to isolate Set-TargetResource
-            Mock Set-AuditOption { return } -ModuleName MSFT_AuditOption
+            Mock Set-AuditOption { return } -ModuleName MSFT_AuditPolicyOption
                 
             $set = Set-TargetResource -Name $optionName -Value $optionState
 

@@ -44,7 +44,7 @@ try
             Context "Return object " {
                 
                 # mock call to the helper module to isolate Get-TargetResource
-                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlag} } -ModuleName MSFT_AuditCategory
+                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlag} } -ModuleName MSFT_AuditPolicySubcategory
 
                 $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
 
@@ -76,7 +76,7 @@ try
             Context "Submit '$AuditFlag' and return '$AuditFlag'" {
 
                 # mock call to the helper module to isolate Get-TargetResource
-                Mock Get-AuditCategory { return $AuditFlag } -ModuleName MSFT_AuditCategory
+                Mock Get-AuditCategory { return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
 
                 $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
 
@@ -102,7 +102,7 @@ try
             Context "Submit '$AuditFlag' and return '$($AuditFlagSwap[$AuditFlag])'" {
             
                 # mock call to the helper module to isolate Get-TargetResource
-                Mock Get-AuditCategory { return $AuditFlagSwap[$AuditFlag] } -ModuleName MSFT_AuditCategory
+                Mock Get-AuditCategory { return $AuditFlagSwap[$AuditFlag] } -ModuleName MSFT_AuditPolicySubcategory
 
                 $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
 
@@ -127,7 +127,7 @@ try
 
             Context "Submit '$AuditFlag' and return 'NoAuditing'" {
 
-                Mock Get-AuditCategory { return 'NoAuditing' } -ModuleName MSFT_AuditCategory
+                Mock Get-AuditCategory { return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
 
                 $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
             
@@ -154,7 +154,7 @@ try
 
             Context "Submit '$AuditFlag' and return 'SuccessandFailure'" {
 
-                Mock Get-AuditCategory { return 'SuccessandFailure' } -ModuleName MSFT_AuditCategory
+                Mock Get-AuditCategory { return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
 
                 $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
             
