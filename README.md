@@ -26,7 +26,7 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
  * **Name**: The name of the option to configure. 
  
- * **Vaule**: The value to apply to the option. This can be either Enabled or Disabled. 
+ * **Value**: The value to apply to the option. This can be either Enabled or Disabled. 
  
 ## Versions
 
