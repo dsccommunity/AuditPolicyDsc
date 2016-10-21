@@ -1,6 +1,12 @@
 
 Import-Module $PSScriptRoot\..\Helper.psm1
 
+<#
+    .SYNOPSIS
+    Gets the value of the audit policy option.
+    .PARAMETER Name
+    Specifies the option to get.
+#>
 function Get-TargetResource
 {
     [CmdletBinding()]
@@ -27,7 +33,14 @@ function Get-TargetResource
     $returnValue
 }
 
-
+<#
+    .SYNOPSIS
+    Sets the value of the audit policy option.
+    .PARAMETER Name
+    Specifies the option to set.
+    .PARAMETER Value
+    Specifies the value to set on the option.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
@@ -55,7 +68,14 @@ function Set-TargetResource
     }
 }
 
-
+<#
+    .SYNOPSIS
+    Sets the value of the audit policy option.
+    .PARAMETER Name
+    Specifies the option to test.
+    .PARAMETER Value
+    Specifies the value to test against the option.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]

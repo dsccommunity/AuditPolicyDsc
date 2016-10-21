@@ -1,6 +1,14 @@
 
 Import-Module $PSScriptRoot\..\Helper.psm1
 
+<#
+    .SYNOPSIS
+    Returns the current audit flag for the given subcategory.
+    .PARAMETER Subcategory
+    Specifies the subcategory to get.
+    .PARAMETER AuditFlag
+    Specifies the audit flag to get.
+#>
 function Get-TargetResource
 {
     [CmdletBinding()]
@@ -70,7 +78,16 @@ function Get-TargetResource
     $returnValue
 }
 
-
+<#
+    .SYNOPSIS
+    Sets the audit flag for the given subcategory.
+    .PARAMETER Subcategory
+    Specifies the subcategory to set.
+    .PARAMETER AuditFlag
+    Specifies the audit flag to set.
+    .PARAMETER Ensure
+    Specifies the state of the audit flag provided.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
@@ -122,7 +139,16 @@ function Set-TargetResource
     }
 }
 
-
+<#
+    .SYNOPSIS
+    Tests the audit flag state for the given subcategory.
+    .PARAMETER Subcategory
+    Specifies the subcategory to test.
+    .PARAMETER AuditFlag
+    Specifies the audit flag to test.
+    .PARAMETER Ensure
+    Specifies the state of the audit flag should be in.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]

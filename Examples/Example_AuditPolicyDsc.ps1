@@ -1,33 +1,42 @@
-
-Configuration AuditPolicy
+<#
+    This example will enable Base Directory auditing and set the Logon Success and Failure flags 
+    on the localhost. 
+    To use this example, run it using PowerShell.
+#>
+Configuration SetAuditPolicy
 {
+    param
+    (
+        [String[]] $NodeName = $env:COMPUTERNAME
+    )    
+   
     Import-DscResource -ModuleName AuditPolicyDsc
 
-    AuditOption AuditBaseDirectories
+    Node $NodeName
+
     {
-        Name  = 'AuditBaseDirectories'
-        Value = 'Enabled'
+        AuditPolicyOption AuditBaseDirectories
+        {
+            Name  = 'AuditBaseDirectories'
+            Value = 'Enabled'
+        }
+
+        AuditPolicySubcategory LogonSuccess
+        {
+            Subcategory = 'Logon'
+            AuditFlag   = 'Success'
+            Ensure      = 'Absent' 
+        } 
+
+        AuditPolicySubcategory LogonFailure
+        {
+            Subcategory = 'Logon'
+            AuditFlag   = 'Failure'
+            Ensure      = 'Present' 
+        }
     }
-
-    AuditCategory LogonSuccess
-    {
-        Subcategory = 'Logon'
-        AuditFlag   = 'Success'
-        Ensure      = 'Absent' 
-    } 
-
-    AuditCategory LogonFailure
-    {
-        Subcategory = 'Logon'
-        AuditFlag   = 'Failure'
-        Ensure      = 'Present' 
-    } 
 }
 
-AuditPolicy
+SetAuditPolicy -NodeName 'localhost'
 
-# Test-DscConfiguration -Path .\AuditPolicy
-
-# Get-DscConfiguration
-
-# Start-DscConfiguration -Path .\AuditPolicy -Wait -Verbose -Force
+Start-DscConfiguration -Path .\SetAuditPolicy -Wait -Verbose -Force
