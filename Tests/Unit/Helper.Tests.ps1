@@ -726,4 +726,3 @@ Describe 'Public function Set-AuditOption' `
         }
     }
 }
-

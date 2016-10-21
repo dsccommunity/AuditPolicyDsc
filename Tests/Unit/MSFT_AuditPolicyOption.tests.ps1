@@ -1,15 +1,3 @@
-<#
-.Synopsis
-   Template for creating DSC Resource Unit Tests
-.DESCRIPTION
-   To Use:
-     1. Copy to \Tests\Unit\ folder and rename MSFT_x<ResourceName>.tests.ps1
-     2. Customize TODO sections.
-
-.NOTES
-   Code in HEADER and FOOTER regions are standard and may be moved into DSCResource.Tools in
-   Future and therefore should not be altered if possible.
-#>
 
 $Global:DSCModuleName      = 'AuditPolicyDsc'
 $Global:DSCResourceName    = 'MSFT_AuditOption'
@@ -148,6 +136,4 @@ finally
     #region FOOTER
     Restore-TestEnvironment -TestEnvironment $TestEnvironment
     #endregion
-
-    # TODO: Other Optional Cleanup Code Goes Here...
 }
