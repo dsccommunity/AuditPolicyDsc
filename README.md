@@ -4,22 +4,25 @@
 
 The **AuditPolicyDsc** module allows you to configure and manage the advanced audit policy on all currently supported versions of Windows.
 
+This project has adopted the Microsoft Open Source Code of Conduct.
+For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
+
 ## Contributing
-Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
+Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResources/blob/master/CONTRIBUTING.md).
 
 ## Resources
 
-* **AuditPolicy** configures the advanced audit policy Subcategory audit flags. 
+* **AuditPolicySubcategory** configures the advanced audit policy Subcategory audit flags. 
 
-* **AuditOption** manages the audit policy options available in the auditpol.exe utility. 
+* **AuditPolicyOption** manages the audit policy options available in the auditpol.exe utility. 
 
 
-### AuditPolicy
+### AuditPolicySubcategory
 * **Subcategory**: Name of the subcategory in the advanced audit policy.
 
 * **AuditFlag**: The name of the audit flag to apply to the subcategory. This is can be either Success or Failure.
 
-### AuditOption
+### AuditPolicyOption
 
  * **Name**: The name of the option to configure. 
  
@@ -33,8 +36,8 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 * Initial release with the following resources:
  
-  * AuditCategory
-  * AuditOption
+  * AuditPolicySubcategory
+  * AuditPolicyOption
 
 ## Examples
 
@@ -44,14 +47,14 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
     {
         Import-DscResource -ModuleName AuditPolicyDsc
 
-        AuditPolicy LogonSuccess
+        AuditPolicySubcategory LogonSuccess
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Success'
             Ensure      = 'Present' 
         } 
 
-        AuditPolicy LogonFailure
+        AuditPolicySubcategory LogonFailure
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Failure'
@@ -66,14 +69,14 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
     {
         Import-DscResource -ModuleName AuditPolicyDsc
 
-        AuditPolicy LogonSuccess
+        AuditPolicySubcategory LogonSuccess
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Success'
             Ensure      = 'Absent' 
         } 
 
-        AuditPolicy LogonFailure
+        AuditPolicySubcategory LogonFailure
         {
             Subcategory = 'Logon'
             AuditFlag   = 'Failure'
@@ -88,7 +91,7 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
     {
         Import-DscResource -ModuleName AuditPolicyDsc
 
-        AuditOption AuditBaseDirectories
+        AuditPolicyOption AuditBaseDirectories
         {
             Name  = 'AuditBaseDirectories'
             Value = 'Enabled'
