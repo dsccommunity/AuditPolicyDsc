@@ -18,11 +18,5 @@ ConvertFrom-StringData -StringData @'
         SetAuditpolSubcategoryFailed        = (ERROR) setting '{0}' audit '{1}' to '{2}'
         TestAuditpolSubcategoryCorrect      = '{0}':'{1}' is '{2}'
         TestAuditpolSubcategoryIncorrect    = '{0}':'{1}' is NOT '{2}' 
-        GetAuditpolResourceSACLSucceed      =
-        GetAuditpolResourceSACLFailed       =
-        SetAuditpolResourceSACLSucceed      =
-        SetAuditpolResourceSACLFailed       =
-        TestAuditpolResourceSACLCorrect     =
-        TestAuditpolResourceSACLIncorrect   =
 '@
 
