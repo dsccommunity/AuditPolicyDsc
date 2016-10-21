@@ -1,5 +1,5 @@
 
-Import-Module $PSScriptRoot\..\Helper.psm1 -Verbose:0
+Import-Module $PSScriptRoot\..\Helper.psm1
 
 function Get-TargetResource
 {
