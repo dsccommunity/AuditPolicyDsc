@@ -1,6 +1,6 @@
 
 $Global:DSCModuleName      = 'AuditPolicyDsc'
-$Global:DSCResourceName    = 'MSFT_AuditPolicSubcategory'
+$Global:DSCResourceName    = 'MSFT_AuditPolicySubcategory'
 
 #region HEADER
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
@@ -203,7 +203,7 @@ try
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
 
             # mock call to the helper module to isolate Get-TargetResource
-            Mock Get-AuditCategory { return $AuditFlag } -ModuleName MSFT_AuditCategory
+            Mock Get-AuditCategory { return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
             
             $testResult = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Present"
     

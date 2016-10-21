@@ -41,7 +41,7 @@ try
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
 
             # mock call to the helper module to isolate Get-TargetResource
-            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditOption
+            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditPolicyOption
 
             $get = Get-TargetResource -Name $optionName
 
