@@ -10,13 +10,13 @@ Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
 
 <#
  .SYNOPSIS
-    Invoke_Auditpol is a private function that wraps auditpol.exe providing a 
+    Invoke-AuditPol is a private function that wraps auditpol.exe providing a 
     centralized function to mange access to and the output of auditpol.exe.    
  .DESCRIPTION
     The function will accept a string to pass to auditpol.exe for execution. Any 'get' or
     'set' opertions can be passed to the central wrapper to execute. All of the 
     nuances of auditpol.exe can be further broken out into specalized functions that 
-    call Invoke_AuditPol.   
+    call Invoke-AuditPol.   
     
     Since the call operators is being used to run auditpol, the input is restricted to only execute
     against auditpol.exe. Any input that is an invalid flag or parameter in 
@@ -29,9 +29,9 @@ Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
  .OUTPUTS
     The raw string output of auditpol.exe with the /r switch to return a CSV string. 
  .EXAMPLE
-    Invoke_AuditPol -Command 'Get' -SubCommand 'Subcategory:Logon'
+    Invoke-AuditPol -Command 'Get' -SubCommand 'Subcategory:Logon'
 #>
-function Invoke_AuditPol
+function Invoke-AuditPol
 {
     [CmdletBinding()]
     [OutputType([System.String])]
@@ -102,20 +102,20 @@ function Invoke_AuditPol
 
 <#
  .SYNOPSIS
-    Get_AuditCategory is a private function that generates the specifc parameters 
-    and switches to be passed to Invoke_Auditpol to Get a specific audit category.    
+    Get-AuditCategoryCommand is a private function that generates the specifc parameters 
+    and switches to be passed to Invoke-AuditPol to Get a specific audit category.    
  .DESCRIPTION
      In the absense of a PS module, this function is designed to extract the most 
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume in Invoke_Auditpol.
+    auditpol.exe will consume in Invoke-AuditPol.
  .PARAMETER SubCategory 
     The name of the subcategory to get the audit flags from.
  .OUTPUTS
     The third string of the auditpol results 
 #>
-function Get_AuditCategory
+function Get-AuditCategoryCommand
 {
     [CmdletBinding()]
     [OutputType([System.String])]
@@ -126,8 +126,8 @@ function Get_AuditCategory
         $SubCategory
     )
     
-    # For auditpol format deatils see Invoke_Auditpol
-    ( Invoke_Auditpol -Command "Get" -SubCommand "Subcategory:$SubCategory" )[2]
+    # For auditpol format deatils see Invoke-AuditPol
+    ( Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:$SubCategory" )[2]
 }
 
 
@@ -135,8 +135,8 @@ function Get_AuditCategory
  .SYNOPSIS 
     Gets the audit flag state for a specifc subcategory. 
  .DESCRIPTION
-    Ths is the public function that calls into Get_AuditCategory. This function enforces
-    parameters that will be passed to Get_AuditCategory. 
+    Ths is the public function that calls into Get-AuditCategoryCommand. This function enforces
+    parameters that will be passed to Get-AuditCategoryCommand. 
  .PARAMETER SubCategory 
     The name of the subcategory to get the audit flags from.
  .OUTPUTS
@@ -162,10 +162,10 @@ function Get-AuditCategory
     #>
 
     <# 
-        Get_AuditCategory returns a single string in the following CSV format 
+        Get-AuditCategoryCommand returns a single string in the following CSV format 
         Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting
     #>
-    $split = ( Get_AuditCategory @PSBoundParameters ) -split ','
+    $split = ( Get-AuditCategoryCommand @PSBoundParameters ) -split ','
 
     # remove the spaces from 'Success and Failure' to prevent any wierd string problems later
     [string] $auditFlag = $split[4] -replace ' ',''
@@ -176,21 +176,21 @@ function Get-AuditCategory
 
 <#
  .SYNOPSIS
-    Get_AuditOption is a private function that generates the specifc parameters 
-    and switches to be passed to Invoke_Auditpol to Get a specific audit option.    
+    Get-AuditOptionCommand is a private function that generates the specifc parameters 
+    and switches to be passed to Invoke-AuditPol to Get a specific audit option.    
  .DESCRIPTION
      In the absense of a PS module, this function is designed to extract the most 
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume in Invoke_Auditpol.
+    auditpol.exe will consume in Invoke-AuditPol.
  .PARAMETER Option 
     The name of an audit option in the form of a String that has be validated
     by the public function  
  .OUTPUTS
     A string that is further processed by the public version of this function. 
 #>
-function Get_AuditOption
+function Get-AuditOptionCommand
 {
     [CmdletBinding()]
     [OutputType([System.String])]
@@ -201,8 +201,8 @@ function Get_AuditOption
         $Option
     )
     
-    # For auditpol format deatils see Invoke_Auditpol
-    ( Invoke_Auditpol -Command "Get" -SubCommand "Option:$Option" )[2]   
+    # For auditpol format deatils see Invoke-AuditPol
+    ( Invoke-AuditPol -Command "Get" -SubCommand "Option:$Option" )[2]   
 }
 
 
@@ -210,9 +210,9 @@ function Get_AuditOption
  .SYNOPSIS
     Gets the audit policy option state.
  .DESCRIPTION
-    Ths is one of the public functions that calls into Get_AuditOption.
+    Ths is one of the public functions that calls into Get-AuditOptionCommand.
     This function enforces parameters that will be passed through to the 
-    Get_AuditOption function and aligns to a specifc parameterset. 
+    Get-AuditOptionCommand function and aligns to a specifc parameterset. 
  .PARAMETER Option 
     The name of an audit option.
  .OUTPUTS
@@ -236,23 +236,23 @@ function Get-AuditOption
     #>
 
     <# 
-        Get_AuditOption returns a single string with the Option in a CSV list, so 
+        Get-AuditOptionCommand returns a single string with the Option in a CSV list, so 
         get the 5th item in the list and return it
     #>
-    ( ( Get_AuditOption -Option $Name ) -split ',' )[4]
+    ( ( Get-AuditOptionCommand -Option $Name ) -split ',' )[4]
 }
 
 
 <#
  .SYNOPSIS
-    Set_AuditCategory is a private function that generates the specifc parameters 
-    and switches to be passed to Invoke_Auditpol to Set a specific audit category.    
+    Set-AuditCategoryCommand is a private function that generates the specifc parameters 
+    and switches to be passed to Invoke-AuditPol to Set a specific audit category.    
  .DESCRIPTION
      In the absense of a PS module, this function is designed to extract the most 
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume in Invoke_Auditpol.
+    auditpol.exe will consume in Invoke-AuditPol.
  .PARAMETER SubCategory
     The name of an audit category to set
  .PARAMETER AuditFlag
@@ -260,11 +260,11 @@ function Get-AuditOption
  .PARAMETER Ensure 
     The action to take on the flag
  .EXAMPLE
-    Set_AuditCategory -SubCategory 'Logon' -AuditFlag 'Success' -Ensure 'Present'
+    Set-AuditCategoryCommand -SubCategory 'Logon' -AuditFlag 'Success' -Ensure 'Present'
  .OUTPUTS
     None 
 #>
-function Set_AuditCategory
+function Set-AuditCategoryCommand
 {
     [CmdletBinding()]
     param
@@ -298,7 +298,7 @@ function Set_AuditCategory
         [string] $subcommand = "Subcategory:$SubCategory /failure:$($auditState[$Ensure])"
     }
                 
-    Invoke_Auditpol -Command 'Set' -Subcommand $subcommand | Out-Null
+    Invoke-AuditPol -Command 'Set' -Subcommand $subcommand | Out-Null
 }
 
 
@@ -345,31 +345,31 @@ function Set-AuditCategory
 
     if ( $pscmdlet.ShouldProcess( "$SubCategory","Set AuditFlag '$AuditFlag'" ) ) 
     {
-        Set_AuditCategory @PSBoundParameters
+        Set-AuditCategoryCommand @PSBoundParameters
     }
 }
 
 
 <#
  .SYNOPSIS
-    Set_AuditOption is a private function that generates the specifc parameters 
-    and switches to be passed to Invoke_Auditpol to Set a specific audit option.    
+    Get-AuditOptionCommand is a private function that generates the specifc parameters 
+    and switches to be passed to Invoke-AuditPol to Set a specific audit option.    
  .DESCRIPTION
      In the absense of a PS module, this function is designed to extract the most 
      precise string from the advanced audit policy in Windows using auditpol.exe.
 
     While this function does not use aduitpol directly, it does generate a string that
-    auditpol.exe will consume in Invoke_Auditpol. 
+    auditpol.exe will consume in Invoke-AuditPol. 
  .PARAMETER Name
     The specifc Option to set
  .PARAMETER Value 
     The value to set on the provided Option
  .EXAMPLE
-    Set_AuditOption -Name 'CrashOnAuditFail' -Value 'enabled'
+    Get-AuditOptionCommand -Name 'CrashOnAuditFail' -Value 'enabled'
  .OUTPUTS
     None 
 #>
-function Set_AuditOption
+function Get-AuditOptionCommand
 {
     [CmdletBinding()]
     param
@@ -394,7 +394,7 @@ function Set_AuditOption
     
     $SubCommand = "Option:$Name /value:$($valueHashTable[$value])"
 
-    Invoke_Auditpol -Command "Set" -SubCommand $SubCommand | Out-Null
+    Invoke-AuditPol -Command "Set" -SubCommand $SubCommand | Out-Null
 }
 
 
@@ -402,8 +402,8 @@ function Set_AuditOption
  .SYNOPSIS
     Sets an audit policy option to enabled or disabled
  .DESCRIPTION
-    Ths public function that calls Set_AuditOption. This function enforces parameters 
-    that will be passed to Set_AuditOption and aligns to a specifc parameterset. 
+    Ths public function that calls Get-AuditOptionCommand. This function enforces parameters 
+    that will be passed to Get-AuditOptionCommand and aligns to a specifc parameterset. 
  .PARAMETER Name
     The specifc Option to set
  .PARAMETER Value 
@@ -433,10 +433,19 @@ function Set-AuditOption
 
     if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
     {
-        Set_AuditOption @PSBoundParameters
+        Get-AuditOptionCommand @PSBoundParameters
     }
 }
 
 
-# all private functions are named with '_' vs. '-'
-Export-ModuleMember -Function *-* -Variable localizedData
+$members = @{
+
+    Function = @(
+         'Get-AuditCategory',
+         'Get-AuditOption',
+         'Set-AuditCategory',
+         'Set-AuditOption'
+    ) 
+    Variable = 'localizedData'
+}
+Export-ModuleMember @members
