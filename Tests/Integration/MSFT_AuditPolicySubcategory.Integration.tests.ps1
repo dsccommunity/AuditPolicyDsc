@@ -13,7 +13,7 @@
 #>
 
 $Global:DSCModuleName      = 'AuditPolicyDsc'
-$Global:DSCResourceName    = 'MSFT_AuditCategory'
+$Global:DSCResourceName    = 'MSFT_AuditPolicySubcategory'
 
 #region HEADER
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
