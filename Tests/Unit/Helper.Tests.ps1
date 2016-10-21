@@ -241,12 +241,12 @@ Describe "Private function Invoke_Auditpol" `
     }
 }
 
-Describe "Private function Get_AuditCategory" `
+Describe "Private function Get-AuditCategoryCommand" `
 -Tags Private, Get, Category {  
 
     InModuleScope Helper {
 
-        $command = Get-Command Get_AuditCategory
+        $command = Get-Command Get-AuditCategoryCommand
         $parameter = 'SubCategory'
         
         It "Should Exist" {
@@ -269,7 +269,7 @@ Describe "Private function Get_AuditCategory" `
             $command.Parameters[$parameter].ParameterType | Should Be 'String'
         }
 
-        Context "Get_AuditCategory with Mock Invoke_Auditpol" {
+        Context "Get-AuditCategoryCommand with Mock Invoke_Auditpol" {
 
             # subcategory to search for
             $SubCategory = 'logon'
@@ -282,7 +282,7 @@ Describe "Private function Get_AuditCategory" `
             mock Invoke_AuditPol { @('','','Leading Backslash') } `
                  -ParameterFilter { $Subcommand.StartsWith("/") }
             
-            $Get_AuditCategory = Get_AuditCategory -SubCategory "$SubCategory"
+            $AuditCategoryCommand = Get-AuditCategoryCommand -SubCategory "$SubCategory"
 
             It 'Calls Invoke_Auditpol exactly once'  {
 
@@ -291,12 +291,12 @@ Describe "Private function Get_AuditCategory" `
 
             It "Does not send a leading backslash('/') to Invoke_Auditpol -Subcommand" {
 
-               $Get_AuditCategory | Should Not Be 'Leading Backslash'
+               $AuditCategoryCommand | Should Not Be 'Leading Backslash'
             }
 
             It "Gets the string with the correct subcategory back from Invoke_Auditpol" {
 
-                $Get_AuditCategory | Should BeExactly $auditpolReturn[2] 
+                $AuditCategoryCommand | Should BeExactly $auditpolReturn[2] 
             }
         }
     }
@@ -330,20 +330,20 @@ Describe 'Public function Get-AuditCategory' `
 
     InModuleScope Helper {
 
-        Context 'Get-AuditCategory with Mock ( Get_AuditCategory -SubCategory "Logon" ) returning "Success"' {
+        Context 'Get-AuditCategory with Mock ( Get-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
 
             [string] $subCategory = 'Logon'
             [string] $auditFlag   = 'Success'
             # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
             [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
 
-            Mock Get_AuditCategory { return $returnString } 
+            Mock Get-AuditCategoryCommand { return $returnString } 
 
             $AuditCategory = Get-AuditCategory -SubCategory $subCategory
 
-            It 'Calls Get_AuditCategory exactly once'  {
+            It 'Calls Get-AuditCategoryCommand exactly once'  {
 
-                Assert-MockCalled Get_AuditCategory -Exactly 1 -Scope Context  
+                Assert-MockCalled Get-AuditCategoryCommand -Exactly 1 -Scope Context  
             }
 
             It "The return object is a String" {
@@ -359,12 +359,12 @@ Describe 'Public function Get-AuditCategory' `
     }
 }
 
-Describe "Private function Get_AuditOption" `
+Describe "Private function Get-AuditOptionCommand" `
 -Tags Private, Get, Option {
 
     InModuleScope Helper {
 
-        $command = Get-Command Get_AuditOption
+        $command = Get-Command Get-AuditOptionCommand
         $parameter = 'Option'
         
         It "Should Exist" {
@@ -387,7 +387,7 @@ Describe "Private function Get_AuditOption" `
         }
 
 
-        Context "Get_AuditOption with Mock Invoke_Auditpol" {
+        Context "Get-AuditOptionCommand with Mock Invoke_Auditpol" {
             
             # create a string array to mimic the auditpol output with the /r switch
             [string[]] $returnString =  "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
@@ -398,7 +398,7 @@ Describe "Private function Get_AuditOption" `
             mock Invoke_AuditPol { @('','','Leading Backslash') } `
                  -ParameterFilter { $Subcommand.StartsWith("/") }
 
-            [string] $Get_AuditOption = Get_AuditOption -Option CrashOnAuditFail 
+            [string] $AuditOptionCommand = Get-AuditOptionCommand -Option CrashOnAuditFail 
             
             It 'Calls Invoke_Auditpol exactly once'  {
 
@@ -407,12 +407,12 @@ Describe "Private function Get_AuditOption" `
 
             It "Does not send a leading backslash('/') to Invoke_Auditpol -Subcommand" {
 
-               $Get_AuditOption | Should Not Be 'Leading Backslash'
+               $AuditOptionCommand | Should Not Be 'Leading Backslash'
             }
 
             It "Gets the string with the correct option back from Invoke_Auditpol" {
 
-                $Get_AuditOption | Should BeExactly $returnString[2]
+                $AuditOptionCommand | Should BeExactly $returnString[2]
             }
         }
     }
@@ -446,18 +446,18 @@ Describe 'Public function Get-AuditOption' `
 
     InModuleScope Helper {
 
-        Context 'Get-AuditOption with Mock ( Get_AuditOption -Name "CrashOnAuditFail" ) returning "Enabled"' {
+        Context 'Get-AuditOption with Mock ( Get-AuditOptionCommand -Name "CrashOnAuditFail" ) returning "Enabled"' {
 
             [string] $name  = 'CrashOnAuditFail'
             [string] $value = 'Enabled'
 
-            Mock Get_AuditOption { "$env:COMPUTERNAME,,Option:$name,,$value,," }
+            Mock Get-AuditOptionCommand { "$env:COMPUTERNAME,,Option:$name,,$value,," }
 
             $auditOption = Get-AuditOption -Name $name
 
-            It 'Calls Get_AuditOption exactly once'  {
+            It 'Calls Get-AuditOptionCommand exactly once'  {
 
-                Assert-MockCalled Get_AuditOption -Exactly 1 -Scope Context  
+                Assert-MockCalled Get-AuditOptionCommand -Exactly 1 -Scope Context  
             }
 
             It "The option $name returns $value" {
@@ -468,12 +468,12 @@ Describe 'Public function Get-AuditOption' `
     }
 }
 
-Describe 'Private function Set_AuditCategory' `
+Describe 'Private function Set-AuditCategoryCommand' `
 -Tags Private, Set, Category {
 
     InModuleScope Helper {  
 
-        $command = Get-Command Set_AuditCategory
+        $command = Get-Command Set-AuditCategoryCommand
 
         # parameters listed in the Hashtable name = type, Mandatory, validateSet
         $parameters = @{
@@ -508,7 +508,7 @@ Describe 'Private function Set_AuditCategory' `
             }
         }
 
-        context 'Set_AuditCategory with Mock ( Invoke_Auditpol )' {
+        context 'Set-AuditCategoryCommand with Mock ( Invoke_Auditpol )' {
 
             $auditState = @{
                 'Present' = 'enable'
@@ -528,7 +528,7 @@ Describe 'Private function Set_AuditCategory' `
 
             It "Does not thrown an error" {
 
-                { $AuditCategory = Set_AuditCategory @comamnd } | Should Not Throw
+                { $AuditCategory = Set-AuditCategoryCommand @comamnd } | Should Not Throw
             }
 
             It "Should not return a value" {
@@ -575,11 +575,11 @@ Describe 'Public function Set-AuditCategory' `
         $command.Parameters[$parameter].ParameterType | Should Be 'String'
     }
 
-    Context 'Set-AuditCategory with Mock ( Set_AuditCategory -SubCategory "Logon" ) returning "Success"' {
+    Context 'Set-AuditCategory with Mock ( Set-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
         
         InModuleScope Helper {  
 
-            Mock Set_AuditCategory { } 
+            Mock Set-AuditCategoryCommand { } 
             
             $comamnd = @{
                 SubCategory = "Logon"
@@ -597,21 +597,21 @@ Describe 'Public function Set-AuditCategory' `
                 $AuditCategory | Should BeNullOrEmpty
             }
 
-            It 'Calls Set_AuditCategory exactly once'  {
+            It 'Calls Set-AuditCategoryCommand exactly once'  {
 
-                Assert-MockCalled Set_AuditCategory -Exactly 1 -Scope Context  
+                Assert-MockCalled Set-AuditCategoryCommand -Exactly 1 -Scope Context  
             }
         }
     }
 
 }
 
-Describe 'Private function Set_AuditOption' `
+Describe 'Private function Set-AuditOptionCommand' `
 -Tags Private, Set, Option { 
 
     InModuleScope Helper {  
 
-        $command = Get-Command Set_AuditOption
+        $command = Get-Command Set-AuditOptionCommand
         $parameter = 'Name'
             
         It "Should Exist" {
@@ -634,7 +634,7 @@ Describe 'Private function Set_AuditOption' `
             $command.Parameters[$parameter].ParameterType | Should Be 'String'
         }
 
-        Context "Set_AuditOption with Mock ( Invoke_Auditpol )" {
+        Context "Set-AuditOptionCommand with Mock ( Invoke_Auditpol )" {
 
             $valueHashTable = @{
                 "Enabled"="enable";
@@ -651,7 +651,7 @@ Describe 'Private function Set_AuditOption' `
 
             It "Does not thrown an error"  {
 
-                { $AuditOption = Set_AuditOption -Name $name -Value $value } | 
+                { $AuditOption = Set-AuditOptionCommand -Name $name -Value $value } | 
                 Should Not Throw
             }
 
@@ -701,12 +701,12 @@ Describe 'Public function Set-AuditOption' `
 
     InModuleScope Helper {
 
-        Context "Set-AuditOption with Mock ( Set_AuditOption -Name 'CrashOnAuditFail' -Value 'disable' )" {
+        Context "Set-AuditOption with Mock ( Set-AuditOptionCommand -Name 'CrashOnAuditFail' -Value 'disable' )" {
 
             [string] $name  = "CrashOnAuditFail"
             [string] $value = "Disable"
 
-            Mock Set_AuditOption { } 
+            Mock Set-AuditOptionCommand { } 
 
             It "Does not thrown an error" {
                 
@@ -719,9 +719,9 @@ Describe 'Public function Set-AuditOption' `
                 $setAuditOption | Should BeNullOrEmpty
             }
 
-            It 'Calls Set_AuditOption exactly once'  {
+            It 'Calls Set-AuditOptionCommand exactly once'  {
 
-                Assert-MockCalled Set_AuditOption -Exactly 1 -Scope Context  
+                Assert-MockCalled Set-AuditOptionCommand -Exactly 1 -Scope Context  
             }
         }
     }

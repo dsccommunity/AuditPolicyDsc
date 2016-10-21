@@ -369,7 +369,7 @@ function Set-AuditCategory
  .OUTPUTS
     None 
 #>
-function Get-AuditOptionCommand
+function Set-AuditOptionCommand
 {
     [CmdletBinding()]
     param
@@ -402,8 +402,8 @@ function Get-AuditOptionCommand
  .SYNOPSIS
     Sets an audit policy option to enabled or disabled
  .DESCRIPTION
-    Ths public function that calls Get-AuditOptionCommand. This function enforces parameters 
-    that will be passed to Get-AuditOptionCommand and aligns to a specifc parameterset. 
+    This public function calls Set-AuditOptionCommand and enforces parameters 
+    that will be passed to Set-AuditOptionCommand and aligns to a specifc parameterset. 
  .PARAMETER Name
     The specifc Option to set
  .PARAMETER Value 
@@ -433,7 +433,7 @@ function Set-AuditOption
 
     if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
     {
-        Get-AuditOptionCommand @PSBoundParameters
+        Set-AuditOptionCommand @PSBoundParameters
     }
 }
 
