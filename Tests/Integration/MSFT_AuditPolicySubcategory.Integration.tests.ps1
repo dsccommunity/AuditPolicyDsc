@@ -22,7 +22,7 @@ $TestEnvironment = Initialize-TestEnvironment `
 
 # Other Init Code Goes Here...
 
-$Subcategory     = 'Logon'
+$Subcategory     = 'Credential Validation'
 $AuditFlag       = 'Failure'
 $AuditFlagEnsure = 'Present'
 
