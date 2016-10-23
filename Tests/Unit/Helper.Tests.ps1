@@ -632,7 +632,7 @@ Describe 'Private function Set-AuditOptionCommand' `
             }
 
             [string] $name  = "CrashOnAuditFail"
-            [string] $value = "Disable"
+            [string] $value = "Disabled"
 
             Mock Invoke-Auditpol { } -Verifiable -ParameterFilter { 
                 $command.Equals("Set") -and `
