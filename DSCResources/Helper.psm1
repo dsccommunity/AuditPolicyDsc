@@ -127,7 +127,7 @@ function Get-AuditCategoryCommand
     )
     
     # For auditpol format deatils see Invoke-AuditPol
-    ( Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:$SubCategory" )[2]
+    ( Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:'$SubCategory'" )[2]
 }
 
 
@@ -291,11 +291,11 @@ function Set-AuditCategoryCommand
     # create the line needed auditpol to set the category flag
     if ( $AuditFlag -eq 'Success' )
     { 
-        [string] $subcommand = "Subcategory:$SubCategory /success:$($auditState[$Ensure])" 
+        [string] $subcommand = "Subcategory:'$SubCategory' /success:$($auditState[$Ensure])" 
     }
     else   
     {
-        [string] $subcommand = "Subcategory:$SubCategory /failure:$($auditState[$Ensure])"
+        [string] $subcommand = "Subcategory:'$SubCategory' /failure:$($auditState[$Ensure])"
     }
                 
     Invoke-AuditPol -Command 'Set' -Subcommand $subcommand | Out-Null
