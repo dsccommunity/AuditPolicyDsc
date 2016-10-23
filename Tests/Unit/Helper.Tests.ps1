@@ -193,7 +193,7 @@ Describe "Private function Invoke-Auditpol" `
         # parameters listed in the Hashtable name = type, Mandatory, validateSet
         $parameters = @{
                             'Command'    = @('String',@('set','get'))
-                            'Subcommand' = @('String')
+                            'Subcommand' = @('String[]')
                         }
 
         It "Should Exist" {
@@ -535,16 +535,6 @@ Describe 'Private function Set-AuditCategoryCommand' `
 
                 $AuditCategory | Should BeNullOrEmpty
             }
-
-            It 'Calls Invoke-Auditpol exactly once' {
-
-                Assert-MockCalled Invoke-Auditpol -Exactly 1 -Scope Context
-            }
-
-            It "Calls Invoke-Auditpol in the correct format ( 'Subcategory:`$Subcategory /Success:`$AuditFlag' )" {
-
-                Assert-VerifiableMocks
-            }
         }
     }
 }
@@ -646,7 +636,7 @@ Describe 'Private function Set-AuditOptionCommand' `
 
             Mock Invoke-Auditpol { } -Verifiable -ParameterFilter { 
                 $command.Equals("Set") -and `
-                $SubCommand.Equals("Option:$Name /value:$($valueHashTable[$value])") 
+                $SubCommand.Equals( @( "Option:$Name", "/value:$($valueHashTable[$value])" ) )  
             }
 
             It "Does not thrown an error"  {
@@ -658,16 +648,6 @@ Describe 'Private function Set-AuditOptionCommand' `
             It "Should not return a value"  {
 
                 $AuditOption | Should BeNullOrEmpty
-            }
-
-            It 'Calls Invoke-Auditpol exactly once'  {
-
-                Assert-MockCalled Invoke-Auditpol -Exactly 1 -Scope Context
-            }
-
-            It "Calls Invoke-Auditpol in the correct format ( 'Option:`$Name /value:`$value' )"  {
-
-                Assert-VerifiableMocks
             }
         }
     }
