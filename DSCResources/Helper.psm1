@@ -394,7 +394,7 @@ function Set-AuditOptionCommand
         'Disabled' = 'disable'
     }
     
-    $SubCommand = "Option:$Name /value:$($valueHashTable[$value])"
+    [string[]] $SubCommand = @( "Option:$Name", "/value:$($valueHashTable[$value])" )
 
     Invoke-AuditPol -Command "Set" -SubCommand $SubCommand | Out-Null
 }
