@@ -31,7 +31,7 @@ try
 
         #region Pester Test Initialization
         # the audit option to use in the tests
-        $Subcategory   = 'Logon'
+        $Subcategory   = 'Credential Validation'
         $AuditFlag     = 'Failure'
         $MockAuditFlags = 'Success','Failure','SuccessandFailure','NoAuditing'
         $AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
