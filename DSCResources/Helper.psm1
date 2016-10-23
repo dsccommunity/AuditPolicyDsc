@@ -43,7 +43,7 @@ function Invoke-AuditPol
         $Command,
 
         [parameter(Mandatory = $true)]
-        [System.String]
+        [System.String[]]
         $SubCommand
     )
 
@@ -54,13 +54,15 @@ function Invoke-AuditPol
         2 - the data row we are interested in
     #>
 
-    # set the base commans to execute
-    [string] $commandString = "/$Command /$SubCommand"
-    
-    # add the /r if it is a get command
+    # set the base commands to execute
     if ( $Command -eq 'Get') 
     { 
-        $commandString = $commandString + " /r"
+        $commandString = @("/$Command","/$SubCommand","/r" )
+    }
+    else
+    {
+        # the set subcommand comes in an array of the subcategory and flag 
+        $commandString = @("/$Command","/$($SubCommand[0])",$SubCommand[1] )
     }
 
     Write-Debug -Message ( $localizedData.ExecuteAuditpolCommand -f $commandString )
@@ -68,7 +70,7 @@ function Invoke-AuditPol
     try
     {
         # Use the call operator to process the auditpol command
-        $return = & "auditpol" ( $commandString -split " " ) 2>&1
+        $return = & "auditpol.exe" $commandString 2>&1
 
         # auditpol does not thrown exceptions, so test the results and throw if needed
         if ( $LASTEXITCODE -ne 0 )
@@ -127,7 +129,7 @@ function Get-AuditCategoryCommand
     )
     
     # For auditpol format deatils see Invoke-AuditPol
-    ( Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:'$SubCategory'" )[2]
+    ( Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory""" )[2]
 }
 
 
@@ -291,11 +293,11 @@ function Set-AuditCategoryCommand
     # create the line needed auditpol to set the category flag
     if ( $AuditFlag -eq 'Success' )
     { 
-        [string] $subcommand = "Subcategory:'$SubCategory' /success:$($auditState[$Ensure])" 
+        [string[]] $subcommand = @( "Subcategory:""$SubCategory""", "/success:$($auditState[$Ensure])" )
     }
     else   
     {
-        [string] $subcommand = "Subcategory:'$SubCategory' /failure:$($auditState[$Ensure])"
+        [string[]] $subcommand = @( "Subcategory:""$SubCategory""", "/failure:$($auditState[$Ensure])" )
     }
                 
     Invoke-AuditPol -Command 'Set' -Subcommand $subcommand | Out-Null
