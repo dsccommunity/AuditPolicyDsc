@@ -18,7 +18,12 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Integration
 #endregion
 
-# set the Subcategory being tested to ensure a valid test.
+# set the Subcategory details being tested
+$Subcategory     = 'Credential Validation'
+$AuditFlag       = 'Failure'
+$AuditFlagEnsure = 'Present'
+
+# set the system Subcategory to the incorrect state to ensure a valid test.
 Invoke-Expression "auditpol /set /subcategory:'Credential Validation' /failure:disable"
 
 # Using try/finally to always cleanup even if something awful happens.

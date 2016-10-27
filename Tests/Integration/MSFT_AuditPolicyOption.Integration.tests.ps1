@@ -18,7 +18,11 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Integration
 #endregion
 
-# set the value being tested to ensure a valid test.
+# Set the option detailes being tested
+$optionName  = 'AuditBaseDirectories'
+$optionValue = 'Enabled'
+
+# Set the system value to an incorrect state to ensure a valid test.
 Invoke-Expression "auditpol /set /option:AuditBaseDirectories /Value:disable"
 
 # Using try/finally to always cleanup even if something awful happens.
