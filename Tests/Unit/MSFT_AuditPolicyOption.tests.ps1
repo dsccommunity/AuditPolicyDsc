@@ -126,8 +126,109 @@ try
         }
         #endregion
 
-        # TODO: Pester Tests for any Helper Cmdlets
+        #region Helper Cmdlets
+        Describe 'Private function Get-AuditOption' { 
 
+            $command = Get-Command Get-AuditOption
+            $parameter = 'Name'
+                
+            It "Should Exist" {
+
+                $command | Should Be $command 
+            }
+
+            It 'With output type set to "String"' {
+
+                $command.OutputType | Should Be 'System.String'
+            }
+
+            It "Has a parameter '$parameter'" {
+
+                $command.Parameters[$parameter].Name | Should Be $parameter
+            }
+
+            It 'Of type "String"' {
+
+                $command.Parameters[$parameter].ParameterType | Should Be 'String'
+            }
+
+            InModuleScope Helper {
+
+                Context 'Get-AuditOption with Mock ( Get-AuditOptionCommand -Name "CrashOnAuditFail" ) returning "Enabled"' {
+
+                    [string] $name  = 'CrashOnAuditFail'
+                    [string] $value = 'Enabled'
+
+                    Mock Get-AuditOptionCommand { "$env:COMPUTERNAME,,Option:$name,,$value,," }
+
+                    $auditOption = Get-AuditOption -Name $name
+
+                    It 'Calls Get-AuditOptionCommand exactly once'  {
+
+                        Assert-MockCalled Get-AuditOptionCommand -Exactly 1 -Scope Context  
+                    }
+
+                    It "The option $name returns $value" {
+
+                        $auditOption | should Be $value
+                    }
+                }
+            }
+        }
+
+        Describe 'Private function Set-AuditOption' { 
+
+            $command = Get-Command Set-AuditOption
+            $parameter = 'Name'
+                
+            It "Should Exist" {
+
+                $command | Should Be $command 
+            }
+
+                It "With no output" {
+
+                    $command.OutputType | Should BeNullOrEmpty
+                }
+
+            It "Has a parameter '$parameter'" {
+
+                $command.Parameters[$parameter].Name | Should Be $parameter
+            }
+
+            It 'Of type "String"' {
+
+                $command.Parameters[$parameter].ParameterType | Should Be 'String'
+            }
+
+            InModuleScope Helper {
+
+                Context "Set-AuditOption with Mock ( Set-AuditOptionCommand -Name 'CrashOnAuditFail' -Value 'disable' )" {
+
+                    [string] $name  = "CrashOnAuditFail"
+                    [string] $value = "Disable"
+
+                    Mock Set-AuditOptionCommand { } 
+
+                    It "Does not thrown an error" {
+                        
+                        { $setAuditOption =  Set-AuditOption -Name $name -Value $value } |
+                        Should Not Throw
+                    }    
+
+                    It "Should not return a value"  {
+
+                        $setAuditOption | Should BeNullOrEmpty
+                    }
+
+                    It 'Calls Set-AuditOptionCommand exactly once'  {
+
+                        Assert-MockCalled Set-AuditOptionCommand -Exactly 1 -Scope Context  
+                    }
+                }
+            }
+        }
+        #endregion
     }
     #endregion
 }

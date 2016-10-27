@@ -280,8 +280,119 @@ try
         }
         #endregion
 
-        # Pester Tests for any Helper Cmdlets
+        #region Helper Cmdlets
+        Describe 'Private function Get-AuditCategory'  {
+            
+            $command = Get-Command Get-AuditCategory
+            $parameter = 'SubCategory'
+                
+            It "Should Exist" {
 
+                $command | Should Be $command 
+            }
+
+            It 'With output type set to "String"' {
+
+                $command.OutputType | Should Be 'System.String'
+            }
+
+            It "Has a parameter '$parameter'" {
+
+                $command.Parameters[$parameter].Name | Should Be $parameter
+            }
+
+            It 'Of type "String"' {
+
+                $command.Parameters[$parameter].ParameterType | Should Be 'String'
+            }
+
+            InModuleScope Helper {
+
+                Context 'Get-AuditCategory with Mock ( Get-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
+
+                    [string] $subCategory = 'Logon'
+                    [string] $auditFlag   = 'Success'
+                    # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
+                    [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
+
+                    Mock Get-AuditCategoryCommand { return $returnString } 
+
+                    $AuditCategory = Get-AuditCategory -SubCategory $subCategory
+
+                    It 'Calls Get-AuditCategoryCommand exactly once'  {
+
+                        Assert-MockCalled Get-AuditCategoryCommand -Exactly 1 -Scope Context  
+                    }
+
+                    It "The return object is a String" {
+
+                        $AuditCategory.GetType() | Should Be 'String'
+                    }
+
+                    It "with the value '$auditFlag'" {
+
+                        $AuditCategory | Should BeExactly $auditFlag
+                    }
+                }
+            }
+        }
+
+        Describe 'Private function Set-AuditCategory' {
+
+            $command = Get-Command Set-AuditCategory
+            $parameter = 'SubCategory'
+                
+            It "Should Exist" {
+
+                $command | Should Be $command 
+            }
+
+            It "With no output" {
+
+                $command.OutputType | Should BeNullOrEmpty
+            }
+
+            It "Has a parameter '$parameter'" {
+
+                $command.Parameters[$parameter].Name | Should Be $parameter
+            }
+
+            It 'Of type "String"' {
+
+                $command.Parameters[$parameter].ParameterType | Should Be 'String'
+            }
+
+            Context 'Set-AuditCategory with Mock ( Set-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
+                
+                InModuleScope Helper {  
+
+                    Mock Set-AuditCategoryCommand { } 
+                    
+                    $comamnd = @{
+                        SubCategory = "Logon"
+                        AuditFlag = "Success"
+                        Ensure = "Present"
+                    }
+
+                    It 'Should not throw an error' {
+
+                        { $AuditCategory = Set-AuditCategory @comamnd } | Should Not Throw 
+                    }
+
+                    It "Should not return a value"  {
+
+                        $AuditCategory | Should BeNullOrEmpty
+                    }
+
+                    It 'Calls Set-AuditCategoryCommand exactly once'  {
+
+                        Assert-MockCalled Set-AuditCategoryCommand -Exactly 1 -Scope Context  
+                    }
+                }
+            }
+
+        }
+        #endregion
     }
     #endregion
 }

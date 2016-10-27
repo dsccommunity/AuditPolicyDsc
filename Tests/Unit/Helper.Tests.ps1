@@ -40,8 +40,7 @@ $Categories, $SubCategories = Get-AuditpolCategories
 
 #endregion
 
-Describe 'Prereq' `
--Tags Setup {
+Describe 'Prereq' {
 
     # There are several dependencies for both Pester and auditpol resource that need to be validated.
 
@@ -59,8 +58,7 @@ Describe 'Prereq' `
     }
 }
 
-Describe 'auditpol.exe output' `
--Tags Setup {
+Describe 'auditpol.exe output' {
 
     # verify the raw auditpol output format has not changed across different OS versions and types.
     
@@ -184,8 +182,7 @@ Describe 'auditpol.exe output' `
     }
 }
 
-Describe "Private function Invoke-Auditpol" `
--Tags Private, Get, Set  {
+Describe "Private function Invoke-Auditpol" {
 
     InModuleScope Helper {
 
@@ -236,224 +233,6 @@ Describe "Private function Invoke-Auditpol" `
 
                     $command.Parameters[$name].Attributes.ValidValues | Should Be $validateSet
                 }
-            }
-        }
-    }
-}
-
-Describe 'Public function Get-AuditCategory' `
--Tags Public, Get, Category  {
-    
-    $command = Get-Command Get-AuditCategory
-    $parameter = 'SubCategory'
-        
-    It "Should Exist" {
-
-        $command | Should Be $command 
-    }
-
-    It 'With output type set to "String"' {
-
-        $command.OutputType | Should Be 'System.String'
-    }
-
-    It "Has a parameter '$parameter'" {
-
-        $command.Parameters[$parameter].Name | Should Be $parameter
-    }
-
-    It 'Of type "String"' {
-
-        $command.Parameters[$parameter].ParameterType | Should Be 'String'
-    }
-
-    InModuleScope Helper {
-
-        Context 'Get-AuditCategory with Mock ( Get-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
-
-            [string] $subCategory = 'Logon'
-            [string] $auditFlag   = 'Success'
-            # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
-            [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
-
-            Mock Get-AuditCategoryCommand { return $returnString } 
-
-            $AuditCategory = Get-AuditCategory -SubCategory $subCategory
-
-            It 'Calls Get-AuditCategoryCommand exactly once'  {
-
-                Assert-MockCalled Get-AuditCategoryCommand -Exactly 1 -Scope Context  
-            }
-
-            It "The return object is a String" {
-
-                $AuditCategory.GetType() | Should Be 'String'
-            }
-
-            It "with the value '$auditFlag'" {
-
-                $AuditCategory | Should BeExactly $auditFlag
-            }
-        }
-    }
-}
-
-Describe 'Public function Get-AuditOption' `
--Tags Public, Get, Option  { 
-
-    $command = Get-Command Get-AuditOption
-    $parameter = 'Name'
-        
-    It "Should Exist" {
-
-        $command | Should Be $command 
-    }
-
-    It 'With output type set to "String"' {
-
-        $command.OutputType | Should Be 'System.String'
-    }
-
-    It "Has a parameter '$parameter'" {
-
-        $command.Parameters[$parameter].Name | Should Be $parameter
-    }
-
-    It 'Of type "String"' {
-
-        $command.Parameters[$parameter].ParameterType | Should Be 'String'
-    }
-
-    InModuleScope Helper {
-
-        Context 'Get-AuditOption with Mock ( Get-AuditOptionCommand -Name "CrashOnAuditFail" ) returning "Enabled"' {
-
-            [string] $name  = 'CrashOnAuditFail'
-            [string] $value = 'Enabled'
-
-            Mock Get-AuditOptionCommand { "$env:COMPUTERNAME,,Option:$name,,$value,," }
-
-            $auditOption = Get-AuditOption -Name $name
-
-            It 'Calls Get-AuditOptionCommand exactly once'  {
-
-                Assert-MockCalled Get-AuditOptionCommand -Exactly 1 -Scope Context  
-            }
-
-            It "The option $name returns $value" {
-
-                $auditOption | should Be $value
-            }
-        }
-    }
-}
-
-Describe 'Public function Set-AuditCategory' `
--Tags Public, Set, Category {
-
-    $command = Get-Command Set-AuditCategory
-    $parameter = 'SubCategory'
-        
-    It "Should Exist" {
-
-        $command | Should Be $command 
-    }
-
-    It "With no output" {
-
-        $command.OutputType | Should BeNullOrEmpty
-    }
-
-    It "Has a parameter '$parameter'" {
-
-        $command.Parameters[$parameter].Name | Should Be $parameter
-    }
-
-    It 'Of type "String"' {
-
-        $command.Parameters[$parameter].ParameterType | Should Be 'String'
-    }
-
-    Context 'Set-AuditCategory with Mock ( Set-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
-        
-        InModuleScope Helper {  
-
-            Mock Set-AuditCategoryCommand { } 
-            
-            $comamnd = @{
-                SubCategory = "Logon"
-                AuditFlag = "Success"
-                Ensure = "Present"
-            }
-
-            It 'Should not throw an error' {
-
-                { $AuditCategory = Set-AuditCategory @comamnd } | Should Not Throw 
-            }
-
-            It "Should not return a value"  {
-
-                $AuditCategory | Should BeNullOrEmpty
-            }
-
-            It 'Calls Set-AuditCategoryCommand exactly once'  {
-
-                Assert-MockCalled Set-AuditCategoryCommand -Exactly 1 -Scope Context  
-            }
-        }
-    }
-
-}
-
-Describe 'Public function Set-AuditOption' `
--Tags Public, Set, Option { 
-
-    $command = Get-Command Set-AuditOption
-    $parameter = 'Name'
-        
-    It "Should Exist" {
-
-        $command | Should Be $command 
-    }
-
-        It "With no output" {
-
-            $command.OutputType | Should BeNullOrEmpty
-        }
-
-    It "Has a parameter '$parameter'" {
-
-        $command.Parameters[$parameter].Name | Should Be $parameter
-    }
-
-    It 'Of type "String"' {
-
-        $command.Parameters[$parameter].ParameterType | Should Be 'String'
-    }
-
-    InModuleScope Helper {
-
-        Context "Set-AuditOption with Mock ( Set-AuditOptionCommand -Name 'CrashOnAuditFail' -Value 'disable' )" {
-
-            [string] $name  = "CrashOnAuditFail"
-            [string] $value = "Disable"
-
-            Mock Set-AuditOptionCommand { } 
-
-            It "Does not thrown an error" {
-                
-                { $setAuditOption =  Set-AuditOption -Name $name -Value $value } |
-                Should Not Throw
-            }    
-
-            It "Should not return a value"  {
-
-                $setAuditOption | Should BeNullOrEmpty
-            }
-
-            It 'Calls Set-AuditOptionCommand exactly once'  {
-
-                Assert-MockCalled Set-AuditOptionCommand -Exactly 1 -Scope Context  
             }
         }
     }
