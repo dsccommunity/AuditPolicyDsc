@@ -1,3 +1,7 @@
+$TestAuditPolicyOption = @{
+    Name  = 'AuditBaseDirectories'
+    Value = 'Enabled'
+}
 
 configuration 'MSFT_AuditPolicyOption_config' {
 
@@ -7,8 +11,8 @@ configuration 'MSFT_AuditPolicyOption_config' {
 
         AuditPolicyOption Integration_Test 
         {
-            Name  = $optionName
-            Value = $optionValue
+            Name  = $TestAuditPolicyOption.Name
+            Value = $TestAuditPolicyOption.Value
         }
     }
 }

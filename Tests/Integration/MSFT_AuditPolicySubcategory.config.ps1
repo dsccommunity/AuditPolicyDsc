@@ -1,3 +1,8 @@
+$TestAuditPolicySubCategory = @{
+    Subcategory     = 'Credential Validation'
+    AuditFlag       = 'Failure'
+    AuditFlagEnsure = 'Present'
+}
 
 configuration 'MSFT_AuditPolicySubcategory_Config' {
     
@@ -7,9 +12,9 @@ configuration 'MSFT_AuditPolicySubcategory_Config' {
        
         AuditPolicySubcategory Integration_Test
         {
-            Subcategory = $Subcategory
-            AuditFlag   = $AuditFlag
-            Ensure      = $AuditFlagEnsure
+            Subcategory = $TestAuditPolicySubCategory.Subcategory
+            AuditFlag   = $TestAuditPolicySubCategory.AuditFlag
+            Ensure      = $TestAuditPolicySubCategory.AuditFlagEnsure
         }
     }
 }

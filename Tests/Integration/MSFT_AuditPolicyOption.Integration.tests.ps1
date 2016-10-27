@@ -16,13 +16,10 @@ $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $script:DSCModuleName `
     -DSCResourceName $script:DSCResourceName `
     -TestType Integration
-
 #endregion
 
-
-# Other Init Code Goes Here...
-$optionName  = 'AuditBaseDirectories'
-$optionValue = 'Enabled'
+# set the value being tested to ensure a valid test.
+Invoke-Expression "auditpol /set /option:AuditBaseDirectories /Value:disable"
 
 # Using try/finally to always cleanup even if something awful happens.
 try

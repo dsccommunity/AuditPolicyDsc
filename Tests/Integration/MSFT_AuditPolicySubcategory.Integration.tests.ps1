@@ -16,15 +16,10 @@ $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $script:DSCModuleName `
     -DSCResourceName $script:DSCResourceName `
     -TestType Integration
-
 #endregion
 
-
-# Other Init Code Goes Here...
-
-$Subcategory     = 'Credential Validation'
-$AuditFlag       = 'Failure'
-$AuditFlagEnsure = 'Present'
+# set the Subcategory being tested to ensure a valid test.
+Invoke-Expression "auditpol /set /subcategory:'Credential Validation' /failure:disable"
 
 # Using try/finally to always cleanup even if something awful happens.
 try
