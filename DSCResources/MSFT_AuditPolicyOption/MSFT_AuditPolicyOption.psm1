@@ -107,5 +107,87 @@ function Test-TargetResource
     $return
 }
 
+#---------------------------------------------------------------------------------------------------
+# Support functions to handle auditpol I/O
+
+<#
+ .SYNOPSIS
+    Gets the audit policy option state.
+ .DESCRIPTION
+    Ths is one of the public functions that calls into Get-AuditOptionCommand.
+    This function enforces parameters that will be passed through to the 
+    Get-AuditOptionCommand function and aligns to a specifc parameterset. 
+ .PARAMETER Option 
+    The name of an audit option.
+ .OUTPUTS
+    A string that is the state of the option (Enabled|Disables). 
+#>
+function Get-AuditOption
+{
+    [CmdletBinding()]
+    [OutputType([System.String])]
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [System.String]
+        $Name
+    )
+
+    <# 
+        auditpol returns a single string with the Option in a CSV list, so 
+        get the 5th item in the list and return it
+    #>
+    ( ( ( Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name" )[2] ) -split ',' )[4]
+}
+
+<#
+ .SYNOPSIS
+    Sets an audit policy option to enabled or disabled
+ .DESCRIPTION
+    This public function calls Set-AuditOptionCommand and enforces parameters 
+    that will be passed to Set-AuditOptionCommand and aligns to a specifc parameterset. 
+ .PARAMETER Name
+    The specifc Option to set
+ .PARAMETER Value 
+    The value to set on the provided Option
+ .OUTPUTS
+    None
+#>
+function Set-AuditOption
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [System.String]
+        $Name,
+        
+        [Parameter(Mandatory=$true)]
+        [System.String]
+        $Value
+    )
+
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings
+        a condition will be placed here to use native PowerShell cmdlets to set
+        the option details. 
+    #>
+
+    if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
+    {
+        <# 
+        The output text of auditpol is in simple past tense, but the input is in simple 
+        present tense the hashtable corrects the tense for the input.  
+        #>
+        $valueHashTable = @{
+            'Enabled'  = 'enable'
+            'Disabled' = 'disable'
+        }
+        
+        [string[]] $SubCommand = @( "Option:$Name", "/value:$($valueHashTable[$value])" )
+
+        Invoke-AuditPol -Command "Set" -SubCommand $SubCommand | Out-Null
+    }
+}
 
 Export-ModuleMember -Function *-TargetResource

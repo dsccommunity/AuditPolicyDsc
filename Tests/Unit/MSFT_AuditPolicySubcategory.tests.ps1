@@ -179,14 +179,15 @@ try
 
             }
 
-            Context "Validate support function(s) in helper module" {
+            Context "Validate support function" {
 
-                $Function = ((Get-Module -All 'Helper').ExportedCommands['Get-AuditCategory'])
+                $functionName = 'Get-AuditCategory'
+                $Function = Get-Command $functionName
 
-                It " Found function 'Get-AuditCategory'" {
+                It " Found function $functionName" {
                     $FunctionName = $Function.Name
         
-                    $FunctionName | Should Be 'Get-AuditCategory'
+                    $FunctionName | Should Be $functionName
                 }
 
                 It " Found parameter 'Subcategory'" {
@@ -259,10 +260,10 @@ try
                 }
             }
 
-            Context "Validate support function(s) in helper module" {
+            Context "Validate support function" {
                 
                 $functionName = 'Set-AuditCategory'
-                $Function = ((Get-Module -All 'Helper').ExportedCommands[$functionName])
+                $Function = Get-Command $functionName
 
                 It " Found function $functionName" {
                     $FunctionName = $Function.Name

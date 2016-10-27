@@ -227,4 +227,113 @@ function Test-TargetResource
     $return
 }
 
+#---------------------------------------------------------------------------------------------------
+# Support functions to handle auditpol I/O
+
+<#
+ .SYNOPSIS 
+    Gets the audit flag state for a specifc subcategory. 
+ .DESCRIPTION
+    Ths is the public function that calls into Get-AuditCategoryCommand. This function enforces
+    parameters that will be passed to Get-AuditCategoryCommand. 
+ .PARAMETER SubCategory 
+    The name of the subcategory to get the audit flags from.
+ .OUTPUTS
+    A string with the flags that are set for the specificed subcategory 
+ .EXAMPLE
+    Get-AuditCategory -SubCategory 'Logon'
+#>
+function Get-AuditCategory
+{
+    [CmdletBinding()]
+    [OutputType([System.String])]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [System.String]
+        $SubCategory
+    )
+
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings
+        a condition will be placed here to use native PowerShell cmdlets to return
+        the category details. 
+    #>
+
+    <# 
+        Get-AuditCategoryCommand returns a single string in the following CSV format 
+        Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting
+    #>
+    $split = ( ( Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory""" )[2] ) -split ','
+
+    # remove the spaces from 'Success and Failure' to prevent any wierd string problems later
+    [string] $auditFlag = $split[4] -replace ' ',''
+    
+    $auditFlag
+}
+
+
+<#
+ .SYNOPSIS 
+    Sets the audit flag state for a specifc subcategory. 
+ .DESCRIPTION
+    Calls the private function to execute a set operation on the given subcategory
+ .PARAMETER SubCategory
+    The name of an audit category to set
+ .PARAMETER AuditFlag
+    The specifc flag to set (Success|Failure)
+ .PARAMETER Ensure 
+    The action to take on the flag
+ .EXAMPLE
+    Set-AuditCategory -SubCategory 'Logon' -AuditFlag 'Success' -Ensure 'Present'
+ .OUTPUTS
+    None 
+#>
+function Set-AuditCategory
+{
+    [CmdletBinding( SupportsShouldProcess=$true )]
+    param
+    (
+        [parameter( Mandatory = $true )]
+        [System.String]
+        $SubCategory,
+        
+        [parameter( Mandatory = $true )]
+        [ValidateSet( 'Success','Failure' )]
+        [System.String]
+        $AuditFlag,
+        
+        [parameter( Mandatory = $true )]
+        [System.String]
+        $Ensure
+    )
+
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings
+        a condition will be placed here to use native PowerShell cmdlets to set
+        the subcategory details. 
+    #>
+
+    if ( $pscmdlet.ShouldProcess( "$SubCategory","Set AuditFlag '$AuditFlag'" ) ) 
+    {
+        # translate $ensure=present to enable and $ensure=absent to disable
+        $auditState = @{
+            'Present' = 'enable'
+            'Absent'  = 'disable'
+        }
+                
+        # create the line needed auditpol to set the category flag
+        if ( $AuditFlag -eq 'Success' )
+        { 
+            [string[]] $subcommand = @( "Subcategory:""$SubCategory""", "/success:$($auditState[$Ensure])" )
+        }
+        else   
+        {
+            [string[]] $subcommand = @( "Subcategory:""$SubCategory""", "/failure:$($auditState[$Ensure])" )
+        }
+                    
+        Invoke-AuditPol -Command 'Set' -Subcommand $subcommand | Out-Null
+    }
+}
+
 Export-ModuleMember -Function *-TargetResource
