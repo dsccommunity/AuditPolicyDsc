@@ -264,7 +264,9 @@ function Get-AuditCategory
         Get-AuditCategoryCommand returns a single string in the following CSV format 
         Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting
     #>
-    $split = ( ( Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory""" )[2] ) -split ','
+    $auditpolReturn = Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory"""
+    
+    $split = ( $auditpolReturn[2] ) -split ','
 
     # remove the spaces from 'Success and Failure' to prevent any wierd string problems later
     [string] $auditFlag = $split[4] -replace ' ',''

@@ -37,7 +37,6 @@ try
         $AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
         #endregion
 
-
         #region Function Get-TargetResource
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
             
@@ -149,7 +148,6 @@ try
                 
                     $RetrievedEnsure | Should Be 'Absent'
                 }
-
             }
 
             Context "Submit '$AuditFlag' and return 'SuccessandFailure'" {
@@ -170,35 +168,14 @@ try
                     $RetrievedAuditFlag | Should Be $AuditFlag
                 }
 
-
                 It " 'Ensure' = 'Present'" {
                     $RetrievedEnsure = $Get.Ensure 
                 
                     $RetrievedEnsure | Should Be 'Present'
                 }
-
-            }
-
-            Context "Validate support function" {
-
-                $functionName = 'Get-AuditCategory'
-                $Function = Get-Command $functionName
-
-                It " Found function $functionName" {
-                    $FunctionName = $Function.Name
-        
-                    $FunctionName | Should Be $functionName
-                }
-
-                It " Found parameter 'Subcategory'" {
-                    $Subcategory = $Function.Parameters['Subcategory'].name
-        
-                    $Subcategory | Should Be 'Subcategory'
-                }
             }
         }
         #endregion
-
 
         #region Function Test-TargetResource
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
@@ -223,14 +200,9 @@ try
                 
                 $testResult = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Absent"
                 $testResult | Should Be $false
-
-                Assert-MockCalled Get-AuditCategory -Exactly 1 -Scope It
             }
-
-            
         }
         #endregion
-
 
         #region Function Set-TargetResource
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
@@ -308,21 +280,16 @@ try
 
             InModuleScope Helper {
 
-                Context 'Get-AuditCategory with Mock ( Get-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
+                Context 'Get-AuditCategory with Mock Invoke-Auditpol ' {
 
                     [string] $subCategory = 'Logon'
                     [string] $auditFlag   = 'Success'
                     # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
                     [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
 
-                    Mock Get-AuditCategoryCommand { return $returnString } 
+                    Mock Invoke-Auditpol { return $returnString } 
 
                     $AuditCategory = Get-AuditCategory -SubCategory $subCategory
-
-                    It 'Calls Get-AuditCategoryCommand exactly once'  {
-
-                        Assert-MockCalled Get-AuditCategoryCommand -Exactly 1 -Scope Context  
-                    }
 
                     It "The return object is a String" {
 
@@ -362,11 +329,11 @@ try
                 $command.Parameters[$parameter].ParameterType | Should Be 'String'
             }
 
-            Context 'Set-AuditCategory with Mock ( Set-AuditCategoryCommand -SubCategory "Logon" ) returning "Success"' {
+            Context 'Set-AuditCategory with Mock Invoke-Auditpol' {
                 
                 InModuleScope Helper {  
 
-                    Mock Set-AuditCategoryCommand { } 
+                    Mock Invoke-Auditpol { } 
                     
                     $comamnd = @{
                         SubCategory = "Logon"
@@ -383,14 +350,8 @@ try
 
                         $AuditCategory | Should BeNullOrEmpty
                     }
-
-                    It 'Calls Set-AuditCategoryCommand exactly once'  {
-
-                        Assert-MockCalled Set-AuditCategoryCommand -Exactly 1 -Scope Context  
-                    }
                 }
             }
-
         }
         #endregion
     }
