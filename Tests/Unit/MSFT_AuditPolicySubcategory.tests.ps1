@@ -37,6 +37,7 @@ try
         $AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
         #endregion
 
+
         #region Function Get-TargetResource
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
             
@@ -148,6 +149,7 @@ try
                 
                     $RetrievedEnsure | Should Be 'Absent'
                 }
+
             }
 
             Context "Submit '$AuditFlag' and return 'SuccessandFailure'" {
@@ -278,7 +280,6 @@ try
                 $command.Parameters[$parameter].ParameterType | Should Be 'String'
             }
 
-            InModuleScope Helper {
 
                 Context 'Get-AuditCategory with Mock Invoke-Auditpol ' {
 
@@ -287,9 +288,9 @@ try
                     # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
                     [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
 
-                    Mock Invoke-Auditpol { return $returnString } 
+                    Mock Invoke-Auditpol { return $returnString } -ModuleName Helper
 
-                    $AuditCategory = Get-AuditCategory -SubCategory $subCategory
+                    $AuditCategory = Get-AuditCategory -SubCategory $subCategory 
 
                     It "The return object is a String" {
 
@@ -300,7 +301,6 @@ try
 
                         $AuditCategory | Should BeExactly $auditFlag
                     }
-                }
             }
         }
 
@@ -331,9 +331,7 @@ try
 
             Context 'Set-AuditCategory with Mock Invoke-Auditpol' {
                 
-                InModuleScope Helper {  
-
-                    Mock Invoke-Auditpol { } 
+                    Mock Invoke-Auditpol { } -ModuleName Helper
                     
                     $comamnd = @{
                         SubCategory = "Logon"
@@ -350,7 +348,6 @@ try
 
                         $AuditCategory | Should BeNullOrEmpty
                     }
-                }
             }
         }
         #endregion
