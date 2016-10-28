@@ -142,8 +142,7 @@ try
                 [string] $name  = 'CrashOnAuditFail'
                 [string] $value = 'Enabled'
 
-                Mock Get-AuditOptionCommand { "$env:COMPUTERNAME,,Option:$name,,$value,," } `
-                    -ModuleName Helper
+                Mock Invoke-Auditpol { "$env:COMPUTERNAME,,Option:$name,,$value,," } -ModuleName Helper
 
                 $auditOption = Get-AuditOption -Name $name
 
