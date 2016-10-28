@@ -45,17 +45,13 @@ try
 
             $get = Get-TargetResource -Name $optionName
 
-            Assert-MockCalled Get-AuditOption -Exactly 1 -Scope Describe
-
             It "Return object is a hashtable" {
                 $isHashtable = $get.GetType().Name -eq 'hashtable'
-                
                 $isHashtable | Should Be $true
             }
 
             It " that has a 'Name' key" {
                 $containsNameKey = $get.ContainsKey('Name')
-
                 $containsNameKey | Should Be $true
             }
             
@@ -75,7 +71,6 @@ try
         }
         #endregion
 
-
         #region Function Test-TargetResource
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
             
@@ -86,28 +81,20 @@ try
 
             It "Return object is a Boolean" {
                 $isBool = $test.GetType().Name -eq "Boolean"
-
                 $isBool | Should Be $true
             }
 
             It " that is true when matching" {
                 $valueMatches = $test
-                
                 $valueMatches | Should Be $true
             }
 
             It " and is false when not matching" {
                 $valueNotMatches = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
-                
                 $valueNotMatches | Should Be $false
-
-                Assert-MockCalled Get-AuditOption -Exactly 1 -Scope It
             }
-
-            
         }
         #endregion
-
 
         #region Function Set-TargetResource
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
@@ -121,8 +108,6 @@ try
                 
                 $set | Should BeNullOrEmpty
             } 
-
-            Assert-MockCalled Set-AuditOption 1
         }
         #endregion
 
@@ -152,26 +137,19 @@ try
                 $command.Parameters[$parameter].ParameterType | Should Be 'String'
             }
 
-            InModuleScope Helper {
+            Context 'Get-AuditOption with Mock Invoke-Auditpol' {
 
-                Context 'Get-AuditOption with Mock ( Get-AuditOptionCommand -Name "CrashOnAuditFail" ) returning "Enabled"' {
+                [string] $name  = 'CrashOnAuditFail'
+                [string] $value = 'Enabled'
 
-                    [string] $name  = 'CrashOnAuditFail'
-                    [string] $value = 'Enabled'
+                Mock Get-AuditOptionCommand { "$env:COMPUTERNAME,,Option:$name,,$value,," } `
+                    -ModuleName Helper
 
-                    Mock Get-AuditOptionCommand { "$env:COMPUTERNAME,,Option:$name,,$value,," }
+                $auditOption = Get-AuditOption -Name $name
 
-                    $auditOption = Get-AuditOption -Name $name
+                It "The option $name returns $value" {
 
-                    It 'Calls Get-AuditOptionCommand exactly once'  {
-
-                        Assert-MockCalled Get-AuditOptionCommand -Exactly 1 -Scope Context  
-                    }
-
-                    It "The option $name returns $value" {
-
-                        $auditOption | should Be $value
-                    }
+                    $auditOption | should Be $value
                 }
             }
         }
@@ -186,10 +164,10 @@ try
                 $command | Should Be $command 
             }
 
-                It "With no output" {
+            It "With no output" {
 
-                    $command.OutputType | Should BeNullOrEmpty
-                }
+                $command.OutputType | Should BeNullOrEmpty
+            }
 
             It "Has a parameter '$parameter'" {
 
@@ -201,30 +179,22 @@ try
                 $command.Parameters[$parameter].ParameterType | Should Be 'String'
             }
 
-            InModuleScope Helper {
+            Context "Set-AuditOption with Mock Invoke-Auditpol" {
 
-                Context "Set-AuditOption with Mock ( Set-AuditOptionCommand -Name 'CrashOnAuditFail' -Value 'disable' )" {
+                [string] $name  = "CrashOnAuditFail"
+                [string] $value = "Disable"
 
-                    [string] $name  = "CrashOnAuditFail"
-                    [string] $value = "Disable"
+                Mock Invoke-Auditpol { } -ModuleName Helper
 
-                    Mock Set-AuditOptionCommand { } 
-
-                    It "Does not thrown an error" {
+                It "Does not thrown an error" {
                         
-                        { $setAuditOption =  Set-AuditOption -Name $name -Value $value } |
-                        Should Not Throw
-                    }    
+                    { $setAuditOption =  Set-AuditOption -Name $name -Value $value } |
+                    Should Not Throw
+                }    
 
-                    It "Should not return a value"  {
+                It "Should not return a value"  {
 
-                        $setAuditOption | Should BeNullOrEmpty
-                    }
-
-                    It 'Calls Set-AuditOptionCommand exactly once'  {
-
-                        Assert-MockCalled Set-AuditOptionCommand -Exactly 1 -Scope Context  
-                    }
+                    $setAuditOption | Should BeNullOrEmpty
                 }
             }
         }
