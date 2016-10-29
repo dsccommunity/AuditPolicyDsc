@@ -142,7 +142,7 @@ try
                 [string] $name  = 'CrashOnAuditFail'
                 [string] $value = 'Enabled'
 
-                Mock Invoke-Auditpol { "$env:COMPUTERNAME,,Option:$name,,$value,," } -ModuleName Helper
+                Mock Invoke-Auditpol { "$env:COMPUTERNAME,,Option:$name,,$value,," }
 
                 $auditOption = Get-AuditOption -Name $name
 
@@ -181,7 +181,7 @@ try
             Context "Set-AuditOption with Mock Invoke-Auditpol" {
 
                 [string] $name  = "CrashOnAuditFail"
-                [string] $value = "Disable"
+                [string] $value = "Disabled"
 
                 Mock Invoke-Auditpol { } -ModuleName Helper
 

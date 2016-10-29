@@ -280,27 +280,26 @@ try
                 $command.Parameters[$parameter].ParameterType | Should Be 'String'
             }
 
+            Context 'Get-AuditCategory with Mock Invoke-Auditpol ' {
 
-                Context 'Get-AuditCategory with Mock Invoke-Auditpol ' {
+                [string] $subCategory = 'Logon'
+                [string] $auditFlag   = 'Success'
+                # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
+                [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
 
-                    [string] $subCategory = 'Logon'
-                    [string] $auditFlag   = 'Success'
-                    # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
-                    [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
+                Mock Invoke-Auditpol { return $returnString } -ModuleName Helper
 
-                    Mock Invoke-Auditpol { return $returnString } -ModuleName Helper
+                $AuditCategory = Get-AuditCategory -SubCategory $subCategory 
 
-                    $AuditCategory = Get-AuditCategory -SubCategory $subCategory 
+                It "The return object is a String" {
 
-                    It "The return object is a String" {
+                    $AuditCategory.GetType() | Should Be 'String'
+                }
+                
+                It "with the value '$auditFlag'" {
 
-                        $AuditCategory.GetType() | Should Be 'String'
-                    }
-
-                    It "with the value '$auditFlag'" {
-
-                        $AuditCategory | Should BeExactly $auditFlag
-                    }
+                    $AuditCategory | Should BeExactly $auditFlag
+                }
             }
         }
 
@@ -331,7 +330,7 @@ try
 
             Context 'Set-AuditCategory with Mock Invoke-Auditpol' {
                 
-                    Mock Invoke-Auditpol { } -ModuleName Helper
+                    Mock Invoke-Auditpol { }
                     
                     $comamnd = @{
                         SubCategory = "Logon"
