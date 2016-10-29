@@ -133,11 +133,14 @@ function Get-AuditOption
         $Name
     )
 
-    <# 
-        auditpol returns a single string with the Option in a CSV list, so 
-        get the 5th item in the list and return it
-    #>
-    ( ( ( Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name" )[2] ) -split ',' )[4]
+    # get the auditpol raw csv output
+    $returnCsv =  Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name"
+    
+    # split the details into an array
+    $optionDetails = ( $returnCsv[2] ) -split ','
+
+    # return the option value
+    return $optionDetails[4]
 }
 
 <#

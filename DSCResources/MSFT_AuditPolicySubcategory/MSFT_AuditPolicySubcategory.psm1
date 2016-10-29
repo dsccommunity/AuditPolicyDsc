@@ -254,24 +254,14 @@ function Get-AuditCategory
         $SubCategory
     )
 
-    <#
-        When PowerShell cmdlets are released for individual audit policy settings
-        a condition will be placed here to use native PowerShell cmdlets to return
-        the category details. 
-    #>
-
-    <# 
-        Get-AuditCategoryCommand returns a single string in the following CSV format 
-        Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting
-    #>
-    $auditpolReturn = Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory"""
+    # get the auditpol raw csv output
+    $returnCsv = Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory"""
     
-    $split = ( $auditpolReturn[2] ) -split ','
+    # split the details into an array
+    $subcategoryFlags = ( $returnCsv[2] ) -split ','
 
     # remove the spaces from 'Success and Failure' to prevent any wierd string problems later
-    [string] $auditFlag = $split[4] -replace ' ',''
-    
-    $auditFlag
+    return $subcategoryFlags[4] -replace ' ',''
 }
 
 
