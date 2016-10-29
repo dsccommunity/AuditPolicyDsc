@@ -36,7 +36,6 @@ try
         $optionStateSwap = @{'Disabled'='Enabled';'Enabled'='Disabled'}
         #endregion
 
-
         #region Function Get-TargetResource
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
 
@@ -183,7 +182,7 @@ try
                 [string] $name  = "CrashOnAuditFail"
                 [string] $value = "Disabled"
 
-                Mock Invoke-Auditpol { } -ModuleName Helper
+                Mock Invoke-Auditpol { }
 
                 It "Does not thrown an error" {
                         

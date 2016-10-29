@@ -287,7 +287,7 @@ try
                 # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
                 [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
 
-                Mock Invoke-Auditpol { return $returnString } -ModuleName Helper
+                Mock Invoke-Auditpol { return $returnString }
 
                 $AuditCategory = Get-AuditCategory -SubCategory $subCategory 
 
