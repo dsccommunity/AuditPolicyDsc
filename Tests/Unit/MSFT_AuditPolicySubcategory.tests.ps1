@@ -284,10 +284,9 @@ try
 
                 [string] $subCategory = 'Logon'
                 [string] $auditFlag   = 'Success'
-                # the return format is ComputerName,System,Subcategory,GUID,AuditFlags
-                [string] $returnString = "$env:ComputerName,system,$subCategory,[GUID],$auditFlag"
-
-                Mock Invoke-Auditpol { return $returnString }
+                # the return is 3 lines Header, blank line, data
+                # ComputerName,System,Subcategory,GUID,AuditFlags
+                Mock Invoke-Auditpol { @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") }
 
                 $AuditCategory = Get-AuditCategory -SubCategory $subCategory 
 
