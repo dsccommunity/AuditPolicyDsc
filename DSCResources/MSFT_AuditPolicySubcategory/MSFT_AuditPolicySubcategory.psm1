@@ -253,7 +253,10 @@ function Get-AuditCategory
         [System.String]
         $SubCategory
     )
-
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings a condition 
+        will be placed here to use native PowerShell cmdlets to set the option details. 
+    #>
     # get the auditpol raw csv output
     $returnCsv = Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory"""
     
@@ -301,11 +304,9 @@ function Set-AuditCategory
     )
 
     <#
-        When PowerShell cmdlets are released for individual audit policy settings
-        a condition will be placed here to use native PowerShell cmdlets to set
-        the subcategory details. 
+        When PowerShell cmdlets are released for individual audit policy settings a condition 
+        will be placed here to use native PowerShell cmdlets to set the option details. 
     #>
-
     if ( $pscmdlet.ShouldProcess( "$SubCategory","Set AuditFlag '$AuditFlag'" ) ) 
     {
         # translate $ensure=present to enable and $ensure=absent to disable

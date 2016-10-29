@@ -132,7 +132,10 @@ function Get-AuditOption
         [System.String]
         $Name
     )
-
+    <#
+        When PowerShell cmdlets are released for individual audit policy settings a condition 
+        will be placed here to use native PowerShell cmdlets to set the option details. 
+    #>
     # get the auditpol raw csv output
     $returnCsv =  Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name"
     
@@ -171,11 +174,9 @@ function Set-AuditOption
     )
 
     <#
-        When PowerShell cmdlets are released for individual audit policy settings
-        a condition will be placed here to use native PowerShell cmdlets to set
-        the option details. 
+        When PowerShell cmdlets are released for individual audit policy settings a condition 
+        will be placed here to use native PowerShell cmdlets to set the option details. 
     #>
-
     if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
     {
         <# 
