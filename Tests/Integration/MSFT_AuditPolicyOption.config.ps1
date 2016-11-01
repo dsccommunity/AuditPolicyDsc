@@ -1,17 +1,25 @@
-$TestAuditPolicyOption = @{
-    Name  = 'AuditBaseDirectories'
-    Value = 'Enabled'
-}
+# Integration Test Config Template Version 1.0.0
 
-configuration 'MSFT_AuditPolicyOption_config' {
+configuration 'MSFT_AuditPolicyOption_config'
+{
+    param 
+    (
+        [Parameter(Mandatory)]
+        [System.String]
+        $OptionName,
+        
+        [Parameter(Mandatory)]
+        [System.String]
+        $OptionValue
+    )
 
     Import-DscResource -ModuleName 'AuditPolicyDsc'
 
-    node localhost {
-
+    node localhost 
+    {
         AuditPolicyOption Integration_Test 
         {
-            Name  = $TestAuditPolicyOption.Name
+            Name  = $OptionName
             Value = $TestAuditPolicyOption.Value
         }
     }

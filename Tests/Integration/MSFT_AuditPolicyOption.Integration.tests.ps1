@@ -18,57 +18,96 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Integration
 #endregion
 
-# Set the option detailes being tested
+# Set the option details being tested
 $optionName  = 'AuditBaseDirectories'
-$optionValue = 'Enabled'
-
-# Set the system value to an incorrect state to ensure a valid test.
-Invoke-Expression "auditpol /set /option:AuditBaseDirectories /Value:disable"
 
 # Using try/finally to always cleanup even if something awful happens.
 try
 {
     #region Integration Tests
     $ConfigFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:DSCResourceName).config.ps1"
-    . $ConfigFile
+    . $ConfigFile 
 
     Describe "$($script:DSCResourceName)_Integration" {
         #region DEFAULT TESTS
-        It 'Should compile without throwing' {
-            {
-                Invoke-Expression -Command "$($script:DSCResourceName)_Config -OutputPath `$TestEnvironment.WorkingFolder"
-                Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
-                    -Wait -Verbose -Force
-            } | Should not throw
-        }
-
-        It 'Should be able to call Get-DscConfiguration without throwing' {
-            { 
-                Get-DscConfiguration -Verbose -ErrorAction Stop
-            } | Should Not throw
-        }
-        #endregion
-
-        Context 'Should have set the resource and all the parameters should match' {
+        
+        Context 'Should set option to Enabled' {
             
-            Get-DscConfiguration -OutVariable DscConfiguration
+            # Set the option value to test
+            $optionValue = 'Enabled'
+            # Set the test system value to an incorrect state to ensure a valid test.
+            & 'auditpol' '/set' "/option:$optionName" "/value:disable"  
 
-            It "AuditOption configured is $optionName " {
-                $DscConfiguration.Name | Should Be $optionName
+            It 'Should compile and apply the MOF without throwing' {
+                {
+                    & "$($script:DSCResourceName)_Config" -OptionName $optionName `
+                                                          -OptionValue $optionValue `
+                                                          -OutputPath $TestEnvironment.WorkingFolder
+                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                        -ComputerName localhost -Wait -Verbose -Force
+                } | Should not throw
             }
 
-            It "$optionName is set to $optionValue"{
-                $DscConfiguration.Value | Should Be $optionValue
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
             }
 
+            #endregion
+
+            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+
+            It "Should return the correct option name" {
+                $currentConfig.Name | Should Be $optionName
+            }
+
+            It "Should return the correct option value"{
+                $currentConfig.Value | Should Be $optionValue
+            }
+            
+            It 'Should return $true' {
+                { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
+            }
         }
 
-        It 'Test-DscConfiguration should equal True' {
-            { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
+        Context 'Should set option to Disabled' {
+
+            # Set the option value to test
+            $optionValue = 'Disabled'
+            # Set the system value to an incorrect state to ensure a valid test.
+            & 'auditpol' '/set' "/option:$optionName" "/value:enable"  
+
+            It 'Should compile and apply the MOF without throwing' {
+                {
+                    & "$($script:DSCResourceName)_Config" -OptionName $optionName `
+                                                          -OptionValue $optionValue `
+                                                          -OutputPath $TestEnvironment.WorkingFolder
+                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                        -ComputerName localhost -Wait -Verbose -Force
+                } | Should not throw
+            }
+
+            It 'Should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            }
+
+            #endregion
+
+            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+
+            It "Should return the correct option name" {
+                $currentConfig.Name | Should Be $optionName
+            }
+
+            It "Should return the correct option value"{
+                $currentConfig.Value | Should Be $optionValue
+            }
+            
+            It 'Should return $true' {
+                { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
+            }
         }
     }
     #endregion
-
 }
 finally
 {
