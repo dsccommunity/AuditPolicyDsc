@@ -20,7 +20,7 @@ configuration 'MSFT_AuditPolicyOption_config'
         AuditPolicyOption Integration_Test 
         {
             Name  = $OptionName
-            Value = OptionValue
+            Value = $OptionValue
         }
     }
 }
