@@ -32,7 +32,8 @@ try
         #region Pester Test Initialization
         # the audit option to use in the tests
         $script:target = @{
-            Subcategory   = $null
+            Subcategory = $null
+            AuditFlag   = $null
         }
 
         #endregion
@@ -41,11 +42,12 @@ try
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
             $script:target.Subcategory = 'Logon'
+            $script:target.AuditFlag   = 'Success'
 
             Context "Single word subcategory submit 'Success' and return 'Success'" {
 
                 Mock -CommandName Get-AuditCategory -MockWith { 
-                    return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
+                    return Success } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
                     { $script:getTargetResourceResult = Get-TargetResource @target } | 
@@ -182,7 +184,7 @@ try
 
 
             $script:target.Subcategory = 'Credential Validation'
-            $script:target.AuditFlag = 'Success'
+            $script:target.AuditFlag   = 'Success'
 
             Context "Mulit-word subcategory submit 'Success' and return 'Success'" {
 
@@ -328,17 +330,18 @@ try
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
             
             $script:target = @{
-                Subcategory  = $Subcategory 
-                AuditFlag = $AuditFlag
-                Ensure = $null
+                Subcategory = 'Logon'
+                AuditFlag   = 'Success'
+                Ensure      = 'Present'
             }    
 
-            Context 'Subcategory Success flag present and should be' {
+            Context 'Single word subcategory Success flag present and should be' {
                 Mock -CommandName Get-AuditCategory -MockWith { 
-                    return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory 
+                    return 'Success' } -ModuleName MSFT_AuditPolicySubcategory 
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                    { $script:testTargetResourceResult = Test-TargetResource @target } |
+                        Should Not Throw
                 }
 
                 It "Should return true" {
@@ -346,9 +349,11 @@ try
                 }
             }
 
-            Context 'Subcategory Success flag present and should not be' {
+            Context 'Single word subcategory Success flag present and should not be' {
+                
+                $script:target.Ensure = 'Absent'
                 Mock -CommandName Get-AuditCategory -MockWith { 
-                    return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory 
+                    return 'Success' } -ModuleName MSFT_AuditPolicySubcategory 
 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw

@@ -155,15 +155,33 @@ try
         #region Function Set-TargetResource
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
 
-            # mock call to the helper module to isolate Set-TargetResource
-            Mock -CommandName Set-AuditOption -MockWith { } -ModuleName MSFT_AuditPolicyOption -Verifiable
-                
-            $setTargetResourceResult = Set-TargetResource -Name $optionName -Value $optionState
+            context 'Option Enabled' {
 
-            It 'Should call expected Mocks' {    
-                Assert-VerifiableMocks
-                Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
-            } 
+                $target.Value = 'Enabled'
+                Mock -CommandName Set-AuditOption -MockWith { } -ModuleName MSFT_AuditPolicyOption -Verifiable
+                    
+                It 'Should not throw an exception' {
+                    { $script:setTargetResourceResult = Set-TargetResource @target } | Should Not Throw
+                }
+
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
+                } 
+            }
+
+            context 'Option Disabled' {
+                $target.Value = 'Disabled'
+                Mock -CommandName Set-AuditOption -MockWith { } -ModuleName MSFT_AuditPolicyOption -Verifiable
+                    
+                It 'Should not throw an exception' {
+                    { $script:setTargetResourceResult = Set-TargetResource @target } | Should Not Throw
+                }
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
+                } 
+            }
         }
         #endregion
 
