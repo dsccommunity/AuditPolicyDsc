@@ -64,9 +64,9 @@ try
                 $currentConfig.Subcategory | Should be $Subcategory
             }
             
-            It "AuditFlag Should be $AuditFlag" {
+            It "AuditFlag Should match $AuditFlag" {
             
-                $currentConfig.AuditFlag | Should be $AuditFlag
+                $currentConfig.AuditFlag | Should Match $AuditFlag
             }
 
             It "Ensure Should be $AuditFlagEnsure" {
@@ -112,9 +112,9 @@ try
                 $currentConfig.Subcategory | Should be $Subcategory
             }
             
-            It "AuditFlag Should be $AuditFlag" {
+            It "AuditFlag Should Not match $AuditFlag" {
             
-                $currentConfig.AuditFlag | Should be $AuditFlag
+                $currentConfig.AuditFlag | Should Not Match $AuditFlag
             }
 
             It "Ensure Should be $AuditFlagEnsure" {
@@ -160,7 +160,7 @@ try
                 $currentConfig.Subcategory | Should be $Subcategory
             }
             
-            It "AuditFlag Should be $AuditFlag" {
+            It "AuditFlag Should match $AuditFlag" {
             
                 $currentConfig.AuditFlag | Should be $AuditFlag
             }
@@ -208,9 +208,9 @@ try
                 $currentConfig.Subcategory | Should be $Subcategory
             }
             
-            It "AuditFlag Should be $AuditFlag" {
+            It "AuditFlag Should Not match $AuditFlag" {
             
-                $currentConfig.AuditFlag | Should be $AuditFlag
+                $currentConfig.AuditFlag | Should Not Match $AuditFlag
             }
 
             It "Ensure Should be $AuditFlagEnsure" {
