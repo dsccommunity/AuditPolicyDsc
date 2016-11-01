@@ -31,18 +31,18 @@ try
 
         #region Pester Test Initialization
         # the audit option to use in the tests
-        $script:target = @{
-            Subcategory = $null
-            AuditFlag   = $null
-        }
+
 
         #endregion
 
         #region Function Get-TargetResource
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
-
-            $script:target.Subcategory = 'Logon'
-            $script:target.AuditFlag   = 'Success'
+            $target = @{
+                Subcategory = $null
+                AuditFlag   = $null
+            }
+            $target.Subcategory = 'Logon'
+            $target.AuditFlag   = 'Success'
 
             Context "Single word subcategory submit 'Success' and return 'Success'" {
 
@@ -55,8 +55,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
@@ -72,8 +72,8 @@ try
                 }
 
                 It 'Single word subcategory should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -89,8 +89,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -106,13 +106,13 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
 
-            $script:target.AuditFlag = 'Failure'
+            $target.AuditFlag = 'Failure'
 
             Context "Single word subcategory submit 'Failure' and return 'Success'" {
 
@@ -125,8 +125,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
@@ -142,8 +142,8 @@ try
                 }
 
                 It 'Single word subcategory should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -159,8 +159,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -176,15 +176,15 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
 
 
-            $script:target.Subcategory = 'Credential Validation'
-            $script:target.AuditFlag   = 'Success'
+            $target.Subcategory = 'Credential Validation'
+            $target.AuditFlag   = 'Success'
 
             Context "Mulit-word subcategory submit 'Success' and return 'Success'" {
 
@@ -197,8 +197,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
@@ -214,8 +214,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -231,8 +231,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -248,13 +248,13 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
 
-            $script:target.AuditFlag = 'Failure'
+            $target.AuditFlag = 'Failure'
 
             Context "Mulit-word subcategory submit 'Failure' and return 'Success'" {
 
@@ -267,8 +267,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
@@ -284,8 +284,8 @@ try
                 }
 
                 It 'Single word subcategory should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -301,8 +301,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
@@ -318,8 +318,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $script:target.Subcategory
-                    $script:getTargetResourceResult.AuditFlag   | Should Be $script:target.AuditFlag
+                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $target.AuditFlag
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
@@ -329,7 +329,7 @@ try
         #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
             
-            $script:target = @{
+            $target = @{
                 Subcategory = 'Logon'
                 AuditFlag   = 'Success'
                 Ensure      = 'Present'
@@ -351,7 +351,7 @@ try
 
             Context 'Single word subcategory Success flag present and should not be' {
                 
-                $script:target.Ensure = 'Absent'
+                $target.Ensure = 'Absent'
                 Mock -CommandName Get-AuditCategory -MockWith { 
                     return 'Success' } -ModuleName MSFT_AuditPolicySubcategory 
 

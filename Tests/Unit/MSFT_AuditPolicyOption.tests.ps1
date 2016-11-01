@@ -137,7 +137,7 @@ try
             Context 'Option set to disabled and should not be' {
 
                 $optionState = 'Disabled'
-                $target.Value = $optionState
+                $script:target.Value = $optionState
                 Mock -CommandName Get-AuditOption -MockWith { 
                     return $optionStateSwap[$optionState] } -ModuleName MSFT_AuditPolicyOption
                 
@@ -154,7 +154,10 @@ try
 
         #region Function Set-TargetResource
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
-
+            $target = @{
+                Name  = $optionName 
+                Value = $null
+            }
             context 'Option Enabled' {
 
                 $target.Value = 'Enabled'
