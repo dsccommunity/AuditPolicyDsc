@@ -1,6 +1,8 @@
 
-Import-Module $PSScriptRoot\..\AuditPolicyResourceHelper.psm1
-
+Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+                               -ChildPath (Join-Path -Path 'DscResources' `
+                                                     -ChildPath 'AuditPolicyResourceHelper.psm1')) `
+                                                     -Force
 <#
     .SYNOPSIS
     Gets the value of the audit policy option.
