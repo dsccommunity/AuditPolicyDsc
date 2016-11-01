@@ -593,6 +593,7 @@ try
             $target = @{
                 Subcategory = 'Logon'
                 AuditFlag   = 'Success'
+                Ensure      = 'Present'
             }  
 
             Context 'Set single word subcategory success flag to present' {
@@ -624,10 +625,42 @@ try
                 } 
             }
 
-            Context 'Set multi-word subcategory success flag to present' {
+            Context 'Set single word subcategory success flag to absent' {
+
+                $target.Ensure    = 'Absent'
+                $target.AuditFlag = 'Success'
+                Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
+
+                It 'Should not throw an exception' {
+                    { Set-TargetResource @target } | Should Not Throw
+                }   
+
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Set-AuditCategory -Exactly 1
+                } 
+            }
+
+            Context 'Set single word subcategory failure flag to absent' {
                 
+                $target.AuditFlag = 'Failure'
+                Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
+
+                It 'Should not throw an exception' {
+                    { Set-TargetResource @target } | Should Not Throw
+                }   
+
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Set-AuditCategory -Exactly 1
+                } 
+            }
+
+            Context 'Set multi-word subcategory success flag to present' {
+
                 $target.Subcategory = 'Credential Validation'
                 $target.AuditFlag   = 'Success'
+                $target.Ensure      = 'Present'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
@@ -641,6 +674,37 @@ try
             }
 
             Context 'Set multi-word subcategory failure flag to present' {
+                
+                $target.AuditFlag = 'Failure'
+                Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
+
+                It 'Should not throw an exception' {
+                    { Set-TargetResource @target } | Should Not Throw
+                }   
+
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Set-AuditCategory -Exactly 1
+                } 
+            }
+
+            Context 'Set single word subcategory success flag to absent' {
+
+                $target.AuditFlag = 'Success'
+                $target.Ensure    = 'Absent'
+                Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
+
+                It 'Should not throw an exception' {
+                    { Set-TargetResource @target } | Should Not Throw
+                }   
+
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Set-AuditCategory -Exactly 1
+                } 
+            }
+
+            Context 'Set single word subcategory failure flag to absent' {
                 
                 $target.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
