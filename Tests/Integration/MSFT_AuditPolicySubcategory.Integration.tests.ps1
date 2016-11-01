@@ -20,11 +20,7 @@ $TestEnvironment = Initialize-TestEnvironment `
 
 # set the Subcategory details being tested
 $Subcategory     = 'Credential Validation'
-$AuditFlag       = 'Failure'
-$AuditFlagEnsure = 'Present'
 
-# set the system Subcategory to the incorrect state to ensure a valid test.
-Invoke-Expression "auditpol /set /subcategory:'Credential Validation' /failure:disable"
 
 # Using try/finally to always cleanup even if something awful happens.
 try
@@ -34,42 +30,52 @@ try
     . $ConfigFile
 
     Describe "$($script:DSCResourceName)_Integration" {
-        #region DEFAULT TESTS
-        It 'Should compile without throwing' {
-            {
-                Invoke-Expression -Command "$($script:DSCResourceName)_Config -OutputPath `$TestEnvironment.WorkingFolder"
-                Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
-                    -ComputerName localhost -Wait -Verbose -Force
-            } | Should not throw
-        }
 
-        It 'should be able to call Get-DscConfiguration without throwing' {
-            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
-        }
-        #endregion
-
-        Context 'Should have set the resource and all the parameters should match' {
+        Context 'Should enable failure audit flag' {
+            #region DEFAULT TESTS
             
-            Get-DscConfiguration -OutVariable DscConfiguration
+            $AuditFlag       = 'Failure'
+            $AuditFlagEnsure = 'Present'
+
+            # set the system Subcategory to the incorrect state to ensure a valid test.
+            & 'auditpol' '/set' "/subcategory:$Subcategory" '/failure:disable'
+            
+            It 'Should compile without throwing' {
+                {
+                    & "$($script:DSCResourceName)_Config" -Subcategory $Subcategory `
+                                                          -AuditFlag $AuditFlag `
+                                                          -AuditFlagEnsure $AuditFlagEnsure `
+                                                          -OutputPath $TestEnvironment.WorkingFolder
+                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                        -ComputerName localhost -Wait -Verbose -Force
+                } | Should not throw
+            }
+
+            It 'should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            }
+
+            #endregion
+            
+            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
 
             It "Subcategory Should be $Subcategory" {
             
-                $DscConfiguration.Subcategory | Should be $Subcategory
+                $currentConfig.Subcategory | Should be $Subcategory
             }
             
             It "AuditFlag Should be $AuditFlag" {
             
-                $DscConfiguration.AuditFlag | Should be $AuditFlag
+                $currentConfig.AuditFlag | Should be $AuditFlag
             }
 
             It "Ensure Should be $AuditFlagEnsure" {
             
-                $DscConfiguration.Ensure | Should be $AuditFlagEnsure
+                $currentConfig.Ensure | Should be $AuditFlagEnsure
             }
         }
     }
     #endregion
-
 }
 finally
 {

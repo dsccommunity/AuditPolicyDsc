@@ -29,14 +29,14 @@ try
     . $ConfigFile 
 
     Describe "$($script:DSCResourceName)_Integration" {
-        #region DEFAULT TESTS
         
         Context 'Should set option to Enabled' {
-            
+            #region DEFAULT TESTS
+
             # Set the option value to test
             $optionValue = 'Enabled'
             # Set the test system value to an incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/option:$optionName" "/value:disable"  
+            & 'auditpol' '/set' "/option:$optionName" '/value:disable'  
 
             It 'Should compile and apply the MOF without throwing' {
                 {
@@ -74,7 +74,7 @@ try
             # Set the option value to test
             $optionValue = 'Disabled'
             # Set the system value to an incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/option:$optionName" "/value:enable"  
+            & 'auditpol' '/set' "/option:$optionName" '/value:enable'  
 
             It 'Should compile and apply the MOF without throwing' {
                 {

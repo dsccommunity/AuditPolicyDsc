@@ -4,11 +4,11 @@ configuration 'MSFT_AuditPolicyOption_config'
 {
     param 
     (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $OptionName,
         
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $OptionValue
     )
