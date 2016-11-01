@@ -1,13 +1,15 @@
 
-Import-Module $PSScriptRoot\..\AuditPolicyResourceHelper.psm1
-
+Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
+                               -ChildPath (Join-Path -Path 'DscResources' `
+                                                     -ChildPath 'AuditPolicyResourceHelper.psm1')) `
+                                                     -Force
 <#
     .SYNOPSIS
-    Returns the current audit flag for the given subcategory.
+        Returns the current audit flag for the given subcategory.
     .PARAMETER Subcategory
-    Specifies the subcategory to get.
+        Specifies the subcategory to retrieve.
     .PARAMETER AuditFlag
-    Specifies the audit flag to get.
+        Specifies the audit flag to retrieve.
 #>
 function Get-TargetResource
 {
@@ -15,7 +17,7 @@ function Get-TargetResource
     [OutputType([System.Collections.Hashtable])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Security System Extension', 'System Integrity', 'IPsec Driver', 
         'Other System Events', 'Security State Change', 'Logon', 'Logoff', 'Account Lockout', 
         'IPsec Main Mode', 'IPsec Quick Mode', 'IPsec Extended Mode', 'Special Logon', 
@@ -38,7 +40,7 @@ function Get-TargetResource
         [System.String]
         $Subcategory,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Success', 'Failure')]
         [System.String]
         $AuditFlag
@@ -47,11 +49,11 @@ function Get-TargetResource
     try
     {
         $currentAuditFlag = Get-AuditCategory -SubCategory $Subcategory
-        Write-Verbose ( $localizedData.GetAuditpolSubcategorySucceed -f $Subcategory, $AuditFlag )
+        Write-Verbose -Message ( $localizedData.GetAuditpolSubcategorySucceed -f $Subcategory, $AuditFlag )
     }
     catch
     {
-        Write-Verbose ( $localizedData.GetAuditPolSubcategoryFailed -f $Subcategory, $AuditFlag )
+        Write-Verbose -Message ( $localizedData.GetAuditPolSubcategoryFailed -f $Subcategory, $AuditFlag )
     }
 
     <# 
@@ -69,31 +71,29 @@ function Get-TargetResource
         $ensure = 'Absent'
     }
 
-    $returnValue = @{
+    return @{
         Subcategory = $Subcategory
         AuditFlag   = $currentAuditFlag 
         Ensure      = $ensure
     }
-
-    $returnValue
 }
 
 <#
     .SYNOPSIS
-    Sets the audit flag for the given subcategory.
+        Sets the audit flag for the given subcategory.
     .PARAMETER Subcategory
-    Specifies the subcategory to set.
+        Specifies the subcategory to set.
     .PARAMETER AuditFlag
-    Specifies the audit flag to set.
+        Specifies the audit flag to set.
     .PARAMETER Ensure
-    Specifies the state of the audit flag provided.
+        Specifies the state of the audit flag provided.
 #>
 function Set-TargetResource
 {
     [CmdletBinding()]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Security System Extension', 'System Integrity', 'IPsec Driver', 
         'Other System Events', 'Security State Change', 'Logon', 'Logoff', 'Account Lockout', 
         'IPsec Main Mode', 'IPsec Quick Mode', 'IPsec Extended Mode', 'Special Logon', 
@@ -116,11 +116,12 @@ function Set-TargetResource
         [System.String]
         $Subcategory,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Success', 'Failure')]
         [System.String]
         $AuditFlag,
 
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure
@@ -129,25 +130,25 @@ function Set-TargetResource
     try
     {
         Set-AuditCategory -SubCategory $Subcategory -AuditFlag $AuditFlag -Ensure $Ensure
-        Write-Verbose ( $localizedData.SetAuditpolSubcategorySucceed `
+        Write-Verbose -Message ( $localizedData.SetAuditpolSubcategorySucceed `
                         -f $Subcategory, $AuditFlag, $Ensure )
     }
     catch 
     {
-        Write-Verbose ( $localizedData.SetAuditpolSubcategoryFailed `
+        Write-Verbose -Message ( $localizedData.SetAuditpolSubcategoryFailed `
                         -f $Subcategory, $AuditFlag, $Ensure )
     }
 }
 
 <#
     .SYNOPSIS
-    Tests the audit flag state for the given subcategory.
+        Tests the audit flag state for the given subcategory.
     .PARAMETER Subcategory
-    Specifies the subcategory to test.
+        Specifies the subcategory to test.
     .PARAMETER AuditFlag
-    Specifies the audit flag to test.
+        Specifies the audit flag to test.
     .PARAMETER Ensure
-    Specifies the state of the audit flag should be in.
+        Specifies the state of the audit flag should be in.
 #>
 function Test-TargetResource
 {
@@ -155,7 +156,7 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Security System Extension', 'System Integrity', 'IPsec Driver', 
         'Other System Events', 'Security State Change', 'Logon', 'Logoff', 'Account Lockout', 
         'IPsec Main Mode', 'IPsec Quick Mode', 'IPsec Extended Mode', 'Special Logon', 
@@ -178,7 +179,7 @@ function Test-TargetResource
         [System.String]
         $Subcategory,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Success', 'Failure')]
         [System.String]
         $AuditFlag,
@@ -188,60 +189,62 @@ function Test-TargetResource
         $Ensure
     )
 
+    [System.Boolean] $returnValue
+
     try
     {
         $currentAuditFlag = Get-AuditCategory -SubCategory $Subcategory
-        Write-Verbose ( $localizedData.GetAuditpolSubcategorySucceed -f $Subcategory, $AuditFlag )
+        Write-Verbose -Message ( $localizedData.GetAuditpolSubcategorySucceed -f $Subcategory, $AuditFlag )
     }
     catch
     {
-        Write-Verbose ( $localizedData.GetAuditPolSubcategoryFailed -f $Subcategory, $AuditFlag )
+        Write-Verbose -Message ( $localizedData.GetAuditPolSubcategoryFailed -f $Subcategory, $AuditFlag )
     }
 
-    # if the setting should be present look for a match, otherwise look for a notmatch
+    # If the setting should be present look for a match, otherwise look for a notmatch
     if ( $Ensure -eq 'Present' )
     {
-        $return = $currentAuditFlag -match $AuditFlag
+        $returnValue = $currentAuditFlag -match $AuditFlag
     }
     else
     { 
-        $return = $currentAuditFlag -notmatch $AuditFlag
+        $returnValue = $currentAuditFlag -notmatch $AuditFlag
     }
 
     <# 
-        the audit type can be true in either a match or non-match state. If the audit type 
+        The audit type can be true in either a match or non-match state. If the audit type 
         matches the ensure property return the setting correct message, else return the 
         setting incorrect message
     #>
-    if ( $return )
+    if ( $returnValue )
     {
-        Write-Verbose ( $localizedData.TestAuditpolSubcategoryCorrect `
+        Write-Verbose -Message ( $localizedData.TestAuditpolSubcategoryCorrect `
                         -f $Subcategory, $AuditFlag, $Ensure )
     }
     else
     {
-        Write-Verbose ( $localizedData.TestAuditpolSubcategoryIncorrect `
+        Write-Verbose -Message ( $localizedData.TestAuditpolSubcategoryIncorrect `
                        -f $Subcategory, $AuditFlag, $Ensure )
     }
 
-    $return
+    $returnValue
 }
 
 #---------------------------------------------------------------------------------------------------
 # Support functions to handle auditpol I/O
 
 <#
- .SYNOPSIS 
-    Gets the audit flag state for a specifc subcategory. 
- .DESCRIPTION
-    Ths is the public function that calls into Get-AuditCategoryCommand. This function enforces
-    parameters that will be passed to Get-AuditCategoryCommand. 
- .PARAMETER SubCategory 
-    The name of the subcategory to get the audit flags from.
- .OUTPUTS
-    A string with the flags that are set for the specificed subcategory 
- .EXAMPLE
-    Get-AuditCategory -SubCategory 'Logon'
+    .SYNOPSIS 
+        Gets the audit flag state for a specifc subcategory. 
+    .DESCRIPTION
+        Ths is the public function that calls into Get-AuditCategoryCommand. This function enforces
+        parameters that will be passed to Get-AuditCategoryCommand. 
+    .PARAMETER SubCategory 
+        The name of the subcategory to get the audit flags from.
+    .OUTPUTS
+        A string with the flags that are set for the specificed subcategory 
+    .EXAMPLE
+        Get-AuditCategory -SubCategory 'Logon'
 #>
 function Get-AuditCategory
 {
@@ -249,7 +252,7 @@ function Get-AuditCategory
     [OutputType([System.String])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SubCategory
     )
@@ -258,10 +261,10 @@ function Get-AuditCategory
         will be placed here to use native PowerShell cmdlets to set the option details. 
     #>
     # get the auditpol raw csv output
-    $returnCsv = Invoke-AuditPol -Command "Get" -SubCommand "Subcategory:""$SubCategory"""
+    $returnCsv = Invoke-AuditPol -Command 'Get' -subCommand "Subcategory:""$SubCategory"""
     
     # split the details into an array
-    $subcategoryFlags = ( $returnCsv[2] ) -split ','
+    $subcategoryFlags = ( $returnCsv[2] ) -Split ','
 
     # remove the spaces from 'Success and Failure' to prevent any wierd string problems later
     return $subcategoryFlags[4] -replace ' ',''
@@ -269,36 +272,34 @@ function Get-AuditCategory
 
 
 <#
- .SYNOPSIS 
-    Sets the audit flag state for a specifc subcategory. 
- .DESCRIPTION
-    Calls the private function to execute a set operation on the given subcategory
- .PARAMETER SubCategory
-    The name of an audit category to set
- .PARAMETER AuditFlag
-    The specifc flag to set (Success|Failure)
- .PARAMETER Ensure 
-    The action to take on the flag
- .EXAMPLE
-    Set-AuditCategory -SubCategory 'Logon' -AuditFlag 'Success' -Ensure 'Present'
- .OUTPUTS
-    None 
+    .SYNOPSIS 
+        Sets the audit flag state for a specifc subcategory. 
+    .DESCRIPTION
+        Calls the private function to execute a set operation on the given subcategory
+    .PARAMETER SubCategory
+        The name of the audit subcategory to set
+    .PARAMETER AuditFlag
+        The specifc flag to set (Success|Failure)
+    .PARAMETER Ensure 
+        The action to take on the flag
+    .EXAMPLE
+        Set-AuditCategory -SubCategory 'Logon' -AuditFlag 'Success' -Ensure 'Present'
 #>
 function Set-AuditCategory
 {
     [CmdletBinding( SupportsShouldProcess=$true )]
     param
     (
-        [parameter( Mandatory = $true )]
+        [Parameter( Mandatory = $true )]
         [System.String]
         $SubCategory,
         
-        [parameter( Mandatory = $true )]
+        [Parameter( Mandatory = $true )]
         [ValidateSet( 'Success','Failure' )]
         [System.String]
         $AuditFlag,
         
-        [parameter( Mandatory = $true )]
+        [Parameter( Mandatory = $true )]
         [System.String]
         $Ensure
     )
@@ -315,17 +316,17 @@ function Set-AuditCategory
             'Absent'  = 'disable'
         }
                 
-        # create the line needed auditpol to set the category flag
+        # Create the line needed for auditpol to set the category flag
         if ( $AuditFlag -eq 'Success' )
         { 
-            [string[]] $subcommand = @( "Subcategory:""$SubCategory""", "/success:$($auditState[$Ensure])" )
+            [String[]] $subcommand = @( "Subcategory:""$SubCategory""", "/success:$($auditState[$Ensure])" )
         }
         else   
         {
-            [string[]] $subcommand = @( "Subcategory:""$SubCategory""", "/failure:$($auditState[$Ensure])" )
+            [String[]] $subcommand = @( "Subcategory:""$SubCategory""", "/failure:$($auditState[$Ensure])" )
         }
                     
-        Invoke-AuditPol -Command 'Set' -Subcommand $subcommand | Out-Null
+        Invoke-AuditPol -Command 'Set' -subCommand $subcommand | Out-Null
     }
 }
 

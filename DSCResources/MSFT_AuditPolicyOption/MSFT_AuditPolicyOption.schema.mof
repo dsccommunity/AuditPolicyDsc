@@ -2,7 +2,7 @@
 [ClassVersion("1.0.0.0"), FriendlyName("AuditPolicyOption")]
 class MSFT_AuditPolicyOption : OMI_BaseResource
 {
-    [Key, Description("Sets the audit policy for the CrashOnAuditFail, FullPrivilegeAuditing, AuditBaseObjects, or AuditBaseDirectories options."), ValueMap{"CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects","AuditBaseDirectories"}, Values{"CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects","AuditBaseDirectories"}] String Name;
-    [Write, Description("Describe the auditpol option state"), ValueMap{"Enabled","Disabled"}, Values{"Enabled","Disabled"}] String Value;
+    [Key, Description("The name of the audit policy option to set."), ValueMap{"CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects","AuditBaseDirectories"}, Values{"CrashOnAuditFail","FullPrivilegeAuditing","AuditBaseObjects","AuditBaseDirectories"}] String Name;
+    [Write, Description("The value to set the audit policy option to."), ValueMap{"Enabled","Disabled"}, Values{"Enabled","Disabled"}] String Value;
 };
 
