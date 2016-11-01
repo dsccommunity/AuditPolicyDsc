@@ -5,9 +5,9 @@ Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
                                                      -Force
 <#
     .SYNOPSIS
-    Gets the value of the audit policy option.
+        Gets the value of the audit policy option.
     .PARAMETER Name
-    Specifies the option to get.
+        Specifies the option to get.
 #>
 function Get-TargetResource
 {
@@ -23,25 +23,23 @@ function Get-TargetResource
     )
     
     # get the option's current value 
-    $optionValue = Get-AuditOption @PSBoundParameters
+    $optionValue = Get-AuditOption -Name $name
 
-    Write-Verbose ( $localizedData.GetAuditpolOptionSucceed -f $Name )
+    Write-Verbose -Message ( $localizedData.GetAuditpolOptionSucceed -f $Name )
 
-    $returnValue = @{
+    return @{
         Name   = $Name
         Value  = $optionValue
     }
-
-    $returnValue
 }
 
 <#
     .SYNOPSIS
-    Sets the value of the audit policy option.
+        Sets the value of the audit policy option.
     .PARAMETER Name
-    Specifies the option to set.
+        Specifies the option to set.
     .PARAMETER Value
-    Specifies the value to set on the option.
+        Specifies the value to set the option to.
 #>
 function Set-TargetResource
 {
@@ -54,6 +52,7 @@ function Set-TargetResource
         [System.String]
         $Name,
 
+        [parameter(Mandatory = $true)]
         [ValidateSet('Enabled', 'Disabled')]
         [System.String]
         $Value
@@ -61,22 +60,22 @@ function Set-TargetResource
 
     try 
     {
-        Set-AuditOption @PSBoundParameters
-        Write-Verbose ( $localizedData.SetAuditpolOptionSucceed -f $Name, $Value )
+        Set-AuditOption -Name $name -Value $Value
+        Write-Verbose -Message ( $localizedData.SetAuditpolOptionSucceed -f $Name, $Value )
     }
     catch
     {
-        Write-Verbose ( $localizedData.SetAuditpolOptionFailed -f $Name, $Value )
+        Write-Verbose -Message ( $localizedData.SetAuditpolOptionFailed -f $Name, $Value )
     }
 }
 
 <#
     .SYNOPSIS
-    Sets the value of the audit policy option.
+        Tests that the audit policy option is in the desired state 
     .PARAMETER Name
-    Specifies the option to test.
+        Specifies the option to test.
     .PARAMETER Value
-    Specifies the value to test against the option.
+        Specifies the value to test against the option.
 #>
 function Test-TargetResource
 {
@@ -97,32 +96,30 @@ function Test-TargetResource
 
     if ( ( Get-AuditOption -Name $Name ) -eq $Value )
     {
-        Write-Verbose ( $localizedData.TestAuditpolOptionCorrect -f $Name,$value )
-        $return = $true
+        Write-Verbose -Message ( $localizedData.TestAuditpolOptionCorrect -f $Name, $value )
+        return $true
     }
     else
     {
-        Write-Verbose ( $localizedData.TestAuditpolOptionIncorrect -f $Name,$value )
-        $return = $false
+        Write-Verbose -Message ( $localizedData.TestAuditpolOptionIncorrect -f $Name, $value )
+        return $false
     }
-
-    $return
 }
 
 #---------------------------------------------------------------------------------------------------
 # Support functions to handle auditpol I/O
 
 <#
- .SYNOPSIS
-    Gets the audit policy option state.
- .DESCRIPTION
-    Ths is one of the public functions that calls into Get-AuditOptionCommand.
-    This function enforces parameters that will be passed through to the 
-    Get-AuditOptionCommand function and aligns to a specifc parameterset. 
- .PARAMETER Option 
-    The name of an audit option.
- .OUTPUTS
-    A string that is the state of the option (Enabled|Disables). 
+    .SYNOPSIS
+        Gets the audit policy option state.
+    .DESCRIPTION
+        Ths is one of the public functions that calls into Get-AuditOptionCommand.
+        This function enforces parameters that will be passed through to the 
+        Get-AuditOptionCommand function and aligns to a specifc parameterset. 
+    .PARAMETER Option 
+        The name of an audit option.
+    .OUTPUTS
+        A string that is the state of the option (Enabled|Disables). 
 #>
 function Get-AuditOption
 {
@@ -142,24 +139,22 @@ function Get-AuditOption
     $returnCsv =  Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name"
     
     # split the details into an array
-    $optionDetails = ( $returnCsv[2] ) -split ','
+    $optionDetails = ( $returnCsv[2] ) -Split ','
 
     # return the option value
     return $optionDetails[4]
 }
 
 <#
- .SYNOPSIS
-    Sets an audit policy option to enabled or disabled
- .DESCRIPTION
-    This public function calls Set-AuditOptionCommand and enforces parameters 
-    that will be passed to Set-AuditOptionCommand and aligns to a specifc parameterset. 
- .PARAMETER Name
-    The specifc Option to set
- .PARAMETER Value 
-    The value to set on the provided Option
- .OUTPUTS
-    None
+    .SYNOPSIS
+        Sets an audit policy option to enabled or disabled.
+    .DESCRIPTION
+        This public function calls Set-AuditOptionCommand and enforces parameters 
+        that will be passed to Set-AuditOptionCommand and aligns to a specifc parameterset. 
+    .PARAMETER Name
+        The specifc option to set.
+    .PARAMETER Value 
+        The value to set the provide option to.
 #>
 function Set-AuditOption
 {
@@ -182,17 +177,17 @@ function Set-AuditOption
     if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
     {
         <# 
-        The output text of auditpol is in simple past tense, but the input is in simple 
-        present tense the hashtable corrects the tense for the input.  
+            The output text of auditpol is in simple past tense, but the input is in simple 
+            present tense, so the hashtable converts the input accordingly.
         #>
-        $valueHashTable = @{
+        $pastToPresentValues = @{
             'Enabled'  = 'enable'
             'Disabled' = 'disable'
         }
         
-        [string[]] $SubCommand = @( "Option:$Name", "/value:$($valueHashTable[$value])" )
+        [String[]] $SubCommand = @( "Option:$Name", "/value:$($pastToPresentValues[$value])" )
 
-        Invoke-AuditPol -Command "Set" -SubCommand $SubCommand | Out-Null
+        Invoke-AuditPol -Command 'Set' -subCommand $SubCommand | Out-Null
     }
 }
 
