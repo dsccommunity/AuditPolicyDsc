@@ -41,8 +41,12 @@ try
             context 'Option Enabled' {
 
                 $optionState = 'Enabled'
-                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
-                $getTargetResourceResult = Get-TargetResource -Name $optionName
+                Mock -CommandName Get-AuditOption -MockWith { 
+                    return $optionState } -ModuleName MSFT_AuditPolicyOption
+                
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource -Name $optionName | Should Not Throw
+                }
 
                 It 'Should return the correct hashtable properties' {
                     $getTargetResourceResult.Name  | Should Be $optionName
@@ -53,8 +57,12 @@ try
             context 'Option Disabled' {
 
                 $optionState = 'Disabled'
-                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
-                $getTargetResourceResult = Get-TargetResource -Name $optionName
+                Mock -CommandName Get-AuditOption -MockWith { 
+                    return $optionState } -ModuleName MSFT_AuditPolicyOption
+
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource -Name $optionName | Should Not Throw
+                }
 
                 It 'Should return the correct hashtable properties' {
                     $getTargetResourceResult.Name  | Should Be $optionName
@@ -80,7 +88,8 @@ try
 
                 $optionState = 'Enabled'
                 $target.Value = $optionState
-                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+                Mock -CommandName Get-AuditOption -MockWith { 
+                    return $optionState } -ModuleName MSFT_AuditPolicyOption
 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
@@ -112,7 +121,8 @@ try
 
                 $optionState = 'Disabled'
                 $target.Value = $optionState
-                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+                Mock -CommandName Get-AuditOption -MockWith { 
+                    return $optionState } -ModuleName MSFT_AuditPolicyOption
 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw

@@ -31,95 +31,186 @@ try
 
         #region Pester Test Initialization
         # the audit option to use in the tests
-        $Subcategory   = 'Credential Validation'
-        $AuditFlag     = 'Failure'
-        $MockAuditFlags = 'Success','Failure','SuccessandFailure','NoAuditing'
+        $script:target = @{
+            Subcategory   = $null
+            AuditFlag     = $null
+        }
+
         $AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
         #endregion
 
         #region Function Get-TargetResource
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
-            
-            Context "Submit '$AuditFlag' and return '$AuditFlag'" {
 
-                Mock -CommandName Get-AuditCategory -MockWith { return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
+            $script:target.Subcategory = 'logon'
+            $script:target.AuditFlag = 'Success'
 
-                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-                
-                It 'Should return the correct hashtable properties' {
-                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
-                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
-                    $getTargetResourceResult.Ensure      | Should Be 'Present'
-                }
-            }
+            Context "Single word subcategory submit 'Success' and return 'Success'" {
 
-            Context "Submit '$AuditFlag' and return '$($AuditFlagSwap[$AuditFlag])'" {
-            
                 Mock -CommandName Get-AuditCategory -MockWith { 
-                    return $AuditFlagSwap[$AuditFlag] } -ModuleName MSFT_AuditPolicySubcategory
+                    return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
 
-                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-                
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
                 It 'Should return the correct hashtable properties' {
-                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
-                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
-                    $getTargetResourceResult.Ensure      | Should Be 'Absent'
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
 
-            Context "Submit '$AuditFlag' and return 'NoAuditing'" {
+            Context "Single word subcategory submit 'Success' and return 'Failure'" {
+                
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return 'Failure' } -ModuleName MSFT_AuditPolicySubcategory
+
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
+                It 'Single word subcategory should return the correct hashtable properties' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
+                }
+            }
+
+            Context "Single word subcategory submit 'Success' and return 'NoAuditing'" {
 
                 Mock -CommandName Get-AuditCategory -MockWith { 
                     return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
 
-                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-                
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
                 It 'Should return the correct hashtable properties' {
-                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
-                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
-                    $getTargetResourceResult.Ensure      | Should Be 'Absent'
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
 
-            Context "Submit '$AuditFlag' and return 'SuccessandFailure'" {
+            Context "Single word subcategory submit 'Success' and return 'SuccessandFailure'" {
 
                 Mock -CommandName Get-AuditCategory -MockWith { 
                    return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
             
-                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-                
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
                 It 'Should return the correct hashtable properties' {
-                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
-                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
-                    $getTargetResourceResult.Ensure      | Should Be 'Present'
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
+
+            $script:target.AuditFlag = 'Failure'
+
+            Context "Single word subcategory submit 'Failure' and return 'Success'" {
+
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
+
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
+                It 'Should return the correct hashtable properties' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Present'
+                }
+            }
+
+            Context "Single word subcategory submit 'Failure' and return 'Failure'" {
+                
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return 'Failure' } -ModuleName MSFT_AuditPolicySubcategory
+
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
+                It 'Single word subcategory should return the correct hashtable properties' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
+                }
+            }
+
+            Context "Single word subcategory submit 'Failure' and return 'NoAuditing'" {
+
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
+
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
+                It 'Should return the correct hashtable properties' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
+                }
+            }
+
+            Context "Single word subcategory submit 'Failure' and return 'SuccessandFailure'" {
+
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                   return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
+            
+                It 'Should not throw an exception' {
+                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                }
+
+                It 'Should return the correct hashtable properties' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $script:getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $script:getTargetResourceResult.Ensure      | Should Be 'Present'
+                }
+            }
+
         }
         #endregion
 
         #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
-
-            # mock call to the helper module to isolate Get-TargetResource
-            Mock Get-AuditCategory { return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
             
-            $testResult = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Present"
-    
-            It "Returns an Object of type Boolean" {
-                
-                $isBool = $testResult.GetType().Name -eq 'Boolean'
-                $isBool | Should Be $true
+            $target = @{
+                Subcategory  = $Subcategory 
+                AuditFlag = $AuditFlag
+                Ensure = $null
+            }    
+
+            Context 'Subcategory Success flag present and should be' {
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory 
+
+                It 'Should not throw an exception' {
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                }
+
+                It "Should return true" {
+                    $script:testTargetResourceResult | Should Be $true
+                }
             }
 
-            It " that is True when the Audit flag is Present and should be Present" {
-                
-                $testResult | Should Be $true
-            }
+            Context 'Subcategory Success flag present and should not be' {
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory 
 
-            It " and False when the Audit flag is Absent and should be Present" {
-                
-                $testResult = Test-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag -Ensure "Absent"
-                $testResult | Should Be $false
+                It 'Should not throw an exception' {
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                }
+
+                It "Should return false" {
+                    $script:testTargetResourceResult | Should Be $false
+                }
             }
         }
         #endregion
