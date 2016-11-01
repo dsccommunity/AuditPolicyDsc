@@ -66,41 +66,76 @@ try
 
         #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
+            $target = @{
+                Name  = $optionName 
+                Value = $null
+            }
 
             $optionStateSwap = @{
                 'Disabled' = 'Enabled';
                 'Enabled'  = 'Disabled'
             }
 
-            Context 'Option enabled' {
+            Context 'Option set to enabled and should be' {
 
                 $optionState = 'Enabled'
+                $target.Value = $optionState
                 Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
 
-                It "Should be true when testing for enabled" {
-                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionState
-                    $testTargetResourceResult | Should Be $true
+                It 'Should not throw an exception' {
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
                 }
 
-                It "Should be false when testing for disabled" {
-                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
-                    $testTargetResourceResult | Should Be $false
+                It "Should return true" {
+                    $script:testTargetResourceResult | Should Be $true
                 }
             }
 
-            Context 'Option disabled' {
+            Context 'Option set to enabled and should not be' {
 
-                $optionState = 'Disabled'
-                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+                $optionState = 'Enabled'
+                $target.Value = $optionState
 
-                It "Should be true when disabled and test for disabled" {
-                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionState
-                    $testTargetResourceResult | Should Be $true
+                Mock -CommandName Get-AuditOption -MockWith { 
+                    return $optionStateSwap[$optionState] } -ModuleName MSFT_AuditPolicyOption
+
+                It 'Should not throw an exception' {
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
                 }
 
-                It "Should be false when disabled and test for enabled" {
-                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
-                    $testTargetResourceResult | Should Be $false
+                It "Should return false" {
+                    $script:testTargetResourceResult | Should Be $false
+                }
+            }
+
+            Context 'Option set to disabled and should be' {
+
+                $optionState = 'Disabled'
+                $target.Value = $optionState
+                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+
+                It 'Should not throw an exception' {
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                }
+                
+                It "Should return true" {
+                    $script:testTargetResourceResult | Should Be $true
+                }
+            }
+
+            Context 'Option set to disabled and should not be' {
+
+                $optionState = 'Disabled'
+                $target.Value = $optionState
+                Mock -CommandName Get-AuditOption -MockWith { 
+                    return $optionStateSwap[$optionState] } -ModuleName MSFT_AuditPolicyOption
+                
+                It 'Should not throw an exception' {
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                }
+
+                It "Should return false" {
+                    $script:testTargetResourceResult | Should Be $false
                 }
             }
         }

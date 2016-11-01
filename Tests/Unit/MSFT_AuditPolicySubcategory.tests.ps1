@@ -1,9 +1,9 @@
 
-$Global:DSCModuleName      = 'AuditPolicyDsc'
-$Global:DSCResourceName    = 'MSFT_AuditPolicySubcategory'
+$script:DSCModuleName      = 'AuditPolicyDsc'
+$script:DSCResourceName    = 'MSFT_AuditPolicySubcategory'
 
 #region HEADER
-[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
+[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
 if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
      (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
@@ -15,8 +15,8 @@ else
 }
 Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
-    -DSCModuleName $Global:DSCModuleName `
-    -DSCResourceName $Global:DSCResourceName `
+    -DSCModuleName $script:DSCModuleName `
+    -DSCResourceName $script:DSCResourceName `
     -TestType Unit 
 #endregion
 
@@ -27,7 +27,7 @@ try
 
     # The InModuleScope command allows you to perform white-box unit testing on the internal
     # (non-exported) code of a Script Module.
-    InModuleScope $Global:DSCResourceName {
+    InModuleScope $script:DSCResourceName {
 
         #region Pester Test Initialization
         # the audit option to use in the tests
@@ -37,150 +37,68 @@ try
         $AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
         #endregion
 
-
         #region Function Get-TargetResource
-        Describe "$($Global:DSCResourceName)\Get-TargetResource" {
+        Describe "$($script:DSCResourceName)\Get-TargetResource" {
             
-            Context "Return object " {
-                
-                # mock call to the helper module to isolate Get-TargetResource
-                Mock Get-AuditCategory { return @{'Name'=$Subcategory;'AuditFlag'=$AuditFlag} } -ModuleName MSFT_AuditPolicySubcategory
-
-                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-
-                    It " is a hashtable that has the following keys:" {
-                        $isHashtable = $Get.GetType().Name -eq 'hashtable'
-
-                        $isHashtable | Should Be $true
-                    }
-            
-                    It "  Subcategory" {
-                        $ContainsSubcategoryKey = $Get.ContainsKey('Subcategory') 
-                
-                        $ContainsSubcategoryKey | Should Be $true
-                    }
-
-                    It "  AuditFlag" {
-                        $ContainsAuditFlagKey = $Get.ContainsKey('AuditFlag') 
-                
-                        $ContainsAuditFlagKey | Should Be $true
-                    }
-
-                    It "  Ensure" {
-                        $ContainsEnsureKey = $Get.ContainsKey('Ensure') 
-                
-                        $ContainsEnsureKey| Should Be $true
-                    }
-            }
-
             Context "Submit '$AuditFlag' and return '$AuditFlag'" {
 
-                # mock call to the helper module to isolate Get-TargetResource
-                Mock Get-AuditCategory { return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
+                Mock -CommandName Get-AuditCategory -MockWith { return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
 
-                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-
-                It " 'Subcategory' = '$Subcategory'" {
-                    $RetrievedSubcategory =  $Get.Subcategory 
+                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
                 
-                    $RetrievedSubcategory | Should Be $Subcategory
-                }
-                    
-                It " 'AuditFlag' = '$AuditFlag'" {
-                    $RetrievedAuditFlag = $Get.AuditFlag 
-                
-                    $RetrievedAuditFlag | Should Match $AuditFlag
-                }
-
-                It " 'Ensure' = 'Present'" {
-                    $RetrievedEnsure = $Get.Ensure 
-                
-                    $RetrievedEnsure | Should Be 'Present'
+                It 'Should return the correct hashtable properties' {
+                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
 
             Context "Submit '$AuditFlag' and return '$($AuditFlagSwap[$AuditFlag])'" {
             
-                # mock call to the helper module to isolate Get-TargetResource
-                Mock Get-AuditCategory { return $AuditFlagSwap[$AuditFlag] } -ModuleName MSFT_AuditPolicySubcategory
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return $AuditFlagSwap[$AuditFlag] } -ModuleName MSFT_AuditPolicySubcategory
 
-                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-
-                It " 'Subcategory' = '$Subcategory'" {
-                    $RetrievedSubcategory =  $Get.Subcategory 
+                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
                 
-                    $RetrievedSubcategory | Should Be $Subcategory
-                }
-                    
-                It " 'AuditFlag' != '$AuditFlag'" {
-                    $RetrievedAuditFlag = $Get.AuditFlag 
-                
-                    $RetrievedAuditFlag | Should Not Match $AuditFlag
-                }
-
-                It " 'Ensure' = 'Absent'" {
-                    $RetrievedEnsure = $Get.Ensure 
-                
-                    $RetrievedEnsure | Should Be 'Absent'
+                It 'Should return the correct hashtable properties' {
+                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
             }
 
             Context "Submit '$AuditFlag' and return 'NoAuditing'" {
 
-                Mock Get-AuditCategory { return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                    return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
 
-                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
-            
-                It " 'Subcategory' = '$Subcategory'" {
-                    $RetrievedSubcategory =  $Get.Subcategory 
+                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
                 
-                    $RetrievedSubcategory | Should Be $Subcategory
+                It 'Should return the correct hashtable properties' {
+                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
-
-                It " 'AuditFlag' != '$AuditFlag'" {
-                    $RetrievedAuditFlag = $Get.AuditFlag 
-                
-                    $RetrievedAuditFlag | Should Not Match $AuditFlag
-                }
-
-
-                It " 'Ensure' = 'Absent'" {
-                    $RetrievedEnsure = $Get.Ensure 
-                
-                    $RetrievedEnsure | Should Be 'Absent'
-                }
-
             }
 
             Context "Submit '$AuditFlag' and return 'SuccessandFailure'" {
 
-                Mock Get-AuditCategory { return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
-
-                $Get = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
+                Mock -CommandName Get-AuditCategory -MockWith { 
+                   return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
             
-                It " 'Subcategory' = '$Subcategory'" {
-                    $RetrievedSubcategory =  $Get.Subcategory 
+                $getTargetResourceResult = Get-TargetResource -Subcategory $Subcategory -AuditFlag $AuditFlag
                 
-                    $RetrievedSubcategory | Should Be $Subcategory
-                }
-
-                It " 'AuditFlag' = '$AuditFlag'" {
-                    $RetrievedAuditFlag = $Get.AuditFlag 
-                
-                    $RetrievedAuditFlag | Should Be $AuditFlag
-                }
-
-                It " 'Ensure' = 'Present'" {
-                    $RetrievedEnsure = $Get.Ensure 
-                
-                    $RetrievedEnsure | Should Be 'Present'
+                It 'Should return the correct hashtable properties' {
+                    $getTargetResourceResult.Subcategory | Should Be $Subcategory
+                    $getTargetResourceResult.AuditFlag   | Should Be $AuditFlag
+                    $getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
             }
         }
         #endregion
 
         #region Function Test-TargetResource
-        Describe "$($Global:DSCResourceName)\Test-TargetResource" {
+        Describe "$($script:DSCResourceName)\Test-TargetResource" {
 
             # mock call to the helper module to isolate Get-TargetResource
             Mock Get-AuditCategory { return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
@@ -207,7 +125,7 @@ try
         #endregion
 
         #region Function Set-TargetResource
-        Describe "$($Global:DSCResourceName)\Set-TargetResource" {
+        Describe "$($script:DSCResourceName)\Set-TargetResource" {
             
             Mock Set-AuditCategory { return }
 
@@ -256,31 +174,8 @@ try
 
         #region Helper Cmdlets
         Describe 'Private function Get-AuditCategory'  {
-            
-            $command = Get-Command Get-AuditCategory
-            $parameter = 'SubCategory'
-                
-            It "Should Exist" {
 
-                $command | Should Be $command 
-            }
-
-            It 'With output type set to "String"' {
-
-                $command.OutputType | Should Be 'System.String'
-            }
-
-            It "Has a parameter '$parameter'" {
-
-                $command.Parameters[$parameter].Name | Should Be $parameter
-            }
-
-            It 'Of type "String"' {
-
-                $command.Parameters[$parameter].ParameterType | Should Be 'String'
-            }
-
-            Context 'Get-AuditCategory with Mock Invoke-Auditpol ' {
+            Context 'Get single word audit category' {
 
                 [string] $subCategory = 'Logon'
                 [string] $auditFlag   = 'Success'
@@ -291,12 +186,10 @@ try
                 $AuditCategory = Get-AuditCategory -SubCategory $subCategory 
 
                 It "The return object is a String" {
-
                     $AuditCategory.GetType() | Should Be 'String'
                 }
                 
                 It "with the value '$auditFlag'" {
-
                     $AuditCategory | Should BeExactly $auditFlag
                 }
             }
@@ -304,48 +197,80 @@ try
 
         Describe 'Private function Set-AuditCategory' {
 
-            $command = Get-Command Set-AuditCategory
-            $parameter = 'SubCategory'
+            Context 'Set single word audit category Success flag to Present' {
                 
-            It "Should Exist" {
-
-                $command | Should Be $command 
-            }
-
-            It "With no output" {
-
-                $command.OutputType | Should BeNullOrEmpty
-            }
-
-            It "Has a parameter '$parameter'" {
-
-                $command.Parameters[$parameter].Name | Should Be $parameter
-            }
-
-            It 'Of type "String"' {
-
-                $command.Parameters[$parameter].ParameterType | Should Be 'String'
-            }
-
-            Context 'Set-AuditCategory with Mock Invoke-Auditpol' {
-                
-                    Mock Invoke-Auditpol { }
+                Mock Invoke-Auditpol { }
                     
-                    $comamnd = @{
-                        SubCategory = "Logon"
-                        AuditFlag = "Success"
-                        Ensure = "Present"
-                    }
+                $comamnd = @{
+                    SubCategory = "Logon"
+                    AuditFlag = "Success"
+                    Ensure = "Present"
+                }
 
-                    It 'Should not throw an error' {
+                It 'Should not throw an error' {
+                    { Set-AuditCategory @comamnd } | Should Not Throw 
+                }
 
-                        { $AuditCategory = Set-AuditCategory @comamnd } | Should Not Throw 
-                    }
+                It "Should not return a value"  {
+                    $AuditCategory | Should BeNullOrEmpty
+                }
+            }
 
-                    It "Should not return a value"  {
+            Context 'Set single word audit category Success flag to Absent' {
+                
+                Mock Invoke-Auditpol { }
+                    
+                $comamnd = @{
+                    SubCategory = "Logon"
+                    AuditFlag = "Success"
+                    Ensure = "Absent"
+                }
 
-                        $AuditCategory | Should BeNullOrEmpty
-                    }
+                It 'Should not throw an error' {
+                    { Set-AuditCategory @comamnd } | Should Not Throw 
+                }
+
+                It "Should not return a value"  {
+                    $AuditCategory | Should BeNullOrEmpty
+                }
+            }
+
+            Context 'Set multi-word audit category Success flag to Present' {
+                
+                Mock Invoke-Auditpol { }
+                    
+                $comamnd = @{
+                    SubCategory = "Object Access"
+                    AuditFlag = "Success"
+                    Ensure = "Present"
+                }
+
+                It 'Should not throw an error' {
+                    { Set-AuditCategory @comamnd } | Should Not Throw 
+                }
+
+                It "Should not return a value"  {
+                    $AuditCategory | Should BeNullOrEmpty
+                }
+            }
+
+            Context 'Set multi-word audit category Success flag to Absent' {
+                
+                Mock Invoke-Auditpol { }
+                    
+                $comamnd = @{
+                    SubCategory = "Object Access"
+                    AuditFlag = "Success"
+                    Ensure = "Absent"
+                }
+
+                It 'Should not throw an error' {
+                    { Set-AuditCategory @comamnd } | Should Not Throw 
+                }
+
+                It "Should not return a value"  {
+                    $AuditCategory | Should BeNullOrEmpty
+                }
             }
         }
         #endregion
