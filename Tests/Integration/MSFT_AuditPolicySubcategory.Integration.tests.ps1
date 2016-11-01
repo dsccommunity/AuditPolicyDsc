@@ -73,6 +73,154 @@ try
             
                 $currentConfig.Ensure | Should be $AuditFlagEnsure
             }
+            
+            It 'Should return $true' {
+                { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
+            }
+        }
+
+        Context 'Should disable failure audit flag' {
+            #region DEFAULT TESTS
+            
+            $AuditFlag       = 'Failure'
+            $AuditFlagEnsure = 'Absent'
+
+            # set the system Subcategory to the incorrect state to ensure a valid test.
+            & 'auditpol' '/set' "/subcategory:$Subcategory" '/failure:enable'
+            
+            It 'Should compile without throwing' {
+                {
+                    & "$($script:DSCResourceName)_Config" -Subcategory $Subcategory `
+                                                          -AuditFlag $AuditFlag `
+                                                          -AuditFlagEnsure $AuditFlagEnsure `
+                                                          -OutputPath $TestEnvironment.WorkingFolder
+                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                        -ComputerName localhost -Wait -Verbose -Force
+                } | Should not throw
+            }
+
+            It 'should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            }
+
+            #endregion
+            
+            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+
+            It "Subcategory Should be $Subcategory" {
+            
+                $currentConfig.Subcategory | Should be $Subcategory
+            }
+            
+            It "AuditFlag Should be $AuditFlag" {
+            
+                $currentConfig.AuditFlag | Should be $AuditFlag
+            }
+
+            It "Ensure Should be $AuditFlagEnsure" {
+            
+                $currentConfig.Ensure | Should be $AuditFlagEnsure
+            }
+
+            It 'Should return $true' {
+                { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
+            }
+        }
+
+        Context 'Should enable success audit flag' {
+            #region DEFAULT TESTS
+            
+            $AuditFlag       = 'Success'
+            $AuditFlagEnsure = 'Present'
+
+            # set the system Subcategory to the incorrect state to ensure a valid test.
+            & 'auditpol' '/set' "/subcategory:$Subcategory" '/success:disable'
+            
+            It 'Should compile without throwing' {
+                {
+                    & "$($script:DSCResourceName)_Config" -Subcategory $Subcategory `
+                                                          -AuditFlag $AuditFlag `
+                                                          -AuditFlagEnsure $AuditFlagEnsure `
+                                                          -OutputPath $TestEnvironment.WorkingFolder
+                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                        -ComputerName localhost -Wait -Verbose -Force
+                } | Should not throw
+            }
+
+            It 'should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            }
+
+            #endregion
+            
+            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+
+            It "Subcategory Should be $Subcategory" {
+            
+                $currentConfig.Subcategory | Should be $Subcategory
+            }
+            
+            It "AuditFlag Should be $AuditFlag" {
+            
+                $currentConfig.AuditFlag | Should be $AuditFlag
+            }
+
+            It "Ensure Should be $AuditFlagEnsure" {
+            
+                $currentConfig.Ensure | Should be $AuditFlagEnsure
+            }
+            
+            It 'Should return $true' {
+                { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
+            }
+        }
+
+        Context 'Should disable success audit flag' {
+            #region DEFAULT TESTS
+            
+            $AuditFlag       = 'Success'
+            $AuditFlagEnsure = 'Absent'
+
+            # set the system Subcategory to the incorrect state to ensure a valid test.
+            & 'auditpol' '/set' "/subcategory:$Subcategory" '/success:enable'
+            
+            It 'Should compile without throwing' {
+                {
+                    & "$($script:DSCResourceName)_Config" -Subcategory $Subcategory `
+                                                          -AuditFlag $AuditFlag `
+                                                          -AuditFlagEnsure $AuditFlagEnsure `
+                                                          -OutputPath $TestEnvironment.WorkingFolder
+                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                        -ComputerName localhost -Wait -Verbose -Force
+                } | Should not throw
+            }
+
+            It 'should be able to call Get-DscConfiguration without throwing' {
+                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            }
+
+            #endregion
+            
+            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
+
+            It "Subcategory Should be $Subcategory" {
+            
+                $currentConfig.Subcategory | Should be $Subcategory
+            }
+            
+            It "AuditFlag Should be $AuditFlag" {
+            
+                $currentConfig.AuditFlag | Should be $AuditFlag
+            }
+
+            It "Ensure Should be $AuditFlagEnsure" {
+            
+                $currentConfig.Ensure | Should be $AuditFlagEnsure
+            }
+
+            It 'Should return $true' {
+                { Test-DscConfiguration -Path $TestEnvironment.WorkingFolder } | Should Be $true
+            }
         }
     }
     #endregion
