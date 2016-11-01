@@ -33,17 +33,14 @@ try
         # the audit option to use in the tests
         $script:target = @{
             Subcategory   = $null
-            AuditFlag     = $null
         }
 
-        $AuditFlagSwap = @{'Failure'='Success';'Success'='Failure'}
         #endregion
 
         #region Function Get-TargetResource
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
             $script:target.Subcategory = 'Logon'
-            $script:target.AuditFlag = 'Success'
 
             Context "Single word subcategory submit 'Success' and return 'Success'" {
 
@@ -51,7 +48,8 @@ try
                     return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -67,7 +65,8 @@ try
                     return 'Failure' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Single word subcategory should return the correct hashtable properties' {
@@ -83,7 +82,8 @@ try
                     return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -99,7 +99,8 @@ try
                    return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
             
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -117,7 +118,8 @@ try
                     return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -133,7 +135,8 @@ try
                     return 'Failure' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Single word subcategory should return the correct hashtable properties' {
@@ -149,7 +152,8 @@ try
                     return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -165,7 +169,8 @@ try
                    return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
             
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -185,7 +190,8 @@ try
                     return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -201,7 +207,8 @@ try
                     return 'Failure' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -217,7 +224,8 @@ try
                     return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -233,7 +241,8 @@ try
                    return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
             
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -251,7 +260,8 @@ try
                     return $AuditFlag } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -267,7 +277,8 @@ try
                     return 'Failure' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Single word subcategory should return the correct hashtable properties' {
@@ -283,7 +294,8 @@ try
                     return 'NoAuditing' } -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -299,7 +311,8 @@ try
                    return 'SuccessandFailure' } -ModuleName MSFT_AuditPolicySubcategory
             
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource @target | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
