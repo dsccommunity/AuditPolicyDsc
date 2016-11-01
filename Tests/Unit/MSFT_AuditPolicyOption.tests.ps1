@@ -31,7 +31,6 @@ try
 
         # set the audit option test strings to Mock
         $optionName  = 'CrashOnAuditFail'
-        $optionState = 'Disabled'
         
         #endregion
 
@@ -45,7 +44,8 @@ try
                     return $optionState } -ModuleName MSFT_AuditPolicyOption
                 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource -Name $optionName | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
@@ -61,7 +61,8 @@ try
                     return $optionState } -ModuleName MSFT_AuditPolicyOption
 
                 It 'Should not throw an exception' {
-                    $script:getTargetResourceResult = Get-TargetResource -Name $optionName | Should Not Throw
+                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                        Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
