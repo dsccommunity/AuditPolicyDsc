@@ -6,7 +6,7 @@
     Get, Set, and Test operations on DSC managed nodes.
 #>
 
-Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
+Import-LocalizedData -BindingVariable LocalizedData -Filename AuditPolicyDsc.strings.psd1
 
 <#
  .SYNOPSIS
