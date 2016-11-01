@@ -183,9 +183,9 @@ function Set-AuditOption
             'Disabled' = 'disable'
         }
         
-        [String[]] $SubCommand = @( "Option:$Name", "/value:$($pastToPresentValues[$value])" )
+        [String[]] $subCommand = @( "Option:$Name", "/value:$($pastToPresentValues[$value])" )
 
-        Invoke-AuditPol -Command 'Set' -subCommand $SubCommand | Out-Null
+        Invoke-AuditPol -Command 'Set' -subCommand $subCommand | Out-Null
     }
 }
 
