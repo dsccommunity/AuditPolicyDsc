@@ -1,5 +1,5 @@
 
-Import-Module $PSScriptRoot\..\Helper.psm1
+Import-Module $PSScriptRoot\..\AuditPolicyResourceHelper.psm1
 
 <#
     .SYNOPSIS
