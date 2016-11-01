@@ -11,21 +11,21 @@ Import-LocalizedData -BindingVariable LocalizedData -Filename helper.psd1
 <#
  .SYNOPSIS
     Invoke-AuditPol is a private function that wraps auditpol.exe providing a 
-    centralized function to mange access to and the output of auditpol.exe.    
+    centralized function to manage access to and the output of auditpol.exe.    
  .DESCRIPTION
     The function will accept a string to pass to auditpol.exe for execution. Any 'get' or
     'set' opertions can be passed to the central wrapper to execute. All of the 
     nuances of auditpol.exe can be further broken out into specalized functions that 
     call Invoke-AuditPol.   
     
-    Since the call operators is being used to run auditpol, the input is restricted to only execute
+    Since the call operator is being used to run auditpol, the input is restricted to only execute
     against auditpol.exe. Any input that is an invalid flag or parameter in 
     auditpol.exe will return an error to prevent abuse of the call.
-    The call operator will not parse the parameters, so they are split in the fuction. 
+    The call operator will not parse the parameters, so they are split in the function. 
  .PARAMETER Command 
     The action that audtipol should take on the subcommand.
  .PARAMETER SubCommand 
-    The The subcommand the execute.
+    The subcommand to execute.
  .OUTPUTS
     The raw string output of auditpol.exe with the /r switch to return a CSV string. 
  .EXAMPLE
@@ -37,12 +37,12 @@ function Invoke-AuditPol
     [OutputType([System.String])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Get', 'Set')]
         [System.String]
         $Command,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String[]]
         $SubCommand
     )
@@ -72,7 +72,7 @@ function Invoke-AuditPol
         # Use the call operator to process the auditpol command
         $return = & "auditpol.exe" $commandString 2>&1
 
-        # auditpol does not thrown exceptions, so test the results and throw if needed
+        # auditpol does not throw exceptions, so test the results and throw if needed
         if ( $LASTEXITCODE -ne 0 )
         {
             throw New-Object System.ArgumentException
@@ -88,7 +88,7 @@ function Invoke-AuditPol
     catch [System.ArgumentException]
     {
         # catch the error thrown if the lastexitcode is not 0 
-        [string] $errorString = $error[0].Exception
+        [String] $errorString = $error[0].Exception
         $errorString = $errorString + "`$LASTEXITCODE = $LASTEXITCODE;"
         $errorString = $errorString + " Command = auditpol $commandString"
         
