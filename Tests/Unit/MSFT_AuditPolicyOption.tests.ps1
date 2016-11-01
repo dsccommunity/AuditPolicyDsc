@@ -224,16 +224,17 @@ try
 
             Context 'Get audit policy option' {
 
-                [string] $name  = 'CrashOnAuditFail'
-                [string] $value = 'Enabled'
+                [String] $name  = 'CrashOnAuditFail'
+                [String] $value = 'Enabled'
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                 Mock -CommandName Invoke-Auditpol -MockWith { 
                     @("","","$env:COMPUTERNAME,,Option:$name,,$value,,") 
-                } -Verifiable
+                } -ParameterFilter { $Commmand -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } | Should Not Throw
+                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } | 
+                        Should Not Throw
                 } 
 
                 It "Should return the correct value" {
@@ -249,12 +250,14 @@ try
 
         Describe 'Private function Set-AuditOption' { 
 
+            [String] $name  = "CrashOnAuditFail"
+
             Context "Set audit poliy option to enabled" {
 
-                [string] $name  = "CrashOnAuditFail"
-                [string] $value = "Enabled"
+                [String] $value = "Enabled"
 
-                Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable
+                Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
+                    $Commmand -eq 'Set' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { Set-AuditOption -Name $name -Value $value } | Should Not Throw
@@ -268,11 +271,11 @@ try
 
             Context "Set audit policy option to disabled" {
 
-                [string] $name  = "CrashOnAuditFail"
-                [string] $value = "Disabled"
+                [String] $value = "Disabled"
 
-                Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable
-
+                Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
+                    $Commmand -eq 'Set' } -Verifiable
+                    
                 It 'Should not throw an exception' {
                     { Set-AuditOption -Name $name -Value $value } | Should Not Throw
                 }   
