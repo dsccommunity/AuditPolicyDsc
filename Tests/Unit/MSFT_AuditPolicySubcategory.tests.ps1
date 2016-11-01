@@ -458,7 +458,7 @@ try
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                  Mock -CommandName Invoke-Auditpol -MockWith { 
                      @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Commmand -eq 'Get' } -Verifiable
+                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditCategory -SubCategory $subCategory } | 
@@ -482,7 +482,7 @@ try
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                  Mock -CommandName Invoke-Auditpol -MockWith { 
                      @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Commmand -eq 'Get' } -Verifiable
+                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditCategory -SubCategory $subCategory } | 
@@ -508,7 +508,7 @@ try
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                  Mock -CommandName Invoke-Auditpol -MockWith { 
                      @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Commmand -eq 'Get' } -Verifiable
+                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditCategory -SubCategory $subCategory } | 
@@ -532,7 +532,7 @@ try
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                  Mock -CommandName Invoke-Auditpol -MockWith { 
                      @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Commmand -eq 'Get' } -Verifiable
+                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditCategory -SubCategory $subCategory } | 
@@ -555,7 +555,7 @@ try
             Context 'Set single word audit category Success flag to Present' {
                 
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
-                    $Commmand -eq 'Set'} -Verifiable
+                    $Command -eq 'Set' } -Verifiable
                     
                 $comamnd = @{
                     SubCategory = "Logon"
@@ -576,7 +576,7 @@ try
             Context 'Set single word audit category Success flag to Absent' {
                 
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
-                    $Commmand -eq 'Set' } -Verifiable
+                    $Command -eq 'Set' } -Verifiable
                     
                 $comamnd = @{
                     SubCategory = "Logon"
@@ -597,7 +597,7 @@ try
             Context 'Set multi-word audit category Success flag to Present' {
                 
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
-                    $Commmand -eq 'Set' } -Verifiable
+                    $Command -eq 'Set' } -Verifiable
                     
                 $comamnd = @{
                     SubCategory = "Object Access"
@@ -618,7 +618,7 @@ try
             Context 'Set multi-word audit category Success flag to Absent' {
                 
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
-                    $Commmand -eq 'Set' } -Verifiable
+                    $Command -eq 'Set' } -Verifiable
                     
                 $comamnd = @{
                     SubCategory = "Object Access"

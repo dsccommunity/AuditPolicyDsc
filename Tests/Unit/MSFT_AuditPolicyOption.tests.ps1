@@ -230,7 +230,7 @@ try
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                 Mock -CommandName Invoke-Auditpol -MockWith { 
                     @("","","$env:COMPUTERNAME,,Option:$name,,$value,,") 
-                } -ParameterFilter { $Commmand -eq 'Get' } -Verifiable
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditOptionResult = Get-AuditOption -Name $name } | 
@@ -257,7 +257,7 @@ try
                 [String] $value = "Enabled"
 
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
-                    $Commmand -eq 'Set' } -Verifiable
+                    $Command -eq 'Set' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { Set-AuditOption -Name $name -Value $value } | Should Not Throw
@@ -274,8 +274,8 @@ try
                 [String] $value = "Disabled"
 
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
-                    $Commmand -eq 'Set' } -Verifiable
-                    
+                    $Command -eq 'Set' } -Verifiable
+
                 It 'Should not throw an exception' {
                     { Set-AuditOption -Name $name -Value $value } | Should Not Throw
                 }   
