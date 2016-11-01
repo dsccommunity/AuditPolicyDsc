@@ -1,8 +1,7 @@
 
-Import-Module -Name (Join-Path -Path (Split-Path $PSScriptRoot -Parent) `
-                               -ChildPath (Join-Path -Path 'DscResources' `
-                                                     -ChildPath 'AuditPolicyResourceHelper.psm1')) `
-                                                     -Force
+Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
+                               -ChildPath 'AuditPolicyResourceHelper.psm1') `
+                               -Force
 <#
     .SYNOPSIS
         Returns the current audit flag for the given subcategory.
@@ -184,6 +183,7 @@ function Test-TargetResource
         [System.String]
         $AuditFlag,
 
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure
