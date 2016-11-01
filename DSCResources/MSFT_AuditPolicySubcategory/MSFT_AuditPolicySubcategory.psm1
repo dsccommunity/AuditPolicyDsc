@@ -191,7 +191,7 @@ function Test-TargetResource
 
     try
     {
-        $currentAuditFlag = Get-AuditCategory -SubCategory $Subcategory
+        [String] $currentAuditFlag = Get-AuditCategory -SubCategory $Subcategory
         Write-Verbose -Message ( $localizedData.GetAuditpolSubcategorySucceed -f $Subcategory, $AuditFlag )
     }
     catch

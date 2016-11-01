@@ -1,9 +1,9 @@
 
-$Global:DSCModuleName      = 'AuditPolicyDsc'
-$Global:DSCResourceName    = 'MSFT_AuditPolicyOption'
+$script:DSCModuleName      = 'AuditPolicyDsc'
+$script:DSCResourceName    = 'MSFT_AuditPolicyOption'
 
 #region HEADER
-[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
+[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
 if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
      (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
@@ -15,8 +15,8 @@ else
 }
 Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
-    -DSCModuleName $Global:DSCModuleName `
-    -DSCResourceName $Global:DSCResourceName `
+    -DSCModuleName $script:DSCModuleName `
+    -DSCResourceName $script:DSCResourceName `
     -TestType Unit 
 #endregion
 
@@ -25,87 +25,98 @@ try
 {
     #region Pester Tests
 
-    # The InModuleScope command allows you to perform white-box unit testing on the internal
-    # (non-exported) code of a Script Module.
-    InModuleScope $Global:DSCResourceName {
+    InModuleScope $script:DSCResourceName {
 
         #region Pester Test Initialization
+
         # set the audit option test strings to Mock
         $optionName  = 'CrashOnAuditFail'
         $optionState = 'Disabled'
-        $optionStateSwap = @{'Disabled'='Enabled';'Enabled'='Disabled'}
+        
         #endregion
 
         #region Function Get-TargetResource
-        Describe "$($Global:DSCResourceName)\Get-TargetResource" {
+        Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
-            # mock call to the helper module to isolate Get-TargetResource
-            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditPolicyOption
+            context 'Option Enabled' {
 
-            $get = Get-TargetResource -Name $optionName
+                $optionState = 'Enabled'
+                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+                $getTargetResourceResult = Get-TargetResource -Name $optionName
 
-            It "Return object is a hashtable" {
-                $isHashtable = $get.GetType().Name -eq 'hashtable'
-                $isHashtable | Should Be $true
+                It 'Should return the correct hashtable properties' {
+                    $getTargetResourceResult.Name  | Should Be $optionName
+                    $getTargetResourceResult.Value | Should Be $optionState
+                }
             }
 
-            It " that has a 'Name' key" {
-                $containsNameKey = $get.ContainsKey('Name')
-                $containsNameKey | Should Be $true
-            }
-            
-            It "  with a value of '$optionName'" {
-                $retrievedOptionName = $get.Name 
-                $retrievedOptionName | Should Be $optionName
-            }
+            context 'Option Disabled' {
 
-            It " that has a 'Value' key" {
-                $containsValueKey = $get.ContainsKey('Value')
-                $containsValueKey | Should Be $true
-            }
-            
-            It "  with a value of '$optionState'" {
-                $get.Value | Should Be $optionState
+                $optionState = 'Disabled'
+                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+                $getTargetResourceResult = Get-TargetResource -Name $optionName
+
+                It 'Should return the correct hashtable properties' {
+                    $getTargetResourceResult.Name  | Should Be $optionName
+                    $getTargetResourceResult.Value | Should Be $optionState
+                }
             }
         }
         #endregion
 
         #region Function Test-TargetResource
-        Describe "$($Global:DSCResourceName)\Test-TargetResource" {
-            
-            # mock call to the helper module to isolate Test-TargetResource
-            Mock Get-AuditOption { return $optionState } -ModuleName MSFT_AuditPolicyOption
+        Describe "$($script:DSCResourceName)\Test-TargetResource" {
 
-            $test = Test-TargetResource -Name $optionName -Value $optionState
-
-            It "Return object is a Boolean" {
-                $isBool = $test.GetType().Name -eq "Boolean"
-                $isBool | Should Be $true
+            $optionStateSwap = @{
+                'Disabled' = 'Enabled';
+                'Enabled'  = 'Disabled'
             }
 
-            It " that is true when matching" {
-                $valueMatches = $test
-                $valueMatches | Should Be $true
+            Context 'Option enabled' {
+
+                $optionState = 'Enabled'
+                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+
+                It "Should be true when testing for enabled" {
+                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionState
+                    $testTargetResourceResult | Should Be $true
+                }
+
+                It "Should be false when testing for disabled" {
+                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
+                    $testTargetResourceResult | Should Be $false
+                }
             }
 
-            It " and is false when not matching" {
-                $valueNotMatches = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
-                $valueNotMatches | Should Be $false
+            Context 'Option disabled' {
+
+                $optionState = 'Disabled'
+                Mock -CommandName Get-AuditOption -MockWith { return $optionState } -ModuleName MSFT_AuditPolicyOption
+
+                It "Should be true when disabled and test for disabled" {
+                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionState
+                    $testTargetResourceResult | Should Be $true
+                }
+
+                It "Should be false when disabled and test for enabled" {
+                    $testTargetResourceResult = Test-TargetResource -Name $optionName -Value $optionStateSwap[$optionState]
+                    $testTargetResourceResult | Should Be $false
+                }
             }
         }
         #endregion
 
         #region Function Set-TargetResource
-        Describe "$($Global:DSCResourceName)\Set-TargetResource" {
+        Describe "$($script:DSCResourceName)\Set-TargetResource" {
 
             # mock call to the helper module to isolate Set-TargetResource
-            Mock Set-AuditOption { return } -ModuleName MSFT_AuditPolicyOption
+            Mock -CommandName Set-AuditOption -MockWith { } -ModuleName MSFT_AuditPolicyOption -Verifiable
                 
-            $set = Set-TargetResource -Name $optionName -Value $optionState
+            $setTargetResourceResult = Set-TargetResource -Name $optionName -Value $optionState
 
-            It " returns no object" {
-                
-                $set | Should BeNullOrEmpty
+            It 'Should call expected Mocks' {    
+                Assert-VerifiableMocks
+                Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
             } 
         }
         #endregion
@@ -113,41 +124,19 @@ try
         #region Helper Cmdlets
         Describe 'Private function Get-AuditOption' { 
 
-            $command = Get-Command Get-AuditOption
-            $parameter = 'Name'
-                
-            It "Should Exist" {
-
-                $command | Should Be $command 
-            }
-
-            It 'With output type set to "String"' {
-
-                $command.OutputType | Should Be 'System.String'
-            }
-
-            It "Has a parameter '$parameter'" {
-
-                $command.Parameters[$parameter].Name | Should Be $parameter
-            }
-
-            It 'Of type "String"' {
-
-                $command.Parameters[$parameter].ParameterType | Should Be 'String'
-            }
-
             Context 'Get-AuditOption with Mock Invoke-Auditpol' {
 
                 [string] $name  = 'CrashOnAuditFail'
                 [string] $value = 'Enabled'
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
-                Mock Invoke-Auditpol {  @("","","$env:COMPUTERNAME,,Option:$name,,$value,,") }
+                Mock -CommandName Invoke-Auditpol -MockWith { 
+                    @("","","$env:COMPUTERNAME,,Option:$name,,$value,,") 
+                }
 
                 $auditOption = Get-AuditOption -Name $name
 
-                It "The option $name returns $value" {
-
+                It "Should return the correct value" {
                     $auditOption | should Be $value
                 }
             }
@@ -155,46 +144,38 @@ try
 
         Describe 'Private function Set-AuditOption' { 
 
-            $command = Get-Command Set-AuditOption
-            $parameter = 'Name'
-                
-            It "Should Exist" {
+            Context "Set-AuditOption to enabled" {
 
-                $command | Should Be $command 
+                [string] $name  = "CrashOnAuditFail"
+                [string] $value = "Enabled"
+
+                Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable
+
+                It 'Should not throw an exception' {
+                    { Set-AuditOption -Name $name -Value $value } | Should Not Throw
+                }   
+
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
+                } 
             }
 
-            It "With no output" {
-
-                $command.OutputType | Should BeNullOrEmpty
-            }
-
-            It "Has a parameter '$parameter'" {
-
-                $command.Parameters[$parameter].Name | Should Be $parameter
-            }
-
-            It 'Of type "String"' {
-
-                $command.Parameters[$parameter].ParameterType | Should Be 'String'
-            }
-
-            Context "Set-AuditOption with Mock Invoke-Auditpol" {
+            Context "Set-AuditOption to disabled" {
 
                 [string] $name  = "CrashOnAuditFail"
                 [string] $value = "Disabled"
 
-                Mock Invoke-Auditpol { }
+                Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable
 
-                It "Does not thrown an error" {
-                        
-                    { $setAuditOption =  Set-AuditOption -Name $name -Value $value } |
-                    Should Not Throw
-                }    
+                It 'Should not throw an exception' {
+                    { Set-AuditOption -Name $name -Value $value } | Should Not Throw
+                }   
 
-                It "Should not return a value"  {
-
-                    $setAuditOption | Should BeNullOrEmpty
-                }
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
+                } 
             }
         }
         #endregion

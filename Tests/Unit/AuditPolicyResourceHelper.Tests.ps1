@@ -4,11 +4,11 @@
 [String] $moduleRoot = Split-Path -Parent ( Split-Path -Parent $PSScriptRoot )
 
 # get the module name to import
-[String] $systemUnderTest = ( Split-Path -Leaf $MyInvocation.MyCommand.Path ) `
+[String] $helperModuleName = ( Split-Path -Leaf $MyInvocation.MyCommand.Path ) `
                                 -Replace "\.tests\.ps1", ".psm1"
 
 Import-Module -Name (Join-Path -Path ( Join-Path -Path $moduleRoot -ChildPath 'DSCResources') `
-                               -ChildPath $systemUnderTest ) `
+                               -ChildPath $helperModuleName ) `
                                -Force
 #region Generate data
 
