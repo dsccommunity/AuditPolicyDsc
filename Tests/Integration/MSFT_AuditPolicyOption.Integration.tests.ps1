@@ -31,6 +31,7 @@ try
     Describe "$($script:DSCResourceName)_Integration" {
         
         Context 'Should set option to Enabled' {
+            
             #region DEFAULT TESTS
 
             # Set the option value to test
@@ -49,19 +50,18 @@ try
             }
 
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+                { $script:currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop } | 
+                    Should Not throw
             }
 
             #endregion
 
-            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
-
-            It "Should return the correct option name" {
-                $currentConfig.Name | Should Be $optionName
+            It 'Should return the correct option name' {
+                $script:currentConfig.Name | Should Be $optionName
             }
 
-            It "Should return the correct option value"{
-                $currentConfig.Value | Should Be $optionValue
+            It 'Should return the correct option value' {
+                $script:currentConfig.Value | Should Be $optionValue
             }
             
             It 'Should return $true' {
@@ -70,6 +70,8 @@ try
         }
 
         Context 'Should set option to Disabled' {
+
+            #region DEFAULT TESTS
 
             # Set the option value to test
             $optionValue = 'Disabled'
@@ -87,19 +89,18 @@ try
             }
 
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+                { $script:currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop } | 
+                    Should Not throw
             }
 
             #endregion
 
-            $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
-
-            It "Should return the correct option name" {
-                $currentConfig.Name | Should Be $optionName
+            It 'Should return the correct option name' {
+                $script:currentConfig.Name | Should Be $optionName
             }
 
-            It "Should return the correct option value"{
-                $currentConfig.Value | Should Be $optionValue
+            It 'Should return the correct option value' {
+                $script:currentConfig.Value | Should Be $optionValue
             }
             
             It 'Should return $true' {

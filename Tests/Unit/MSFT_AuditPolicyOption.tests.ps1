@@ -37,7 +37,7 @@ try
         #region Function Get-TargetResource
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
-            context 'Option Enabled' {
+            Context 'Option Enabled' {
 
                 $optionState = 'Enabled'
                 Mock -CommandName Get-AuditOption -MockWith { 
@@ -54,7 +54,7 @@ try
                 }
             }
 
-            context 'Option Disabled' {
+            Context 'Option Disabled' {
 
                 $optionState = 'Disabled'
                 Mock -CommandName Get-AuditOption -MockWith { 
@@ -75,22 +75,16 @@ try
 
         #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
+            
             $target = @{
                 Name  = $optionName 
-                Value = $null
-            }
-
-            $optionStateSwap = @{
-                'Disabled' = 'Enabled';
-                'Enabled'  = 'Disabled'
+                Value = 'Enabled'
             }
 
             Context 'Option set to enabled and should be' {
 
-                $optionState = 'Enabled'
-                $target.Value = $optionState
                 Mock -CommandName Get-AuditOption -MockWith { 
-                    return $optionState } -ModuleName MSFT_AuditPolicyOption
+                    return 'Enabled' } -ModuleName MSFT_AuditPolicyOption
 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
@@ -103,11 +97,8 @@ try
 
             Context 'Option set to enabled and should not be' {
 
-                $optionState = 'Enabled'
-                $target.Value = $optionState
-
                 Mock -CommandName Get-AuditOption -MockWith { 
-                    return $optionStateSwap[$optionState] } -ModuleName MSFT_AuditPolicyOption
+                    return 'Disabled' } -ModuleName MSFT_AuditPolicyOption
 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
@@ -118,12 +109,12 @@ try
                 }
             }
 
+            $target.Value = 'Disabled'
+
             Context 'Option set to disabled and should be' {
 
-                $optionState = 'Disabled'
-                $target.Value = $optionState
                 Mock -CommandName Get-AuditOption -MockWith { 
-                    return $optionState } -ModuleName MSFT_AuditPolicyOption
+                    return 'Disabled' } -ModuleName MSFT_AuditPolicyOption
 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
@@ -136,10 +127,8 @@ try
 
             Context 'Option set to disabled and should not be' {
 
-                $optionState = 'Disabled'
-                $script:target.Value = $optionState
                 Mock -CommandName Get-AuditOption -MockWith { 
-                    return $optionStateSwap[$optionState] } -ModuleName MSFT_AuditPolicyOption
+                    return 'Enabled' } -ModuleName MSFT_AuditPolicyOption
                 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
@@ -154,17 +143,20 @@ try
 
         #region Function Set-TargetResource
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
+            
             $target = @{
                 Name  = $optionName 
-                Value = $null
+                Value = 'Enabled'
             }
-            context 'Option Enabled' {
 
-                $target.Value = 'Enabled'
-                Mock -CommandName Set-AuditOption -MockWith { } -ModuleName MSFT_AuditPolicyOption -Verifiable
+            Context 'Option Enabled' {
+
+                Mock -CommandName Set-AuditOption -MockWith { } `
+                     -ModuleName MSFT_AuditPolicyOption -Verifiable
                     
                 It 'Should not throw an exception' {
-                    { $script:setTargetResourceResult = Set-TargetResource @target } | Should Not Throw
+                    { $script:setTargetResourceResult = Set-TargetResource @target } | 
+                        Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {    
@@ -173,13 +165,18 @@ try
                 } 
             }
 
-            context 'Option Disabled' {
-                $target.Value = 'Disabled'
-                Mock -CommandName Set-AuditOption -MockWith { } -ModuleName MSFT_AuditPolicyOption -Verifiable
+            $target.Value = 'Disabled'
+
+            Context 'Option Disabled' {
+
+                Mock -CommandName Set-AuditOption -MockWith { } `
+                     -ModuleName MSFT_AuditPolicyOption -Verifiable
                     
                 It 'Should not throw an exception' {
-                    { $script:setTargetResourceResult = Set-TargetResource @target } | Should Not Throw
+                    { $script:setTargetResourceResult = Set-TargetResource @target } | 
+                        Should Not Throw
                 }
+
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
@@ -191,7 +188,7 @@ try
         #region Helper Cmdlets
         Describe 'Private function Get-AuditOption' { 
 
-            Context 'Get-AuditOption with Mock Invoke-Auditpol' {
+            Context 'Get audit policy option' {
 
                 [string] $name  = 'CrashOnAuditFail'
                 [string] $value = 'Enabled'
@@ -201,17 +198,19 @@ try
                     @("","","$env:COMPUTERNAME,,Option:$name,,$value,,") 
                 }
 
-                $auditOption = Get-AuditOption -Name $name
+                It 'Should not throw an exception' {
+                    { $getAuditOptionResult = Get-AuditOption -Name $name } | Should Not Throw
+                } 
 
                 It "Should return the correct value" {
-                    $auditOption | should Be $value
+                    $getAuditOptionResult | should Be $value
                 }
             }
         }
 
         Describe 'Private function Set-AuditOption' { 
 
-            Context "Set-AuditOption to enabled" {
+            Context "Set audit poliy option to enabled" {
 
                 [string] $name  = "CrashOnAuditFail"
                 [string] $value = "Enabled"
@@ -228,7 +227,7 @@ try
                 } 
             }
 
-            Context "Set-AuditOption to disabled" {
+            Context "Set audit policy option to disabled" {
 
                 [string] $name  = "CrashOnAuditFail"
                 [string] $value = "Disabled"
