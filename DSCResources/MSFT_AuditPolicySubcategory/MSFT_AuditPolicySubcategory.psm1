@@ -120,7 +120,6 @@ function Set-TargetResource
         [System.String]
         $AuditFlag,
 
-        [Parameter(Mandatory = $true)]
         [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure
