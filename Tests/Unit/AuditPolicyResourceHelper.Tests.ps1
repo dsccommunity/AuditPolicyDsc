@@ -184,7 +184,7 @@ Describe 'auditpol.exe output' {
 
 Describe "Private function Invoke-Auditpol" {
 
-    InModuleScope Helper {
+    InModuleScope AuditPolicyResourceHelper {
 
         $command = Get-Command Invoke-Auditpol
         # parameters listed in the Hashtable name = type, Mandatory, validateSet
