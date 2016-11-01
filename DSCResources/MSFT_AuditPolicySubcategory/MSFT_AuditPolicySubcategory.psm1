@@ -187,7 +187,7 @@ function Test-TargetResource
         $Ensure
     )
 
-    [System.Boolean] $returnValue
+    [System.Boolean] $isInDesiredState = $false
 
     try
     {
@@ -202,11 +202,11 @@ function Test-TargetResource
     # If the setting should be present look for a match, otherwise look for a notmatch
     if ( $Ensure -eq 'Present' )
     {
-        $returnValue = $currentAuditFlag -match $AuditFlag
+        $isInDesiredState = $currentAuditFlag -match $AuditFlag
     }
     else
     { 
-        $returnValue = $currentAuditFlag -notmatch $AuditFlag
+        $isInDesiredState = $currentAuditFlag -notmatch $AuditFlag
     }
 
     <# 
@@ -214,7 +214,7 @@ function Test-TargetResource
         matches the ensure property return the setting correct message, else return the 
         setting incorrect message
     #>
-    if ( $returnValue )
+    if ( $isInDesiredState )
     {
         Write-Verbose -Message ( $localizedData.TestAuditpolSubcategoryCorrect `
                         -f $Subcategory, $AuditFlag, $Ensure )
@@ -225,7 +225,7 @@ function Test-TargetResource
                        -f $Subcategory, $AuditFlag, $Ensure )
     }
 
-    $returnValue
+    $isInDesiredState
 }
 
 #---------------------------------------------------------------------------------------------------
