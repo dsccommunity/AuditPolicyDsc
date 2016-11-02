@@ -30,27 +30,29 @@ try
         #region Pester Test Initialization
 
         # set the audit option test strings to Mock
-        $optionName  = 'CrashOnAuditFail'
-        
+        $testParameters = @{
+            optionName  = 'CrashOnAuditFail'
+            optionState = 'Enabled'
+        }
+
         #endregion
 
         #region Function Get-TargetResource
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
             Context 'Option Enabled' {
-
-                $optionState = 'Enabled'
+                
                 Mock -CommandName Get-AuditOption -MockWith { 
                     return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
                 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Name  | Should Be $optionName
-                    $script:getTargetResourceResult.Value | Should Be $optionState
+                    $script:getTargetResourceResult.Name  | Should Be $testParameters.optionName
+                    $script:getTargetResourceResult.Value | Should Be $testParameters.optionState
                 }
 
                 It 'Should call expected Mocks' {    
@@ -61,18 +63,18 @@ try
 
             Context 'Option Disabled' {
 
-                $optionState = 'Disabled'
+                $testParameters.optionState = 'Disabled'
                 Mock -CommandName Get-AuditOption -MockWith { 
                     return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Name  | Should Be $optionName
-                    $script:getTargetResourceResult.Value | Should Be $optionState
+                    $script:getTargetResourceResult.Name  | Should Be $testParameters.optionName
+                    $script:getTargetResourceResult.Value | Should Be $testParameters.optionState
                 }
 
                 It 'Should call expected Mocks' {    
@@ -86,10 +88,7 @@ try
         #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
             
-            $testParameters = @{
-                Name  = $optionName 
-                Value = 'Enabled'
-            }
+            $testParameters.Value = 'Enabled'
 
             Context 'Option set to enabled and should be' {
 
@@ -178,10 +177,7 @@ try
         #region Function Set-TargetResource
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
             
-            $testParameters = @{
-                Name  = $optionName 
-                Value = 'Enabled'
-            }
+            $testParameters.Value = 'Enabled'
 
             Context 'Option to Enabled' {
 
