@@ -41,7 +41,7 @@ manage.
 can be Success or Failure.
 
 * **[String] Ensure _(Write)_**: Indicates if the audit flag should exist or not. To add a flag to 
-a subcategpry, set this property to Present. By default this is set to Present.
+a subcategory, set this property to Present. By default this is set to Present.
 
 
 #### Read-Only Properties from Get-TargetResource
