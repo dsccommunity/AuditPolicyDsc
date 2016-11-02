@@ -1,14 +1,10 @@
 #requires -RunAsAdministrator
 
-# get the root path of the resourse
-[String] $moduleRoot = Split-Path -Parent ( Split-Path -Parent $PSScriptRoot )
+# Get the root path of the resourse
+[String] $script:moduleRoot = Split-Path -Parent ( Split-Path -Parent $PSScriptRoot )
 
-# get the module name to import
-[String] $helperModuleName = ( Split-Path -Leaf $MyInvocation.MyCommand.Path ) `
-                                -Replace "\.tests\.ps1", ".psm1"
-
-Import-Module -Name (Join-Path -Path ( Join-Path -Path $moduleRoot -ChildPath 'DSCResources') `
-                               -ChildPath $helperModuleName ) `
+Import-Module -Name (Join-Path -Path $moduleRoot `
+                               -ChildPath 'DSCResources\AuditPolicyResourceHelper.psm1' ) `
                                -Force
 #region Generate data
 
@@ -18,8 +14,8 @@ Import-Module -Name (Join-Path -Path ( Join-Path -Path $moduleRoot -ChildPath 'D
     so it is easier to filter later on.
 #>
 
-$categories = @()
-$subcategories = @()
+$script:categories = @()
+$script:subcategories = @()
 
 auditpol /list /subcategory:* | 
 Where-Object { $_ -notlike 'Category/Subcategory*' } | ForEach-Object `
@@ -173,10 +169,6 @@ Describe "Private function Invoke-Auditpol" {
             $command.Name | Should Be 'Invoke-Auditpol' 
         }
 
-        It 'Should output a type "String"' {
-            $command.OutputType | Should Be 'System.String'
-        }
-
         It 'Should have a parameter Command' {
             $command.Parameters.Command | Should Not BeNullOrEmpty
         }
@@ -200,7 +192,7 @@ Describe "Private function Invoke-Auditpol" {
             Should match ".,."
         }
 
-        It 'Should return a CSV format when a option is passed in' {
+        It 'Should return a CSV format when an option is passed in' {
             ( Invoke-Auditpol -Command "Get" -SubCommand "option:CrashOnAuditFail" )[0] | 
             Should match ".,."
         }
