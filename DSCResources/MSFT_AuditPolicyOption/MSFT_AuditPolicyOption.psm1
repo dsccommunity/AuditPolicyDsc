@@ -18,7 +18,12 @@ function Get-TargetResource
         [ValidateSet('CrashOnAuditFail', 'FullPrivilegeAuditing', 'AuditBaseObjects',
         'AuditBaseDirectories')]
         [System.String]
-        $Name
+        $Name,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet('Enabled', 'Disabled')]
+        [System.String]
+        $Value
     )
     
     # get the option's current value 
@@ -51,9 +56,10 @@ function Set-TargetResource
         [System.String]
         $Name,
 
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Enabled', 'Disabled')]
         [System.String]
-        $Value = 'Disabled'
+        $Value
     )
 
     try 
@@ -87,6 +93,7 @@ function Test-TargetResource
         [System.String]
         $Name,
 
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Enabled', 'Disabled')]
         [System.String]
         $Value
