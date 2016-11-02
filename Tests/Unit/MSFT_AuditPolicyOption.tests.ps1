@@ -183,7 +183,7 @@ try
                 Value = 'Enabled'
             }
 
-            Context 'Option Enabled' {
+            Context 'Option to Enabled' {
 
                 Mock -CommandName Set-AuditOption -MockWith { } `
                      -ModuleName MSFT_AuditPolicyOption -Verifiable
@@ -200,7 +200,7 @@ try
 
             $target.Value = 'Disabled'
 
-            Context 'Option Disabled' {
+            Context 'Option to Disabled' {
 
                 Mock -CommandName Set-AuditOption -MockWith { } `
                      -ModuleName MSFT_AuditPolicyOption -Verifiable
@@ -220,7 +220,7 @@ try
         #region Helper Cmdlets
         Describe 'Private function Get-AuditOption' { 
             
-            [String] $name  = 'CrashOnAuditFail'
+            [String] $name = 'CrashOnAuditFail'
             
             Context 'Get audit policy option enabled' {
                 
