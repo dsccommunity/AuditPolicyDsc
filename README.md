@@ -2,7 +2,8 @@
 
 # AuditPolicyDsc
 
-The **AuditPolicyDsc** module allows you to configure and manage the advanced audit policy on all currently supported versions of Windows.
+The **AuditPolicyDsc** module allows you to configure and manage the advanced audit policy on all 
+currently supported versions of Windows.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
@@ -12,22 +13,65 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ## Resources
 
-* **AuditPolicySubcategory** configures the advanced audit policy Subcategory audit flags. 
+* [AuditPolicySubcategory](#AuditPolicySubcategory): Provides a mechanism to manage advanced audit 
+policy subcategory audit flags. 
 
-* **AuditPolicyOption** manages the audit policy options available in the auditpol.exe utility. 
+* [AuditPolicyOption](#AuditPolicyOption): Provides a mechanism to manage audit policy options. 
 
 
 ### AuditPolicySubcategory
-* **Subcategory**: Name of the subcategory in the advanced audit policy.
+Provides a mechanism to manage advanced audit policy subcategory audit flags. 
+This resource works on Nano Server.
 
-* **AuditFlag**: The name of the audit flag to apply to the subcategory. This is can be either Success or Failure.
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] Subcategory _(Key)_**: The name of the subcategory in the advanced audit policy to 
+manage.
+
+* **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory. This is 
+can be Success or Failure.
+
+* **[String] Ensure _(Write)_**: Indicates if the audit flag should exist or not. To add a flag to 
+a subcategpry, set this property to Present. By default this is set to Present.
+
+
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+#TODO * [Create or modify a group with Members](https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/.ps1)
+
 
 ### AuditPolicyOption
+Provides a mechanism to manage audit policy options. 
+This resource works on Nano Server.
 
- * **Name**: The name of the option to configure. 
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] Name _(Key)_**: The name of the option to configure. 
  
- * **Value**: The value to apply to the option. This can be either Enabled or Disabled. 
- 
+* **[String] Value _(Write)_**: The value to apply to the option. This can be either Enabled or 
+Disabled. 
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+#TODO * [Create or modify a group with Members](https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/.ps1)
+
 ## Versions
 
 ### Unreleased
@@ -38,63 +82,3 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
  
   * AuditPolicySubcategory
   * AuditPolicyOption
-
-## Examples
-
-### Example 1 Audit Logon Success and Failure
-```powershell
-    Configuration AuditPolicy
-    {
-        Import-DscResource -ModuleName AuditPolicyDsc
-
-        AuditPolicySubcategory LogonSuccess
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Success'
-            Ensure      = 'Present' 
-        } 
-
-        AuditPolicySubcategory LogonFailure
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Failure'
-            Ensure      = 'Present' 
-        } 
-    }
-```
-
-### Example 2 Audit Logon Failure only
-```powershell
-    Configuration AuditPolicy
-    {
-        Import-DscResource -ModuleName AuditPolicyDsc
-
-        AuditPolicySubcategory LogonSuccess
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Success'
-            Ensure      = 'Absent' 
-        } 
-
-        AuditPolicySubcategory LogonFailure
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Failure'
-            Ensure      = 'Present' 
-        } 
-    }
-```
-
-### Example 3 Enable the option AuditBaseDirectories
-```powershell
-    Configuration AuditPolicy
-    {
-        Import-DscResource -ModuleName AuditPolicyDsc
-
-        AuditPolicyOption AuditBaseDirectories
-        {
-            Name  = 'AuditBaseDirectories'
-            Value = 'Enabled'
-        }
-    }
-```

@@ -85,7 +85,7 @@ function Get-TargetResource
     .PARAMETER AuditFlag
         Specifies the audit flag to set.
     .PARAMETER Ensure
-        Specifies the state of the audit flag provided.
+        Specifies the state of the audit flag provided. By default this is set to Present.
 #>
 function Set-TargetResource
 {
@@ -122,7 +122,7 @@ function Set-TargetResource
 
         [ValidateSet('Present', 'Absent')]
         [System.String]
-        $Ensure
+        $Ensure = 'Present'
     )
 
     try
@@ -259,7 +259,7 @@ function Get-AuditCategory
         will be placed here to use native PowerShell cmdlets to set the option details. 
     #>
     # get the auditpol raw csv output
-    $returnCsv = Invoke-AuditPol -Command 'Get' -subCommand "Subcategory:""$SubCategory"""
+    $returnCsv = Invoke-AuditPol -Command 'Get' -SubCommand "Subcategory:""$SubCategory"""
     
     # split the details into an array
     $subcategoryFlags = ( $returnCsv[2] ) -Split ','
