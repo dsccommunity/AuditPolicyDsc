@@ -22,7 +22,7 @@ function Get-TargetResource
     )
     
     # get the option's current value 
-    $optionValue = Get-AuditOption -Name $name
+    $optionValue = Get-AuditOption -Name $Name
 
     Write-Verbose -Message ( $localizedData.GetAuditpolOptionSucceed -f $Name )
 
@@ -58,7 +58,7 @@ function Set-TargetResource
 
     try 
     {
-        Set-AuditOption -Name $name -Value $Value
+        Set-AuditOption -Name $Name -Value $Value
         Write-Verbose -Message ( $localizedData.SetAuditpolOptionSucceed -f $Name, $Value )
     }
     catch
@@ -150,9 +150,9 @@ function Get-AuditOption
         This public function calls Set-AuditOptionCommand and enforces parameters 
         that will be passed to Set-AuditOptionCommand and aligns to a specifc parameterset. 
     .PARAMETER Name
-        The specifc option to set.
+        The specific option to set.
     .PARAMETER Value 
-        The value to set the provide option to.
+        The value to set the provided option to.
 #>
 function Set-AuditOption
 {
@@ -185,7 +185,7 @@ function Set-AuditOption
         
         [String[]] $subCommand = @( "Option:$Name", "/value:$($pastToPresentValues[$value])" )
 
-        Invoke-AuditPol -Command 'Set' -subCommand $subCommand | Out-Null
+        Invoke-AuditPol -Command 'Set' -SubCommand $subCommand | Out-Null
     }
 }
 
