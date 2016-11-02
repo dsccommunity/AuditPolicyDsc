@@ -5,11 +5,16 @@
 The **AuditPolicyDsc** module allows you to configure and manage the advanced audit policy on all 
 currently supported versions of Windows.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct](
+  https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](
+  https://opensource.microsoft.com/codeofconduct/faq/) 
+or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions 
+or comments.
 
 ## Contributing
-Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResources/blob/master/CONTRIBUTING.md).
+Please check out common DSC Resources [contributing guidelines](
+  https://github.com/PowerShell/DscResources/blob/master/CONTRIBUTING.md).
 
 ## Resources
 
@@ -39,14 +44,14 @@ can be Success or Failure.
 a subcategpry, set this property to Present. By default this is set to Present.
 
 
-
 #### Read-Only Properties from Get-TargetResource
 
 None
 
 #### Examples
 
-#TODO * [Create or modify a group with Members](https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/.ps1)
+* [Set Audit Policy Subcategory Audit Flags](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicySubcategory.ps1)
 
 
 ### AuditPolicyOption
@@ -61,7 +66,7 @@ None
 
 * **[String] Name _(Key)_**: The name of the option to configure. 
  
-* **[String] Value _(Write)_**: The value to apply to the option. This can be either Enabled or 
+* **[String] Value _(Key)_**: The value to apply to the option. This can be either Enabled or 
 Disabled. 
 
 #### Read-Only Properties from Get-TargetResource
@@ -70,7 +75,8 @@ None
 
 #### Examples
 
-#TODO * [Create or modify a group with Members](https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/.ps1)
+* [Set Audit Policy Option](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyOption.ps1)
 
 ## Versions
 
