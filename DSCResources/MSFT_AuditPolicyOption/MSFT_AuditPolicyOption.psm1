@@ -7,6 +7,8 @@ Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
         Gets the value of the audit policy option.
     .PARAMETER Name
         Specifies the option to get.
+    .PARAMETER Value
+        Not used in Get-TargetResource.
 #>
 function Get-TargetResource
 {

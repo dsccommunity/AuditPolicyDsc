@@ -37,11 +37,11 @@ None
 * **[String] Subcategory _(Key)_**: The name of the subcategory in the advanced audit policy to 
 manage.
 
-* **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory. This is 
-can be Success or Failure.
+* **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory. 
+{ Success | Failure }.
 
-* **[String] Ensure _(Write)_**: Indicates if the audit flag should exist or not. To add a flag to 
-a subcategory, set this property to Present. By default this is set to Present.
+* **[String] Ensure _(Write)_**: Indicates whether the service is present or absent. 
+Defaults to Present. { Present | Absent }.
 
 
 #### Read-Only Properties from Get-TargetResource
@@ -66,8 +66,7 @@ None
 
 * **[String] Name _(Key)_**: The name of the option to configure. 
  
-* **[String] Value _(Key)_**: The value to apply to the option. This can be either Enabled or 
-Disabled. 
+* **[String] Value _(Key)_**: The value to apply to the option. { Enabled | Disabled }. 
 
 #### Read-Only Properties from Get-TargetResource
 
