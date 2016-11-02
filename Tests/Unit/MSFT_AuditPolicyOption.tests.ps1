@@ -31,8 +31,8 @@ try
 
         # set the audit option test strings to Mock
         $testParameters = @{
-            optionName  = 'CrashOnAuditFail'
-            optionState = 'Enabled'
+            Name  = 'CrashOnAuditFail'
+            Value = 'Enabled'
         }
 
         #endregion
@@ -51,8 +51,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Name  | Should Be $testParameters.optionName
-                    $script:getTargetResourceResult.Value | Should Be $testParameters.optionState
+                    $script:getTargetResourceResult.Name  | Should Be $testParameters.Name
+                    $script:getTargetResourceResult.Value | Should Be $testParameters.Value
                 }
 
                 It 'Should call expected Mocks' {    
@@ -63,7 +63,7 @@ try
 
             Context 'Option Disabled' {
 
-                $testParameters.optionState = 'Disabled'
+                $testParameters.Value = 'Disabled'
                 Mock -CommandName Get-AuditOption -MockWith { 
                     return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
@@ -73,8 +73,8 @@ try
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Name  | Should Be $testParameters.optionName
-                    $script:getTargetResourceResult.Value | Should Be $testParameters.optionState
+                    $script:getTargetResourceResult.Name  | Should Be $testParameters.Name
+                    $script:getTargetResourceResult.Value | Should Be $testParameters.Value
                 }
 
                 It 'Should call expected Mocks' {    
