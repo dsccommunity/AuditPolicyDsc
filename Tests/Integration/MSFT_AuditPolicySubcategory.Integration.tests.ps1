@@ -18,8 +18,8 @@ $TestEnvironment = Initialize-TestEnvironment `
     -TestType Integration
 #endregion
 
-# set the Subcategory details being tested
-$subcategory = 'Credential Validation'
+# set the subcategory details being tested
+$script:subCategory = 'Credential Validation'
 
 # Using try/finally to always cleanup even if something awful happens.
 try
@@ -37,11 +37,11 @@ try
             $auditFlagEnsure = 'Present'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/subcategory:$subcategory" '/failure:disable'
+            & 'auditpol' '/set' "/subcategory:$subCategory" '/failure:disable'
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subcategory `
+                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -59,7 +59,7 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subcategory
+                $currentConfig.Subcategory | Should Be $subCategory
                 $currentConfig.AuditFlag   | Should Match $auditFlag
                 $currentConfig.Ensure      | Should Be $auditFlagEnsure
             }
@@ -72,11 +72,11 @@ try
             $auditFlagEnsure = 'Absent'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/subcategory:$subcategory" '/failure:enable'
+            & 'auditpol' '/set' "/subcategory:$subCategory" '/failure:enable'
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subcategory `
+                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -94,7 +94,7 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subcategory
+                $currentConfig.Subcategory | Should Be $subCategory
                 $currentConfig.AuditFlag   | Should Not Match $auditFlag
                 $currentConfig.Ensure      | Should Be $auditFlagEnsure
             }
@@ -107,11 +107,11 @@ try
             $auditFlagEnsure = 'Present'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/subcategory:$subcategory" '/success:disable'
+            & 'auditpol' '/set' "/subcategory:$subCategory" '/success:disable'
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subcategory `
+                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -129,7 +129,7 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subcategory
+                $currentConfig.Subcategory | Should Be $subCategory
                 $currentConfig.AuditFlag   | Should Match $auditFlag
                 $currentConfig.Ensure      | Should Be $auditFlagEnsure
             }
@@ -142,11 +142,11 @@ try
             $auditFlagEnsure = 'Absent'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/subcategory:$subcategory" '/success:enable'
+            & 'auditpol' '/set' "/subcategory:$subCategory" '/success:enable'
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subcategory `
+                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -164,7 +164,7 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subcategory
+                $currentConfig.Subcategory | Should Be $subCategory
                 $currentConfig.AuditFlag   | Should Not Match $auditFlag
                 $currentConfig.Ensure      | Should Be $auditFlagEnsure
             }
