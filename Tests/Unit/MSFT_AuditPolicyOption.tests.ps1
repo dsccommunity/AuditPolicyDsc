@@ -3,7 +3,7 @@ $script:DSCModuleName      = 'AuditPolicyDsc'
 $script:DSCResourceName    = 'MSFT_AuditPolicyOption'
 
 #region HEADER
-[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
+[String] $script:moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
 if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
      (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
@@ -44,7 +44,7 @@ try
                     return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
                 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                    { $getTargetResourceResult = Get-TargetResource -Name $optionName } | 
                         Should Not Throw
                 }
 
@@ -66,7 +66,7 @@ try
                     return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                    { $getTargetResourceResult = Get-TargetResource -Name $optionName } | 
                         Should Not Throw
                 }
 
@@ -101,7 +101,7 @@ try
                         Should Not Throw
                 }
 
-                It "Should return true" {
+                It 'Should return true' {
                     $script:testTargetResourceResult | Should Be $true
                 }
 
@@ -121,7 +121,7 @@ try
                         Should Not Throw
                 }
 
-                It "Should return false" {
+                It 'Should return false' {
                     $script:testTargetResourceResult | Should Be $false
                 }
 
@@ -143,7 +143,7 @@ try
                         Should Not Throw
                 }
                 
-                It "Should return true" {
+                It 'Should return true' {
                     $script:testTargetResourceResult | Should Be $true
                 }
 
@@ -163,7 +163,7 @@ try
                         Should Not Throw
                 }
 
-                It "Should return false" {
+                It 'Should return false' {
                     $script:testTargetResourceResult | Should Be $false
                 }
 
@@ -237,7 +237,7 @@ try
                         Should Not Throw
                 } 
 
-                It "Should return the correct value" {
+                It 'Should return the correct value' {
                     $script:getAuditOptionResult | should Be $value
                 }
 
