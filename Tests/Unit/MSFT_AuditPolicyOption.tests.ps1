@@ -44,13 +44,13 @@ try
                     return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
                 
                 It 'Should not throw an exception' {
-                    { $getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $getTargetResourceResult.Name  | Should Be $optionName
-                    $getTargetResourceResult.Value | Should Be $optionState
+                    $script:getTargetResourceResult.Name  | Should Be $optionName
+                    $script:getTargetResourceResult.Value | Should Be $optionState
                 }
 
                 It 'Should call expected Mocks' {    
@@ -66,13 +66,13 @@ try
                     return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $getTargetResourceResult = Get-TargetResource -Name $optionName } | 
+                    { $script:getTargetResourceResult = Get-TargetResource -Name $optionName } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $getTargetResourceResult.Name  | Should Be $optionName
-                    $getTargetResourceResult.Value | Should Be $optionState
+                    $script:getTargetResourceResult.Name  | Should Be $optionName
+                    $script:getTargetResourceResult.Value | Should Be $optionState
                 }
 
                 It 'Should call expected Mocks' {    
@@ -97,12 +97,12 @@ try
                     return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
                         Should Not Throw
                 }
 
                 It 'Should return true' {
-                    $testTargetResourceResult | Should Be $true
+                    $script:testTargetResourceResult | Should Be $true
                 }
 
                 It 'Should call expected Mocks' {    
@@ -117,12 +117,12 @@ try
                     return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
                         Should Not Throw
                 }
 
                 It 'Should return false' {
-                    $testTargetResourceResult | Should Be $false
+                    $script:testTargetResourceResult | Should Be $false
                 }
 
                 It 'Should call expected Mocks' {    
@@ -139,12 +139,12 @@ try
                     return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
                         Should Not Throw
                 }
                 
                 It 'Should return true' {
-                    $testTargetResourceResult | Should Be $true
+                    $script:testTargetResourceResult | Should Be $true
                 }
 
                 It 'Should call expected Mocks' {    
@@ -159,12 +159,12 @@ try
                     return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
                 
                 It 'Should not throw an exception' {
-                    { $testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
                         Should Not Throw
                 }
 
                 It 'Should return false' {
-                    $testTargetResourceResult | Should Be $false
+                    $script:testTargetResourceResult | Should Be $false
                 }
 
                 It 'Should call expected Mocks' {    
@@ -234,12 +234,12 @@ try
                 } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $getAuditOptionResult = Get-AuditOption -Name $name } | 
+                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } | 
                         Should Not Throw
                 } 
 
                 It 'Should return the correct value' {
-                    $getAuditOptionResult | Should Be $value
+                    $script:getAuditOptionResult | Should Be $value
                 }
 
                 It 'Should call expected Mocks' {    
@@ -260,12 +260,12 @@ try
                 } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $getAuditOptionResult = Get-AuditOption -Name $name } | 
+                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } | 
                         Should Not Throw
                 } 
 
                 It 'Should return the correct value' {
-                    $getAuditOptionResult | Should Be $value
+                    $script:getAuditOptionResult | Should Be $value
                 }
 
                 It 'Should call expected Mocks' {    
