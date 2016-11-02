@@ -3,7 +3,7 @@ $script:DSCModuleName      = 'AuditPolicyDsc'
 $script:DSCResourceName    = 'MSFT_AuditPolicySubcategory'
 
 #region HEADER
-[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
+[String] $script:moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
 if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
      (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
@@ -25,26 +25,14 @@ try
 {
     #region Pester Tests
 
-    # The InModuleScope command allows you to perform white-box unit testing on the internal
-    # (non-exported) code of a Script Module.
     InModuleScope $script:DSCResourceName {
 
-        #region Pester Test Initialization
-        # the audit option to use in the tests
-
-
-        #endregion
-
-        #region Function Get-TargetResource
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
             
-            $target = @{
-                Subcategory = $null
-                AuditFlag   = $null
+            $testParameters = @{
+                Subcategory = 'Logon'
+                AuditFlag   = 'Success'
             }
-
-            $target.Subcategory = 'Logon'
-            $target.AuditFlag   = 'Success'
 
             Context "Single word subcategory submit 'Success' and return 'Success'" {
 
@@ -52,12 +40,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Success'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -74,12 +62,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
-                It 'Single word subcategory should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                It 'Should return the correct hashtable properties from a Single word subcategory' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Failure'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -96,12 +84,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'NoAuditing'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -118,12 +106,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Success'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -134,7 +122,7 @@ try
                 } 
             }
 
-            $target.AuditFlag = 'Failure'
+            $testParameters.AuditFlag = 'Failure'
 
             Context "Single word subcategory submit 'Failure' and return 'Success'" {
 
@@ -142,12 +130,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Success'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -164,12 +152,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
-                It 'Single word subcategory should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                It 'Should return the correct hashtable properties from a Single word subcategory' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Failure'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -186,12 +174,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'NoAuditing'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -208,12 +196,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Failure'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -224,8 +212,8 @@ try
                 } 
             }
 
-            $target.Subcategory = 'Credential Validation'
-            $target.AuditFlag   = 'Success'
+            $testParameters.Subcategory = 'Credential Validation'
+            $testParameters.AuditFlag   = 'Success'
 
             Context "Mulit-word subcategory submit 'Success' and return 'Success'" {
 
@@ -233,12 +221,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Success'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -255,12 +243,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Failure'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -277,12 +265,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'NoAuditing'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -299,12 +287,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Success'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -315,7 +303,7 @@ try
                 } 
             }
 
-            $target.AuditFlag = 'Failure'
+            $testParameters.AuditFlag = 'Failure'
 
             Context "Mulit-word subcategory submit 'Failure' and return 'Success'" {
 
@@ -323,12 +311,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Success'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -345,12 +333,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
-                It 'Single word subcategory should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                It 'Should return the correct hashtable properties from a Single word subcategory' {
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Failure'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -367,12 +355,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'NoAuditing'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Absent'
                 }
@@ -389,12 +377,12 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @target } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
                 It 'Should return the correct hashtable properties' {
-                    $script:getTargetResourceResult.Subcategory | Should Be $target.Subcategory
+                    $script:getTargetResourceResult.Subcategory | Should Be $testParameters.Subcategory
                     $script:getTargetResourceResult.AuditFlag   | Should Be 'Failure'
                     $script:getTargetResourceResult.Ensure      | Should Be 'Present'
                 }
@@ -405,12 +393,10 @@ try
                 } 
             }
         }
-        #endregion
 
-        #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
             
-            $target = @{
+            $testParameters = @{
                 Subcategory = 'Logon'
                 AuditFlag   = 'Success'
                 Ensure      = 'Present'
@@ -421,11 +407,11 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } |
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
-                It "Should return true" {
+                It 'Should return true' {
                     $script:testTargetResourceResult | Should Be $true
                 }
 
@@ -437,15 +423,15 @@ try
 
             Context 'Single word subcategory Success flag present and should not be' {
                 
-                $target.Ensure = 'Absent'
+                $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditCategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | Should Not Throw
                 }
 
-                It "Should return false" {
+                It 'Should return false' {
                     $script:testTargetResourceResult | Should Be $false
                 }
 
@@ -455,20 +441,20 @@ try
                 }
             }
             
-            $target.AuditFlag   = 'Failure'
+            $testParameters.AuditFlag   = 'Failure'
 
             Context 'Single word subcategory failure flag present and should be' {
 
-                $target.Ensure = 'Present'
+                $testParameters.Ensure = 'Present'
                 Mock -CommandName Get-AuditCategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } |
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
-                It "Should return true" {
+                It 'Should return true' {
                     $script:testTargetResourceResult | Should Be $true
                 }
 
@@ -480,15 +466,15 @@ try
 
             Context 'Single word subcategory failure flag present and should not be' {
                 
-                $target.Ensure = 'Absent'
+                $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditCategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | Should Not Throw
                 }
 
-                It "Should return false" {
+                It 'Should return false' {
                     $script:testTargetResourceResult | Should Be $false
                 }
 
@@ -498,21 +484,21 @@ try
                 }
             }
 
-            $target.AuditFlag   = 'Success'
-            $target.Subcategory = 'Credential Validation'
+            $testParameters.AuditFlag   = 'Success'
+            $testParameters.Subcategory = 'Credential Validation'
 
             Context 'Multi-word subcategory Success flag present and should be' {
                 
-                $target.Ensure = 'Present'
+                $testParameters.Ensure = 'Present'
                 Mock -CommandName Get-AuditCategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } |
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
-                It "Should return true" {
+                It 'Should return true' {
                     $script:testTargetResourceResult | Should Be $true
                 }
 
@@ -524,15 +510,15 @@ try
 
             Context 'Multi-word subcategory Success flag present and should not be' {
                 
-                $target.Ensure = 'Absent'
+                $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditCategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | Should Not Throw
                 }
 
-                It "Should return false" {
+                It 'Should return false' {
                     $script:testTargetResourceResult | Should Be $false
                 }
 
@@ -542,20 +528,20 @@ try
                 }
             }
 
-            $target.AuditFlag   = 'Failure'
+            $testParameters.AuditFlag   = 'Failure'
 
             Context 'Multi-word subcategory failure flag present and should be' {
 
-                $target.Ensure = 'Present'
+                $testParameters.Ensure = 'Present'
                 Mock -CommandName Get-AuditCategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } |
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
-                It "Should return true" {
+                It 'Should return true' {
                     $script:testTargetResourceResult | Should Be $true
                 }
 
@@ -567,15 +553,15 @@ try
 
             Context 'Multi-word subcategory failure flag present and should not be' {
                 
-                $target.Ensure = 'Absent'
+                $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditCategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | Should Not Throw
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | Should Not Throw
                 }
 
-                It "Should return false" {
+                It 'Should return false' {
                     $script:testTargetResourceResult | Should Be $false
                 }
 
@@ -585,12 +571,10 @@ try
                 }
             }
         }
-        #endregion
 
-        #region Function Set-TargetResource
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
             
-            $target = @{
+            $testParameters = @{
                 Subcategory = 'Logon'
                 AuditFlag   = 'Success'
                 Ensure      = 'Present'
@@ -601,7 +585,7 @@ try
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -612,11 +596,11 @@ try
 
             Context 'Set single word subcategory failure flag to present' {
                 
-                $target.AuditFlag = 'Failure'
+                $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -627,12 +611,12 @@ try
 
             Context 'Set single word subcategory success flag to absent' {
 
-                $target.Ensure    = 'Absent'
-                $target.AuditFlag = 'Success'
+                $testParameters.Ensure    = 'Absent'
+                $testParameters.AuditFlag = 'Success'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -643,11 +627,11 @@ try
 
             Context 'Set single word subcategory failure flag to absent' {
                 
-                $target.AuditFlag = 'Failure'
+                $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -658,13 +642,13 @@ try
 
             Context 'Set multi-word subcategory success flag to present' {
 
-                $target.Subcategory = 'Credential Validation'
-                $target.AuditFlag   = 'Success'
-                $target.Ensure      = 'Present'
+                $testParameters.Subcategory = 'Credential Validation'
+                $testParameters.AuditFlag   = 'Success'
+                $testParameters.Ensure      = 'Present'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -675,11 +659,11 @@ try
 
             Context 'Set multi-word subcategory failure flag to present' {
                 
-                $target.AuditFlag = 'Failure'
+                $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -690,12 +674,12 @@ try
 
             Context 'Set single word subcategory success flag to absent' {
 
-                $target.AuditFlag = 'Success'
-                $target.Ensure    = 'Absent'
+                $testParameters.AuditFlag = 'Success'
+                $testParameters.Ensure    = 'Absent'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -706,11 +690,11 @@ try
 
             Context 'Set single word subcategory failure flag to absent' {
                 
-                $target.AuditFlag = 'Failure'
+                $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditCategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }   
 
                 It 'Should call expected Mocks' {    
@@ -719,9 +703,7 @@ try
                 } 
             }
         }
-        #endregion
 
-        #region Helper Cmdlets
         Describe 'Private function Get-AuditCategory'  {
             
             [String] $subCategory = 'Logon'
@@ -729,8 +711,10 @@ try
             Context 'Get single word audit category success flag' {
     
                 [String] $auditFlag   = 'Success'
-                # the return is 3 lines Header, blank line, data
-                # ComputerName,System,Subcategory,GUID,AuditFlags
+                <# 
+                    The return is 3 lines Header, blank line, data
+                    ComputerName,System,Subcategory,GUID,AuditFlags
+                 #>
                  Mock -CommandName Invoke-Auditpol -MockWith { 
                      @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
                      -ParameterFilter { $Command -eq 'Get' } -Verifiable
@@ -740,7 +724,7 @@ try
                         Should Not Throw
                 } 
                 
-                It "with the value '$auditFlag'" {
+                It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 
@@ -753,8 +737,10 @@ try
             Context 'Get single word audit category failure flag' {
 
                 [String] $auditFlag   = 'failure'
-                # the return is 3 lines Header, blank line, data
-                # ComputerName,System,Subcategory,GUID,AuditFlags
+                <# 
+                    The return is 3 lines Header, blank line, data
+                    ComputerName,System,Subcategory,GUID,AuditFlags
+                 #>
                  Mock -CommandName Invoke-Auditpol -MockWith { 
                      @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
                      -ParameterFilter { $Command -eq 'Get' } -Verifiable
@@ -764,7 +750,7 @@ try
                         Should Not Throw
                 } 
                 
-                It "with the value '$auditFlag'" {
+                It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 
@@ -790,7 +776,7 @@ try
                         Should Not Throw
                 } 
                 
-                It "with the value '$auditFlag'" {
+                It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 
@@ -814,7 +800,7 @@ try
                         Should Not Throw
                 } 
                 
-                It "with the value '$auditFlag'" {
+                It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 

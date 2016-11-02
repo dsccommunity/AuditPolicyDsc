@@ -86,7 +86,7 @@ try
         #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
             
-            $target = @{
+            $testParameters = @{
                 Name  = $optionName 
                 Value = 'Enabled'
             }
@@ -97,7 +97,7 @@ try
                     return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
@@ -117,7 +117,7 @@ try
                     return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
@@ -131,7 +131,7 @@ try
                 } 
             }
 
-            $target.Value = 'Disabled'
+            $testParameters.Value = 'Disabled'
 
             Context 'Option set to disabled and should be' {
 
@@ -139,7 +139,7 @@ try
                     return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
                         Should Not Throw
                 }
                 
@@ -159,7 +159,7 @@ try
                     return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
                 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @target } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
                         Should Not Throw
                 }
 
@@ -178,7 +178,7 @@ try
         #region Function Set-TargetResource
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
             
-            $target = @{
+            $testParameters = @{
                 Name  = $optionName 
                 Value = 'Enabled'
             }
@@ -189,7 +189,7 @@ try
                      -ModuleName MSFT_AuditPolicyOption -Verifiable
                     
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {    
@@ -198,7 +198,7 @@ try
                 } 
             }
 
-            $target.Value = 'Disabled'
+            $testParameters.Value = 'Disabled'
 
             Context 'Option to Disabled' {
 
@@ -206,7 +206,7 @@ try
                      -ModuleName MSFT_AuditPolicyOption -Verifiable
                     
                 It 'Should not throw an exception' {
-                    { Set-TargetResource @target } | Should Not Throw
+                    { Set-TargetResource @testParameters } | Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {    
