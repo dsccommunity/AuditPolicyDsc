@@ -26,7 +26,7 @@ function Get-TargetResource
         $Value
     )
     
-    # get the option's current value 
+    # Get the option's current value 
     $optionValue = Get-AuditOption -Name $Name
 
     Write-Verbose -Message ( $localizedData.GetAuditpolOptionSucceed -f $Name )

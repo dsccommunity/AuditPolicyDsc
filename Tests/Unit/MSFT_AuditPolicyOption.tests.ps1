@@ -43,7 +43,7 @@ try
             Context 'Option Enabled' {
                 
                 Mock -CommandName Get-AuditOption -MockWith { 
-                    return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
+                    return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
                 
                 It 'Should not throw an exception' {
                     { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
@@ -65,7 +65,7 @@ try
 
                 $testParameters.Value = 'Disabled'
                 Mock -CommandName Get-AuditOption -MockWith { 
-                    return $optionState } -ModuleName MSFT_AuditPolicyOption -Verifiable
+                    return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
