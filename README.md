@@ -41,7 +41,7 @@ manage.
 { Success | Failure }.
 
 * **[String] Ensure _(Write)_**: Indicates whether the service is present or absent. 
-Defaults to Present. { Present | Absent }.
+Defaults to Present. { *Present* | Absent }.
 
 
 #### Read-Only Properties from Get-TargetResource
