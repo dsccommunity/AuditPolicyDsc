@@ -6,8 +6,6 @@
     Get, Set, and Test operations on DSC managed nodes.
 #>
 
-Import-LocalizedData -BindingVariable LocalizedData -Filename AuditPolicyDsc.strings.psd1
-
 <#
  .SYNOPSIS
     Invoke-AuditPol is a private function that wraps auditpol.exe providing a 
@@ -101,4 +99,43 @@ function Invoke-AuditPol
     }
 }
 
-Export-ModuleMember -Function 'Invoke-AuditPol' -Variable 'LocalizedData'
+<#
+    .SYNOPSIS
+        Retrieves the localized string data based on the machine's culture.
+        Falls back to en-US strings if the machine's culture is not supported.
+
+    .PARAMETER ResourceName
+        The name of the resource as it appears before '.strings.psd1' of the localized string file.
+        For example:
+            AuditPolicySubcategory: MSFT_AuditPolicySubcategory
+            AuditPolicyOption: MSFT_AuditPolicyOption
+#>
+function Get-LocalizedData
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $ResourceName
+    )
+
+    $resourceDirectory = Join-Path -Path $PSScriptRoot -ChildPath $ResourceName
+    $localizedStringFileLocation = Join-Path -Path $resourceDirectory -ChildPath $PSUICulture
+
+    if (-not (Test-Path -Path $localizedStringFileLocation))
+    {
+        # Fallback to en-US
+        $localizedStringFileLocation = Join-Path -Path $resourceDirectory -ChildPath 'en-US'
+    }
+
+    Import-LocalizedData `
+        -BindingVariable 'localizedData' `
+        -FileName "$ResourceName.strings.psd1" `
+        -BaseDirectory $localizedStringFileLocation
+
+    return $localizedData
+}
+
+Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData' )
