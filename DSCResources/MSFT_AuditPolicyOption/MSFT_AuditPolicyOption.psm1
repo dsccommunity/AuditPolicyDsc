@@ -2,6 +2,10 @@
 Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
                                -ChildPath 'AuditPolicyResourceHelper.psm1') `
                                -Force
+
+# Localized messages for Write-Verbose statements in this resource
+$script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyOption'
+
 <#
     .SYNOPSIS
         Gets the value of the audit policy option.
