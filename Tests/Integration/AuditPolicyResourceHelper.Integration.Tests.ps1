@@ -61,7 +61,7 @@ Describe 'auditpol.exe output' {
     }
 
     # Loop through the raw output of every category option to validate the auditpol /category subcommand
-    Foreach( $category in $categories ) 
+    foreach ( $category in $categories ) 
     {
         Context "Category: $category" {
         
@@ -81,7 +81,7 @@ Describe 'auditpol.exe output' {
     }
 
     # Loop through the filtered output of every category option to validate the auditpol /category subcommand
-    Foreach( $category in $categories ) 
+    foreach ( $category in $categories ) 
     {
         Context "Category: $category Filtered 'Select-String -Pattern `$env:ComputerName'" {
             # Reuse the same command as the raw output context, only this time filter out the entries.
@@ -114,7 +114,7 @@ Describe 'auditpol.exe output' {
     }
 
     # Loop through the raw output of every subcategory to validate the auditpol /subcategory subcommand
-    Foreach( $subcategory in $subcategories ) 
+    foreach ( $subcategory in $subcategories ) 
     {
         Context "Subcategory: $subcategory" {
 
@@ -133,7 +133,7 @@ Describe 'auditpol.exe output' {
     }
 
     # Loop through the filtered output of every subcategory to validate the auditpol /subcategory subcommand
-    Foreach( $subcategory in $subcategories ) 
+    foreach ( $subcategory in $subcategories ) 
     {
         Context "Subcategory: $subcategory Filtered 'Select-String -Pattern `$env:ComputerName'" {
             # Reuse the same command as the raw output context, only this time filter out the entries.
@@ -159,7 +159,7 @@ Describe 'auditpol.exe output' {
     }
 }
 
-Describe "Private function Invoke-Auditpol" {
+Describe "Function Invoke-Auditpol" {
 
     InModuleScope AuditPolicyResourceHelper {
 
