@@ -1,4 +1,3 @@
-# Integration Test Config Template Version 1.0.0
 
 configuration 'MSFT_AuditPolicySubcategory_Config' 
 {
