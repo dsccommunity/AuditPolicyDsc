@@ -173,8 +173,8 @@ Describe "Function Invoke-Auditpol" {
             $command.Parameters.Command | Should Not BeNullOrEmpty
         }
 
-        It 'Should have a ValidSet (set|get)' {
-            $command.Parameters.Command.Attributes.ValidValues | Should Be @('set','get')
+        It 'Should have a ValidSet (Set|Get|List)' {
+            $command.Parameters.Command.Attributes.ValidValues | Should Be @('Set','Get','List')
         }
 
         It 'Should have a parameter Subcommand' {
