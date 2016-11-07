@@ -5,7 +5,7 @@ configuration 'MSFT_AuditPolicySubcategory_Config'
     (
         [Parameter(Mandatory = $true)]
         [System.String]
-        $Subcategory,
+        $Name,
         
         [Parameter(Mandatory = $true)]
         [System.String]
@@ -22,9 +22,9 @@ configuration 'MSFT_AuditPolicySubcategory_Config'
     {
         AuditPolicySubcategory Integration_Test
         {
-            Subcategory = $Subcategory
-            AuditFlag   = $AuditFlag
-            Ensure      = $AuditFlagEnsure
+            Name      = $Name
+            AuditFlag = $AuditFlag
+            Ensure    = $AuditFlagEnsure
         }
     }
 }

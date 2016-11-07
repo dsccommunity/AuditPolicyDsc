@@ -41,7 +41,7 @@ try
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
+                    & "$($script:DSCResourceName)_Config" -Name $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -59,9 +59,9 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subCategory
-                $currentConfig.AuditFlag   | Should Match $auditFlag
-                $currentConfig.Ensure      | Should Be $auditFlagEnsure
+                $currentConfig.Name      | Should Be $subCategory
+                $currentConfig.AuditFlag | Should Match $auditFlag
+                $currentConfig.Ensure    | Should Be $auditFlagEnsure
             }
         }
 
@@ -76,7 +76,7 @@ try
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
+                    & "$($script:DSCResourceName)_Config" -Name $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -94,9 +94,9 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subCategory
-                $currentConfig.AuditFlag   | Should Not Match $auditFlag
-                $currentConfig.Ensure      | Should Be $auditFlagEnsure
+                $currentConfig.Name      | Should Be $subCategory
+                $currentConfig.AuditFlag | Should Not Match $auditFlag
+                $currentConfig.Ensure    | Should Be $auditFlagEnsure
             }
         }
 
@@ -111,7 +111,7 @@ try
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
+                    & "$($script:DSCResourceName)_Config" -Name $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -129,9 +129,9 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subCategory
-                $currentConfig.AuditFlag   | Should Match $auditFlag
-                $currentConfig.Ensure      | Should Be $auditFlagEnsure
+                $currentConfig.Name      | Should Be $subCategory
+                $currentConfig.AuditFlag | Should Match $auditFlag
+                $currentConfig.Ensure    | Should Be $auditFlagEnsure
             }
         }
 
@@ -146,7 +146,7 @@ try
             
             It 'Should compile without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -Subcategory $subCategory `
+                    & "$($script:DSCResourceName)_Config" -Name $subCategory `
                                                           -AuditFlag $auditFlag `
                                                           -AuditFlagEnsure $auditFlagEnsure `
                                                           -OutputPath $TestEnvironment.WorkingFolder
@@ -164,9 +164,9 @@ try
 
             It 'Should return the correct configuration' {
             
-                $currentConfig.Subcategory | Should Be $subCategory
-                $currentConfig.AuditFlag   | Should Not Match $auditFlag
-                $currentConfig.Ensure      | Should Be $auditFlagEnsure
+                $currentConfig.Name      | Should Be $subCategory
+                $currentConfig.AuditFlag | Should Not Match $auditFlag
+                $currentConfig.Ensure    | Should Be $auditFlagEnsure
             }
         }
     }

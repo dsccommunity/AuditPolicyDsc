@@ -131,7 +131,7 @@ function Set-TargetResource
 
     try
     {
-        Set-AuditSubCategory -Name $Name -AuditFlag $AuditFlag -Ensure $Ensure
+        Set-AuditSubcategory -Name $Name -AuditFlag $AuditFlag -Ensure $Ensure
         Write-Verbose -Message ( $localizedData.SetAuditpolSubcategorySucceed `
                         -f $Name, $AuditFlag, $Ensure )
     }
@@ -284,9 +284,9 @@ function Get-AuditSubCategory
     .PARAMETER Ensure 
         The action to take on the flag
     .EXAMPLE
-        Set-AuditSubCategory -Name 'Logon' -AuditFlag 'Success' -Ensure 'Present'
+        Set-AuditSubcategory -Name 'Logon' -AuditFlag 'Success' -Ensure 'Present'
 #>
-function Set-AuditSubCategory
+function Set-AuditSubcategory
 {
     [CmdletBinding( SupportsShouldProcess=$true )]
     param
