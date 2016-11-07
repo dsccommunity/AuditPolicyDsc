@@ -198,3 +198,23 @@ Describe "Function Invoke-Auditpol" {
         }
     }
 }
+
+Describe 'Test-ValidSubcategory' {
+
+    InModuleScope AuditPolicyResourceHelper {
+
+        $command = Get-Command -Name Test-ValidSubcategory
+
+        It "Should find command Test-ValidSubcategory" {
+            $command.Name | Should Be 'Test-ValidSubcategory' 
+        }
+
+        It 'Should return false when an invalid Subcategory is passed ' {
+            { Test-ValidSubcategory -Name 'Invalid' } | Should Be $false
+        }
+
+        It 'Should return true when a valid Subcategory is passed ' {
+            { Test-ValidSubcategory -Name 'logon' } | Should Be $true
+        }
+    }
+}

@@ -30,7 +30,7 @@ function Get-TargetResource
         $AuditFlag
     )
 
-    if ( $validSubcategory -notcontains $name )
+    if ( -Not ( Test-ValidSubcategory -Name $Name ) )
     {
         Throw ( $localizedData.InvalidSubcategory -f $Name )
     }
@@ -96,7 +96,7 @@ function Set-TargetResource
         $Ensure = 'Present'
     )
 
-    if ( $validSubcategory -notcontains $name )
+    if ( -Not ( Test-ValidSubcategory -Name $Name ) )
     {
         Throw ( $localizedData.InvalidSubcategory -f $Name )
     }

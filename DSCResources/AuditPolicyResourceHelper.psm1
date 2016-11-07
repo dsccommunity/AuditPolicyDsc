@@ -7,7 +7,7 @@
 #>
 
 # Generate a list of valid subcategories when the module is loaded
-$validSubcategory = @()
+$script:validSubcategory = @()
 
 auditpol /list /subcategory:* | 
     Where-Object { $_ -notlike 'Category/Subcategory*' } | 
@@ -18,6 +18,33 @@ auditpol /list /subcategory:* |
         $validSubcategory += $_.trim()
     }
 } 
+
+<#
+    .SYNOPSIS
+        Verifies that the Subcategory is valid.
+    .PARAMETER Name
+        The name of the Subcategory to validate.
+#>
+function Test-ValidSubcategory
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [String]
+        $Name
+    )
+
+    if ( $script:validSubcategory -contains $Name )
+    {
+        return $true
+    }
+    else 
+    {
+        return $false    
+    }
+}
+
 
 <#
  .SYNOPSIS
@@ -151,6 +178,4 @@ function Get-LocalizedData
     return $localizedData
 }
 
-Export-ModuleMember `
-    -Function @( 'Invoke-AuditPol', 'Get-LocalizedData' ) `
-    -Variable 'validSubcategory'
+Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Test-ValidSubcategory' )
