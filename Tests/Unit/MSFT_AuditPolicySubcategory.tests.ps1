@@ -212,8 +212,8 @@ try
                 } 
             }
 
-            $testParameters.Subcategory = 'Credential Validation'
-            $testParameters.AuditFlag   = 'Success'
+            $testParameters.Name      = 'Credential Validation'
+            $testParameters.AuditFlag = 'Success'
 
             Context "Mulit-word subcategory submit 'Success' and return 'Success'" {
 
