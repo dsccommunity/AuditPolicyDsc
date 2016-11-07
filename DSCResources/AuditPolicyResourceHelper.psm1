@@ -6,6 +6,19 @@
     Get, Set, and Test operations on DSC managed nodes.
 #>
 
+# Generate a list of valid subcategories when the module is loaded
+$validSubcategory = @()
+
+auditpol /list /subcategory:* | 
+    Where-Object { $_ -notlike 'Category/Subcategory*' } | 
+        ForEach-Object {
+    # The categories do not have any space in front of them, but the subcategories do.
+    if ( $_ -like " *" )
+    {
+        $validSubcategory += $_.trim()
+    }
+} 
+
 <#
  .SYNOPSIS
     Invoke-AuditPol is a private function that wraps auditpol.exe providing a 
@@ -138,4 +151,6 @@ function Get-LocalizedData
     return $localizedData
 }
 
-Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData' )
+Export-ModuleMember `
+    -Function @( 'Invoke-AuditPol', 'Get-LocalizedData' ) `
+    -Variable 'validSubcategory'

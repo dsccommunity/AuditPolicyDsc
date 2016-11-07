@@ -30,9 +30,29 @@ try
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
             
             $testParameters = @{
-                Name      = 'Logon'
+                # Invalid name to test throw 
+                Name      = 'Invalid'
                 AuditFlag = 'Success'
             }
+
+            Context 'Invalid subcategory' {
+
+                Mock -CommandName Get-AuditSubcategory -MockWith { } `
+                     -ModuleName MSFT_AuditPolicySubcategory -Verifiable
+
+                It 'Should throw an exception' {
+                    { $getTargetResourceResult = Get-TargetResource @testParameters } | 
+                        Should Throw
+                }
+
+                It 'Should NOT call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly o
+                } 
+            }
+
+            # Update the Subcategory to a valid name
+            $testParameters.Name = 'Logon'
 
             Context "Single word subcategory submit 'Success' and return 'Success'" {
 
