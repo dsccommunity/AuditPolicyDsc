@@ -47,7 +47,7 @@ try
 
                 It 'Should NOT call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly o
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 0
                 } 
             }
 
@@ -417,10 +417,29 @@ try
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
             
             $testParameters = @{
-                Name      = 'Logon'
+                Name      = 'Invalid'
                 AuditFlag = 'Success'
                 Ensure    = 'Present'
             }    
+
+            Context 'Invalid subcategory' {
+
+                Mock -CommandName Get-AuditSubcategory -MockWith { } `
+                     -ModuleName MSFT_AuditPolicySubcategory -Verifiable
+
+                It 'Should throw an exception' {
+                    { $getTargetResourceResult = Get-TargetResource @testParameters } | 
+                        Should Throw
+                }
+
+                It 'Should NOT call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 0
+                } 
+            }
+
+            # Update the Subcategory to a valid name
+            $testParameters.Name = 'Logon'
 
             Context 'Single word subcategory Success flag present and should be' {
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
