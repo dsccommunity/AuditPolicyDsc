@@ -30,13 +30,13 @@ try
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
             
             $testParameters = @{
-                Name = 'Logon'
-                AuditFlag   = 'Success'
+                Name      = 'Logon'
+                AuditFlag = 'Success'
             }
 
             Context "Single word subcategory submit 'Success' and return 'Success'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -52,13 +52,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Single word subcategory submit 'Success' and return 'Failure'" {
                 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -74,13 +74,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Single word subcategory submit 'Success' and return 'NoAuditing'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'NoAuditing' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'NoAuditing' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -96,13 +96,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Single word subcategory submit 'Success' and return 'SuccessandFailure'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
@@ -118,7 +118,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
@@ -126,7 +126,7 @@ try
 
             Context "Single word subcategory submit 'Failure' and return 'Success'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -142,13 +142,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Single word subcategory submit 'Failure' and return 'Failure'" {
                 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -164,13 +164,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Single word subcategory submit 'Failure' and return 'NoAuditing'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'NoAuditing' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'NoAuditing' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -186,13 +186,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Single word subcategory submit 'Failure' and return 'SuccessandFailure'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
@@ -208,7 +208,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
@@ -217,7 +217,7 @@ try
 
             Context "Mulit-word subcategory submit 'Success' and return 'Success'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -233,13 +233,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Mulit-word subcategory submit 'Success' and return 'Failure'" {
                 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -255,13 +255,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Mulit-word subcategory submit 'Success' and return 'NoAuditing'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'NoAuditing' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'NoAuditing' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -277,13 +277,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Mulit-word subcategory submit 'Success' and return 'SuccessandFailure'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
@@ -299,7 +299,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
@@ -307,7 +307,7 @@ try
 
             Context "Mulit-word subcategory submit 'Failure' and return 'Success'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -323,13 +323,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Mulit-word subcategory submit 'Failure' and return 'Failure'" {
                 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -345,13 +345,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Mulit-word subcategory submit 'Failure' and return 'NoAuditing'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'NoAuditing' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'NoAuditing' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -367,13 +367,13 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context "Mulit-word subcategory submit 'Failure' and return 'SuccessandFailure'" {
 
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
             
                 It 'Should not throw an exception' {
@@ -389,7 +389,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
         }
@@ -403,7 +403,7 @@ try
             }    
 
             Context 'Single word subcategory Success flag present and should be' {
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -417,14 +417,14 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context 'Single word subcategory Success flag present and should not be' {
                 
                 $testParameters.Ensure = 'Absent'
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -437,7 +437,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
             }
             
@@ -446,7 +446,7 @@ try
             Context 'Single word subcategory failure flag present and should be' {
 
                 $testParameters.Ensure = 'Present'
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -460,14 +460,14 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context 'Single word subcategory failure flag present and should not be' {
                 
                 $testParameters.Ensure = 'Absent'
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -480,7 +480,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
             }
 
@@ -490,7 +490,7 @@ try
             Context 'Multi-word subcategory Success flag present and should be' {
                 
                 $testParameters.Ensure = 'Present'
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -504,14 +504,14 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context 'Multi-word subcategory Success flag present and should not be' {
                 
                 $testParameters.Ensure = 'Absent'
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'Success' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -524,7 +524,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
             }
 
@@ -533,7 +533,7 @@ try
             Context 'Multi-word subcategory failure flag present and should be' {
 
                 $testParameters.Ensure = 'Present'
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -547,14 +547,14 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 } 
             }
 
             Context 'Multi-word subcategory failure flag present and should not be' {
                 
                 $testParameters.Ensure = 'Absent'
-                Mock -CommandName Set-AuditSubcategory -MockWith { return 'failure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -567,7 +567,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
             }
         }
@@ -704,7 +704,7 @@ try
             }
         }
 
-        Describe 'Function Set-AuditSubcategory'  {
+        Describe 'Function Get-AuditSubcategory'  {
             
             [String] $subCategory = 'Logon'
             
@@ -720,7 +720,7 @@ try
                      -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Set-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
                         Should Not Throw
                 } 
                 
@@ -746,7 +746,7 @@ try
                      -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Set-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
                         Should Not Throw
                 } 
                 
@@ -772,7 +772,7 @@ try
                      -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Set-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
                         Should Not Throw
                 } 
                 
@@ -796,7 +796,7 @@ try
                      -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Set-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
                         Should Not Throw
                 } 
                 
