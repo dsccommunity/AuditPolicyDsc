@@ -38,7 +38,7 @@ try
             Context 'Invalid subcategory' {
 
                 Mock -CommandName Get-AuditSubcategory -MockWith { } `
-                     -ModuleName MSFT_AuditPolicySubcategory -Verifiable
+                     -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should throw an exception' {
                     { $getTargetResourceResult = Get-TargetResource @testParameters } | 
@@ -46,8 +46,7 @@ try
                 }
 
                 It 'Should NOT call expected Mocks' {    
-                    Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 0
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Times 0
                 } 
             }
 
@@ -425,7 +424,7 @@ try
             Context 'Invalid subcategory' {
 
                 Mock -CommandName Get-AuditSubcategory -MockWith { } `
-                     -ModuleName MSFT_AuditPolicySubcategory -Verifiable
+                     -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should throw an exception' {
                     { $getTargetResourceResult = Get-TargetResource @testParameters } | 
@@ -433,8 +432,7 @@ try
                 }
 
                 It 'Should NOT call expected Mocks' {    
-                    Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 0
+                    Assert-MockCalled -CommandName Get-AuditSubcategory -Times 0
                 } 
             }
 

@@ -210,11 +210,11 @@ Describe 'Test-ValidSubcategory' {
         }
 
         It 'Should return false when an invalid Subcategory is passed ' {
-            { Test-ValidSubcategory -Name 'Invalid' } | Should Be $false
+            Test-ValidSubcategory -Name 'Invalid' | Should Be $false
         }
 
         It 'Should return true when a valid Subcategory is passed ' {
-            { Test-ValidSubcategory -Name 'logon' } | Should Be $true
+            Test-ValidSubcategory -Name 'logon' | Should Be $true
         }
     }
 }

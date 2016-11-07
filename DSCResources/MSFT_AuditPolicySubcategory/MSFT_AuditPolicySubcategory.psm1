@@ -29,11 +29,6 @@ function Get-TargetResource
         [System.String]
         $AuditFlag
     )
-
-    if ( -Not ( Test-ValidSubcategory -Name $Name ) )
-    {
-        Throw ( $localizedData.InvalidSubcategory -f $Name )
-    }
     
     try
     {
@@ -145,6 +140,11 @@ function Test-TargetResource
     )
 
     [System.Boolean] $isInDesiredState = $false
+
+    if ( -Not ( Test-ValidSubcategory -Name $Name ) )
+    {
+        Throw ( $localizedData.InvalidSubcategory -f $Name )
+    }
 
     try
     {
