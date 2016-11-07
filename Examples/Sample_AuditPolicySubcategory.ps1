@@ -24,7 +24,7 @@ Configuration Sample_AuditSubcategory
         {
             Name      = 'Logon'
             AuditFlag = 'Failure'
-            Ensure    = 'Present' 
+            Ensure    = 'Present'
         }
     }
 }
