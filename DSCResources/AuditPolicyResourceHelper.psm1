@@ -6,45 +6,11 @@
     Get, Set, and Test operations on DSC managed nodes.
 #>
 
-# Generate a list of valid subcategories when the module is loaded
-$script:validSubcategory = @()
-
-auditpol /list /subcategory:* | 
-    Where-Object { $_ -notlike 'Category/Subcategory*' } | 
-        ForEach-Object {
-    # The categories do not have any space in front of them, but the subcategories do.
-    if ( $_ -like " *" )
-    {
-        $validSubcategory += $_.trim()
-    }
-} 
-
-<#
-    .SYNOPSIS
-        Verifies that the Subcategory is valid.
-    .PARAMETER Name
-        The name of the Subcategory to validate.
+<# 
+    A list of valid subcategories. This variable is populated after Invoke-AuditPol is defined 
+    so that Invoke-AutiPol can be used to dynamically generate the list of valid subcategories. 
 #>
-function Test-ValidSubcategory
-{
-    [CmdletBinding()]
-    param
-    (
-        [Parameter(Mandatory = $true)]
-        [String]
-        $Name
-    )
-
-    if ( $script:validSubcategory -contains $Name )
-    {
-        return $true
-    }
-    else 
-    {
-        return $false    
-    }
-}
-
+$script:validSubcategory = @()
 
 <#
  .SYNOPSIS
@@ -76,7 +42,7 @@ function Invoke-AuditPol
     param
     (
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Get', 'Set')]
+        [ValidateSet('Get', 'Set', 'List')]
         [System.String]
         $Command,
 
@@ -136,6 +102,43 @@ function Invoke-AuditPol
     {
         # catch any other errors
         Write-Error -Message ( $localizedData.UnknownError -f $error[0] )
+    }
+}
+
+# Populating $validSubcategory uses Invoke-AuditPol, so it needs to come after the definition
+Invoke-AuditPol -Command List -SubCommand "Subcategory:*" | 
+    Where-Object { $_ -notlike 'Category/Subcategory*' } | 
+        ForEach-Object {
+    # The categories do not have any space in front of them, but the subcategories do.
+    if ( $_ -like " *" )
+    {
+        $validSubcategory += $_.trim()
+    }
+} 
+
+<#
+    .SYNOPSIS
+        Verifies that the Subcategory is valid.
+    .PARAMETER Name
+        The name of the Subcategory to validate.
+#>
+function Test-ValidSubcategory
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [String]
+        $Name
+    )
+
+    if ( $script:validSubcategory -contains $Name )
+    {
+        return $true
+    }
+    else 
+    {
+        return $false    
     }
 }
 
