@@ -15,20 +15,18 @@ Configuration Sample_AuditSubcategory
     {
         AuditPolicySubcategory LogonSuccess
         {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Success'
-            Ensure      = 'Absent' 
+            Name      = 'Logon'
+            AuditFlag = 'Success'
+            Ensure    = 'Absent' 
         } 
 
         AuditPolicySubcategory LogonFailure
         {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Failure'
-            Ensure      = 'Present' 
+            Name      = 'Logon'
+            AuditFlag = 'Failure'
+            Ensure    = 'Present' 
         }
     }
 }
 
-Sample_AuditSubcategory -NodeName 
-
-Start-DscConfiguration -Path .\Sample_AuditSubcategory -Wait -Verbose -Force
+Sample_AuditSubcategory

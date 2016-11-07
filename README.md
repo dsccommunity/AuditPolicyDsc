@@ -34,7 +34,7 @@ None
 
 #### Parameters
 
-* **[String] Subcategory _(Key)_**: The name of the subcategory in the advanced audit policy to 
+* **[String] Name _(Key)_**: The name of the subcategory in the advanced audit policy to 
 manage.
 
 * **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory. 

@@ -22,5 +22,3 @@ Configuration Sample_AuditOption
 }
 
 Sample_AuditOption
-
-Start-DscConfiguration -Path .\Sample_AuditOption -Wait -Verbose -Force
