@@ -4,7 +4,7 @@
 [String] $script:moduleRoot = Split-Path -Parent ( Split-Path -Parent $PSScriptRoot )
 
 Import-Module -Name (Join-Path -Path $moduleRoot `
-                               -ChildPath 'DSCResources\AuditPolicyResourceHelper.psm1' ) `
+                               -ChildPath 'DSCResources\AuditPolicyResourceHelper\AuditPolicyResourceHelper.psm1' ) `
                                -Force
 #region Generate data
 
