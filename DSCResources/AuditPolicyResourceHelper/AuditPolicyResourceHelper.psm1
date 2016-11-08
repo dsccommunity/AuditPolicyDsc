@@ -10,7 +10,7 @@
     A list of valid subcategories. This variable is populated after Invoke-AuditPol is defined 
     so that Invoke-AutiPol can be used to dynamically generate the list of valid subcategories. 
 #>
-$script:validSubcategory = @()
+$script:validSubcategoryList = @()
 
 <#
     .SYNOPSIS
@@ -93,8 +93,8 @@ function Get-LocalizedData
 #>
 function Invoke-AuditPol
 {
-    [CmdletBinding()]
     [OutputType([System.String])]
+    [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -163,16 +163,36 @@ function Invoke-AuditPol
     }
 }
 
-# Populating $validSubcategory uses Invoke-AuditPol, so it needs to come after the definition
-Invoke-AuditPol -Command List -SubCommand "Subcategory:*" | 
-    Where-Object { $_ -notlike 'Category/Subcategory*' } | 
-        ForEach-Object {
-    # The categories do not have any space in front of them, but the subcategories do.
-    if ( $_ -like " *" )
+<#
+    .SYNOPSIS
+        Returns the list of valid Subcategories.
+    .DESCRIPTION
+        This funciton will check if the list of valid subcategories has already been created. 
+        If the list exists it will simply return it. If it doe not exists, it will generate 
+        it and return it.  
+#>
+function Get-ValidSubcategoryList
+{
+    [OutputType([String[]])]
+    [CmdletBinding()]
+    param ()
+
+    if ($null -eq $script:validSubcategoryList)
     {
-        $validSubcategory += $_.trim()
+        # Populating $validSubcategoryList uses Invoke-AuditPol and needs to follow the definition.
+        Invoke-AuditPol -Command List -SubCommand "Subcategory:*" | 
+            Where-Object { $_ -notlike 'Category/Subcategory*' } | 
+                ForEach-Object {
+            # The categories do not have any space in front of them, but the subcategories do.
+            if ( $_ -like " *" )
+            {
+                $validSubcategoryList += $_.trim()
+            }
+        } 
     }
-} 
+
+    return $script:validSubcategoryList
+}
 
 <#
     .SYNOPSIS
@@ -191,7 +211,7 @@ function Test-ValidSubcategory
         $Name
     )
 
-    if ( $script:validSubcategory -icontains $Name )
+    if ( Get-ValidSubcategoryList -icontains $Name )
     {
         return $true
     }
@@ -200,7 +220,5 @@ function Test-ValidSubcategory
         return $false    
     }
 }
-
-
 
 Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Test-ValidSubcategory' )
