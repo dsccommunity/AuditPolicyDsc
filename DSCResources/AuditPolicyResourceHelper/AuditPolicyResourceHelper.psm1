@@ -211,7 +211,7 @@ function Test-ValidSubcategory
         $Name
     )
 
-    if ( Get-ValidSubcategoryList -icontains $Name )
+    if ( ( Get-ValidSubcategoryList ) -icontains $Name )
     {
         return $true
     }
