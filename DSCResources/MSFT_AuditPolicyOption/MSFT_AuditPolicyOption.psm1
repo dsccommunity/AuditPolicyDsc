@@ -1,6 +1,6 @@
 
 Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
-                               -ChildPath 'AuditPolicyResourceHelper.psm1') `
+                               -ChildPath 'AuditPolicyResourceHelper\AuditPolicyResourceHelper.psm1') `
                                -Force
 
 # Localized messages for Write-Verbose statements in this resource

@@ -1,6 +1,6 @@
 
 Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
-                               -ChildPath 'AuditPolicyResourceHelper.psm1') `
+                               -ChildPath 'AuditPolicyResourceHelper\AuditPolicyResourceHelper.psm1') `
                                -Force
 
 # Localized messages for Write-Verbose statements in this resource
@@ -9,7 +9,7 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicySubcate
 <#
     .SYNOPSIS
         Returns the current audit flag for the given subcategory.
-    .PARAMETER Subcategory
+    .PARAMETER Name
         Specifies the subcategory to retrieve.
     .PARAMETER AuditFlag
         Specifies the audit flag to retrieve.
@@ -65,7 +65,7 @@ function Get-TargetResource
 <#
     .SYNOPSIS
         Sets the audit flag for the given subcategory.
-    .PARAMETER Subcategory
+    .PARAMETER Name
         Specifies the subcategory to set.
     .PARAMETER AuditFlag
         Specifies the audit flag to set.
@@ -112,7 +112,7 @@ function Set-TargetResource
 <#
     .SYNOPSIS
         Tests the audit flag state for the given subcategory.
-    .PARAMETER Subcategory
+    .PARAMETER Name
         Specifies the subcategory to test.
     .PARAMETER AuditFlag
         Specifies the audit flag to test.
@@ -230,7 +230,7 @@ function Get-AuditSubCategory
         Sets the audit flag state for a specifc subcategory. 
     .DESCRIPTION
         Calls the private function to execute a set operation on the given subcategory
-    .PARAMETER SubCategory
+    .PARAMETER Name
         The name of the audit subcategory to set
     .PARAMETER AuditFlag
         The specifc flag to set (Success|Failure)

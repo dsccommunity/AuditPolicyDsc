@@ -13,6 +13,62 @@
 $script:validSubcategory = @()
 
 <#
+    .SYNOPSIS
+        Retrieves the localized string data based on the machine's culture.
+        Falls back to en-US strings if the machine's culture is not supported.
+
+    .PARAMETER ResourceName
+        The name of the resource as it appears before '.strings.psd1' of the localized string file.
+        For example:
+            AuditPolicySubcategory: MSFT_AuditPolicySubcategory
+            AuditPolicyOption: MSFT_AuditPolicyOption
+#>
+function Get-LocalizedData
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true, ParameterSetName = 'resource')]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $ResourceName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'helper')]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $HelperName
+    )
+
+    # With the helper module just update the name and path variables as if it were a resource. 
+    if ($PSCmdlet.ParameterSetName -eq 'helper')
+    {
+        $resourceDirectory = $PSScriptRoot
+        $ResourceName = $HelperName
+    }
+    else 
+    {
+        # Step up one additional level to build the correct path to the resource culture.
+        $resourceDirectory = Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
+                                       -ChildPath $ResourceName
+    }
+
+    $localizedStringFileLocation = Join-Path -Path $resourceDirectory -ChildPath $PSUICulture
+
+    if (-not (Test-Path -Path $localizedStringFileLocation))
+    {
+        # Fallback to en-US
+        $localizedStringFileLocation = Join-Path -Path $resourceDirectory -ChildPath 'en-US'
+    }
+
+    Import-LocalizedData `
+        -BindingVariable 'localizedData' `
+        -FileName "$ResourceName.strings.psd1" `
+        -BaseDirectory $localizedStringFileLocation
+
+    return $localizedData
+}
+
+<#
  .SYNOPSIS
     Invoke-AuditPol is a private function that wraps auditpol.exe providing a 
     centralized function to manage access to and the output of auditpol.exe.    
@@ -51,6 +107,8 @@ function Invoke-AuditPol
         $SubCommand
     )
 
+    # Localized messages for Write-Verbose statements in this resource
+    $localizedData = Get-LocalizedData -HelperName 'AuditPolicyResourceHelper'
     <# 
         The raw auditpol data with the /r switch is a 3 line CSV
         0 - header row
@@ -124,6 +182,7 @@ Invoke-AuditPol -Command List -SubCommand "Subcategory:*" |
 #>
 function Test-ValidSubcategory
 {
+    [OutputType([Boolean])]
     [CmdletBinding()]
     param
     (
@@ -132,7 +191,7 @@ function Test-ValidSubcategory
         $Name
     )
 
-    if ( $script:validSubcategory -contains $Name )
+    if ( $script:validSubcategory -icontains $Name )
     {
         return $true
     }
@@ -142,43 +201,6 @@ function Test-ValidSubcategory
     }
 }
 
-<#
-    .SYNOPSIS
-        Retrieves the localized string data based on the machine's culture.
-        Falls back to en-US strings if the machine's culture is not supported.
 
-    .PARAMETER ResourceName
-        The name of the resource as it appears before '.strings.psd1' of the localized string file.
-        For example:
-            AuditPolicySubcategory: MSFT_AuditPolicySubcategory
-            AuditPolicyOption: MSFT_AuditPolicyOption
-#>
-function Get-LocalizedData
-{
-    [CmdletBinding()]
-    param
-    (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [String]
-        $ResourceName
-    )
-
-    $resourceDirectory = Join-Path -Path $PSScriptRoot -ChildPath $ResourceName
-    $localizedStringFileLocation = Join-Path -Path $resourceDirectory -ChildPath $PSUICulture
-
-    if (-not (Test-Path -Path $localizedStringFileLocation))
-    {
-        # Fallback to en-US
-        $localizedStringFileLocation = Join-Path -Path $resourceDirectory -ChildPath 'en-US'
-    }
-
-    Import-LocalizedData `
-        -BindingVariable 'localizedData' `
-        -FileName "$ResourceName.strings.psd1" `
-        -BaseDirectory $localizedStringFileLocation
-
-    return $localizedData
-}
 
 Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Test-ValidSubcategory' )
