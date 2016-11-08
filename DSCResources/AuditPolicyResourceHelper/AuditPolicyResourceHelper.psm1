@@ -6,12 +6,6 @@
     Get, Set, and Test operations on DSC managed nodes.
 #>
 
-<# 
-    A list of valid subcategories. This variable is populated after Invoke-AuditPol is defined 
-    so that Invoke-AutiPol can be used to dynamically generate the list of valid subcategories. 
-#>
-$script:validSubcategoryList = @()
-
 <#
     .SYNOPSIS
         Retrieves the localized string data based on the machine's culture.
@@ -179,6 +173,8 @@ function Get-ValidSubcategoryList
 
     if ($null -eq $script:validSubcategoryList)
     {
+        $script:validSubcategoryList = @()
+
         # Populating $validSubcategoryList uses Invoke-AuditPol and needs to follow the definition.
         Invoke-AuditPol -Command List -SubCommand "Subcategory:*" | 
             Where-Object { $_ -notlike 'Category/Subcategory*' } | 
@@ -186,7 +182,7 @@ function Get-ValidSubcategoryList
             # The categories do not have any space in front of them, but the subcategories do.
             if ( $_ -like " *" )
             {
-                $validSubcategoryList += $_.trim()
+                $script:validSubcategoryList += $_.trim()
             }
         } 
     }
