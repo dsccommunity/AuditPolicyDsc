@@ -1,94 +1,89 @@
-# xAuditPolicy
+[![Build status](https://ci.appveyor.com/api/projects/status/urjs5g2l5kt71msb?svg=true)](https://ci.appveyor.com/project/athaynes/auditpolicydsc)
 
-The **xAuditPolicy** DSC resources allow you to configure and manage the advanced audit policy on all currently supported versions of Windows.
+# AuditPolicyDsc
+
+The **AuditPolicyDsc** module allows you to configure and manage the advanced audit policy on all 
+currently supported versions of Windows.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](
+  https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](
+  https://opensource.microsoft.com/codeofconduct/faq/) 
+or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions 
+or comments.
 
 ## Contributing
-Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
+Please check out common DSC Resources [contributing guidelines](
+  https://github.com/PowerShell/DscResources/blob/master/CONTRIBUTING.md).
 
 ## Resources
 
-* **xAuditCategory** configures the advanced audit policy Subcategories audit flags. 
+* [AuditPolicySubcategory](#AuditPolicySubcategory): Provides a mechanism to manage advanced audit 
+policy subcategory audit flags. 
 
-* **xAuditOption** manages the auditpol options available in the auditpol.exe utility. 
+* [AuditPolicyOption](#AuditPolicyOption): Provides a mechanism to manage audit policy options. 
 
 
-### xAuditCategory
-* **Subcategory**: Name of the subcategory in the advanced audit policy.
+### AuditPolicySubcategory
+Provides a mechanism to manage advanced audit policy subcategory audit flags. 
+This resource works on Nano Server.
 
-* **AuditFlag**: The name of the audit flag to apply to the subcategory. This is can be either Success or Failure.
+#### Requirements
 
-### xAuditOption
+None
 
- * **Name**: The name of the option to configure. 
+#### Parameters
+
+* **[String] Name _(Key)_**: The name of the subcategory in the advanced audit policy to 
+manage.
+
+* **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory. 
+{ Success | Failure }.
+
+* **[String] Ensure _(Write)_**: Indicates whether the service is present or absent. 
+Defaults to Present. { *Present* | Absent }.
+
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Set Audit Policy Subcategory Audit Flags](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicySubcategory.ps1)
+
+
+### AuditPolicyOption
+Provides a mechanism to manage audit policy options. 
+This resource works on Nano Server.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] Name _(Key)_**: The name of the option to configure. 
  
- * **Vaule**: The value to apply to the option. This can be either Enabled or Disabled. 
- 
+* **[String] Value _(Key)_**: The value to apply to the option. { Enabled | Disabled }. 
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Set Audit Policy Option](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyOption.ps1)
+
 ## Versions
 
 ### Unreleased
 
 ### 1.0.0.0
+
 * Initial release with the following resources:
-
-  * xAuditPolicy 
-  * xAuditOption   
-
-## Examples
-
-### Example 1 Audit Logon Success and Failure
-```powershell
-    Configuration AuditPolicy
-    {
-        Import-DscResource -ModuleName xAuditPolicy
-
-        xAuditCategory LogonSuccess
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Success'
-            Ensure      = 'Present' 
-        } 
-
-        xAuditCategory LogonFailure
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Failure'
-            Ensure      = 'Present' 
-        } 
-    }
-```
-
-### Example 2 Audit Logon Failure only
-```powershell
-    Configuration AuditPolicy
-    {
-        Import-DscResource -ModuleName xAuditPolicy
-
-        xAuditCategory LogonSuccess
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Success'
-            Ensure      = 'Absent' 
-        } 
-
-        xAuditCategory LogonFailure
-        {
-            Subcategory = 'Logon'
-            AuditFlag   = 'Failure'
-            Ensure      = 'Present' 
-        } 
-    }
-```
-
-### Example 3 Enable the option AuditBaseDirectories
-```powershell
-    Configuration AuditPolicy
-    {
-        Import-DscResource -ModuleName xAuditPolicy
-
-        xAuditOption AuditBaseDirectories
-        {
-            Name  = 'AuditBaseDirectories'
-            Value = 'Enabled'
-        }
-    }
-```
+ 
+  * AuditPolicySubcategory
+  * AuditPolicyOption
