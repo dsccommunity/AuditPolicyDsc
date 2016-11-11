@@ -203,12 +203,12 @@ Describe "Function Invoke-Auditpol" {
             $path = ([system.IO.Path]::GetTempFileName()).Replace('tmp','csv') 
             
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command "/backup" -SubCommand "/file:$path"} | 
+                {Invoke-AuditPol -Command 'Backup' -SubCommand "/file:$path"} | 
                 Should Not Throw
             }       
 
             It 'Should not return anything when a backup is requested' {    
-                (Invoke-AuditPol -Command "/backup" -SubCommand "/file:$path") | 
+                (Invoke-AuditPol -Command 'Backup' -SubCommand "/file:$path") | 
                 Should BeNullOrEmpty
             }
 
@@ -221,12 +221,12 @@ Describe "Function Invoke-Auditpol" {
         Context 'Restore' {
 
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command "/restore" -SubCommand "/file:$path"} | 
+                {Invoke-AuditPol -Command 'Restore' -SubCommand "/file:$path"} | 
                 Should Not Throw
             } 
             
             It 'Should not return anything when a restore is requested' {
-                (Invoke-AuditPol -Command "/restore" -SubCommand "/file:$path") | 
+                (Invoke-AuditPol -Command 'Restore' -SubCommand "/file:$path") | 
                 Should BeNullOrEmpty
             }
         }
