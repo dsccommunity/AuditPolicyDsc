@@ -216,6 +216,7 @@ Describe "Function Invoke-Auditpol" {
                 (Import-csv -Path $path)[0] | 
                 Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
             }
+        }
         
         Context 'Restore' {
 
