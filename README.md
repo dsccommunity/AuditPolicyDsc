@@ -78,6 +78,31 @@ None
 * [Set Audit Policy Option](
   https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyOption.ps1)
 
+### AuditPolicyCsv
+Provides a mechanism to manage advanced audit policy subcategory audit flags by importing the csv
+output from auditpol.exe. 
+This resource works on Nano Server.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] CsvPath _(Key)_**: The path to the CSV file to apply to the node.
+
+* **[Boolean] Force _(Write)_**: Only allow settings defined in the csv. 
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Apply auditpol backup](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsv.ps1)
+
+
 ## Versions
 
 ### Unreleased

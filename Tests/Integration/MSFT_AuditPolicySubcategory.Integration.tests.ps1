@@ -47,11 +47,11 @@ try
                                                           -OutputPath $TestEnvironment.WorkingFolder
                     Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
                         -ComputerName localhost -Wait -Verbose -Force
-                } | Should not throw
+                } | Should Not Throw
             }
 
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+                { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not Throw
             }
             #endregion
             

@@ -173,8 +173,9 @@ Describe "Function Invoke-Auditpol" {
             $command.Parameters.Command | Should Not BeNullOrEmpty
         }
 
-        It 'Should have a ValidSet (Set|Get|List)' {
-            $command.Parameters.Command.Attributes.ValidValues | Should Be @('Set','Get','List')
+        It 'Should have a ValidSet (Set|Get|List|Backup|Restore)' {
+            $command.Parameters.Command.Attributes.ValidValues | 
+            Should Be @('Set','Get','List','Backup','Restore')
         }
 
         It 'Should have a parameter Subcommand' {
@@ -195,6 +196,38 @@ Describe "Function Invoke-Auditpol" {
         It 'Should return a CSV format when an option is passed in' {
             ( Invoke-Auditpol -Command "Get" -SubCommand "option:CrashOnAuditFail" )[0] | 
             Should match ".,."
+        }
+
+        Context 'Backup' {
+
+            $path = ([system.IO.Path]::GetTempFileName()).Replace('tmp','csv') 
+            
+            It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
+                {Invoke-AuditPol -Command "/backup" -SubCommand "/file:$path"} | 
+                Should Not Throw
+            }       
+
+            It 'Should not return anything when a backup is requested' {    
+                (Invoke-AuditPol -Command "/backup" -SubCommand "/file:$path") | 
+                Should BeNullOrEmpty
+            }
+
+            It 'Should produce a valid CSV to a temp file when the backup switch is used' {
+                (Import-csv -Path $path)[0] | 
+                Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
+            }
+        
+        Context 'Restore' {
+
+            It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
+                {Invoke-AuditPol -Command "/restore" -SubCommand "/file:$path"} | 
+                Should Not Throw
+            } 
+            
+            It 'Should not return anything when a restore is requested' {
+                (Invoke-AuditPol -Command "/restore" -SubCommand "/file:$path") | 
+                Should BeNullOrEmpty
+            }
         }
     }
 }

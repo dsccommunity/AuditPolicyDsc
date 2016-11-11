@@ -92,7 +92,7 @@ function Invoke-AuditPol
     param
     (
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Get', 'Set', 'List')]
+        [ValidateSet('Get', 'Set', 'List','Restore','Backup')]
         [System.String]
         $Command,
 
@@ -117,7 +117,7 @@ function Invoke-AuditPol
     }
     else
     {
-        # the set subcommand comes in an array of the subcategory and flag 
+        # The set subcommand comes in an array of the subcategory and flag 
         $commandString = @("/$Command","/$($SubCommand[0])",$SubCommand[1] )
     }
 
@@ -134,16 +134,19 @@ function Invoke-AuditPol
             throw New-Object System.ArgumentException
         }
 
-        $return
+        if ($Command -notmatch "Restore|Backup")
+        {
+            $return
+        }       
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
-        # catch error if the auditpol command is not found on the system
+        # Catch error if the auditpol command is not found on the system
         Write-Error -Message $localizedData.AuditpolNotFound
     }
     catch [System.ArgumentException]
     {
-        # catch the error thrown if the lastexitcode is not 0 
+        # Catch the error thrown if the lastexitcode is not 0 
         [String] $errorString = $error[0].Exception
         $errorString = $errorString + "`$LASTEXITCODE = $LASTEXITCODE;"
         $errorString = $errorString + " Command = auditpol $commandString"
@@ -152,7 +155,7 @@ function Invoke-AuditPol
     }
     catch
     {
-        # catch any other errors
+        # Catch any other errors
         Write-Error -Message ( $localizedData.UnknownError -f $error[0] )
     }
 }
@@ -217,4 +220,62 @@ function Test-ValidSubcategory
     }
 }
 
-Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Test-ValidSubcategory' )
+<#
+    .SYNOPSIS 
+        Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
+    .PARAMETER Action 
+        The action to take, either Import or Export. Import will clear existing policy before writing.
+    .PARAMETER Path 
+        The path to a CSV file to either create or import.  
+    .EXAMPLE
+        Invoke-SecurityCmdlet -Action Import -Path .\test.csv
+#>
+function Invoke-SecurityCmdlet
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [ValidateSet("Import","Export")]
+        [System.String]
+        $Action,
+        
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path 
+    )
+
+    # Test if security cmdlets are present. If not, use auditpol directly.
+    if ($null -eq (Get-Module -ListAvailable -Name "SecurityCmdlets"))
+    {
+        if ($Action -ieq "Import")
+        {
+            Invoke-AuditPol -Command "/restore" -SubCommand "/file:$path"
+        }
+        else
+        {
+            Invoke-AuditPol -Command "/backup" -SubCommand "/file:$path"
+        }
+    }
+    else
+    {
+        Import-Module -Name SecurityCmdlets
+
+        if ($Action -eq "Import")
+        {
+            Restore-AuditPolicy $Path | Out-Null
+        }
+        elseif ($Action -eq "Export")
+        {
+            #no force option on Backup, manually check for file and delete it so we can write back again
+            if (Test-Path $path)
+            {
+                Remove-Item $path -force
+            }
+            Backup-AuditPolicy $Path | Out-Null
+        }
+    }
+}
+
+Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 
+    'Test-ValidSubcategory', 'Invoke-SecurityCmdlet' )
