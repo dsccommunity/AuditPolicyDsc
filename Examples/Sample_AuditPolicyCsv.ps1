@@ -15,7 +15,7 @@ Configuration Sample_AuditPolicyCsv
     {
         AuditPolicyCsv auditPolicy
         {
-            CsvPath = "C:\Users\Administrator\Documents\examples\test.csv"
+            CsvPath = "C:\data\AuditPolBackup.csv"
         }
     
     }
