@@ -1,8 +1,8 @@
 
 Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
                                -ChildPath 'AuditPolicyResourceHelper\AuditPolicyResourceHelper.psm1') `
-                               -Force
-                               
+                               -Force                              
+
 # Localized messages for Write-Verbose statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
 
@@ -11,8 +11,6 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
         Gets the current audit policy for the node.
     .PARAMETER CsvPath
         Specifies the path to store the exported results.
-    .PARAMETER Force
-        Not used in Get-TargetResource.
 #>
 function Get-TargetResource
 {
@@ -22,47 +20,34 @@ function Get-TargetResource
     (
         [parameter(Mandatory = $true)]
         [System.String]
-        $CsvPath,
-
-        [parameter()]
-        [System.Boolean]
-        $Force,
-
-        [ValidateSet("Present","Absent")]
-        [string]
-        $Ensure = "Absent"
+        $CsvPath
     )
-
-    if (-not (Test-Path "c:\Temp\"))
-    {
-        New-Item -ItemType Directory -path "c:\temp\"
-    }
     
-    #Question: Better way to create a temp file in SYSTEM context?
-    $tempFile = "C:\Temp\test.CSV"
+    $tempFile = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
 
     try
     {
-        Invoke-SecurityCmdlet -Action "Export" -Path $tempFile
+        Write-Verbose -Message ($localizedData.BackupFilePath -f $tempFile)
+        Invoke-SecurityCmdlet -Action "Export" -Path $tempFile 
     }
     catch
     {
-        Write-Verbose ($localizedData.ExportFailed -f $tempFile)
-    }
-
-    $csv = Import-CSV $tempFile
-    if (($csv | Where-Object {($_."Inclusion Setting" -notmatch "No Auditing") -and ($_."Inclusion Setting" -ne "")}).Count -gt 0)
-    {
-        $Ensure = "Present"
+        Write-Verbose -Message ($localizedData.ExportFailed -f $tempFile)
     }
 
     return @{
-        CSVPath = $tempFile
-        Force   = $Force
-        Ensure  = $Ensure
+        CsvPath = $tempFile
     }
 }
 
+<#
+    .SYNOPSIS
+        Sets the current audit policy for the node.
+    .PARAMETER CsvPath
+        Specifies the path to store the exported results.
+    .PARAMETER Force
+        Clears the current audit policy and applies the desired state policy.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
@@ -74,49 +59,42 @@ function Set-TargetResource
 
         [parameter()]
         [System.Boolean]
-        $force = $false,
-
-        [ValidateSet("Present","Absent")]
-        [string]
-        $Ensure = "Present"
+        $Force
     )
 
     if (Test-Path $CsvPath)
     {
-        #clear existing policy!!
-        Write-Verbose "Start Set" 
         try
         {
-            if ($Ensure -eq "Present")
+            if ($Force)
             {
-                if (-not $Force)
-                {
-                    Invoke-SecurityCmdlet -Action "Import" -Path $CsvPath | Out-Null
-                    Write-Verbose "Set Success"
-                }
-                else
-                {
-                    # Need to import settings, null them out and reset.
-                }
+                # Need to import settings, null them out and reset.
             }
             else
             {
-                # If Ensure is Absent, suggest clearing out Audit Policy.
-                # Cannot do ensure separately on every settings without serious re-working, so this is the next logical move.
+                Invoke-SecurityCmdlet -Action "Import" -Path $CsvPath | Out-Null
+                Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)    
             }
         }
         catch
         {
-            Write-Verbse "Set Fail" 
-            Write-Verbose ($localizedData.ImportFailed -f $CsvPath)
+            Write-Verbose -Message ($localizedData.ImportFailed -f $CsvPath)
         }
     }
     else
     {
-        Write-Verbose ($localizedData.FileNotFound -f $CsvPath)
+        Write-Verbose -Message ($localizedData.FileNotFound -f $CsvPath)
     }
 }
 
+<#
+    .SYNOPSIS
+        Tests the current audit policy against the desired policy.
+    .PARAMETER CsvPath
+        Specifies the path to store the exported results.
+    .PARAMETER Force
+        Clears the current audit policy and applies the desired state policy.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]
@@ -129,67 +107,144 @@ function Test-TargetResource
 
         [parameter()]
         [System.Boolean]
-        $force = $false, 
-
-        [ValidateSet("Present","Absent")]
-        [string]
-        $Ensure = "Present"
+        $Force
     )
 
     if (Test-Path $CsvPath)
     {
-        $result = Get-TargetResource @PSBoundParameters
-        # Good Precedent here for using Get-TargetResource within other Blocks.$result = Get-TargetResource
-        $tempFile = $result.CSVPath
+        $targetResourceReturn = (Get-TargetResource -CsvPath $CsvPath).CsvPath
 
-        #Ignore "Machine Name" since it will cause a failure if your CSV was generated on a different machine
+        <# 
+            Ignore "Machine Name" since it will cause a failure if the CSV was generated on a 
+            different machine.
 
-        #compare GUIDs and values to see if they are the same
-        #options have no GUIDs, just object names...
+            Compare GUIDs and values to see if they are the same
+            Options have no GUIDs, just object names...
 
-        #clearing settings just writes "0"s on top, so lets discard those from consideration
+            Clearing settings just writes "0"s on top, so discard those from consideration
+        #>
 
-        $ActualSettings  =  import-csv $tempFile | 
-            Where-Object  { $_."Setting Value" -ne 0 -and $_."Setting Value" -ne ""} | 
+        $currentAuditPolicy = Import-Csv -Path $targetResourceReturn |
+            Where-Object  { $_."Setting Value" -ne 0 -and $_."Setting Value" -ne ""} |
             Select-Object -Property "Subcategory GUID", "Setting Value"
 
-        $DesiredSettings =  import-csv $CsvPath  | 
-            Where-Object { $_."Setting Value" -ne 0 -and $_."Setting Value" -ne ""} | 
+        $desiredAuditPolicy = Import-Csv -Path $CsvPath |
+            Where-Object { $_."Setting Value" -ne 0 -and $_."Setting Value" -ne ""} |
             Select-Object -Property "Subcategory GUID", "Setting Value"
         
-        $result = Compare-Object -ReferenceObject $DesiredSettings -DifferenceObject $ActualSettings
-        #only report items where selected items are present in desired state but NOT in actual state
-        switch ($Ensure)
+        $compareResults = Compare-Object -ReferenceObject $desiredAuditPolicy -DifferenceObject $currentAuditPolicy
+
+        if ($null -ne $compareResults)
         {
-            "Present" { 
-                if (-not ($result) )
-                {
-                    return $true
-                }
-                else
-                {
-                    #TODO: branch on $force
-                    foreach ($entry in $result)
-                    {
-                        Write-Verbose ($localizedData.testCsvFailed -f $entry)
-                    }
-                    return $false
-                }
-            } 
-            
-            "Absent" 
-            { 
-                # Same question here on logic.  If "Absent" is set what should the results of the test be? 
-            } 
+            #TODO: branch on $force
+            foreach ($entry in $compareResults)
+            {
+                Write-Verbose -Message ($localizedData.testCsvFailed -f $($entry.InputObject.'Subcategory GUID'))
+            }
+            return $false
+        }
+        else
+        {
+            # Since no changes are needed, cleanup the temp file 
+            Remove-BackupFile -CsvPath $targetResourceReturn
+            Write-Verbose -Message $localizedData.testCsvSuccess
+            return $true
         }
     }
     else
     {
-        Write-Verbose ($localizedData.FileNotFound -f $CsvPath)
+        Write-Verbose -Message ($localizedData.FileNotFound -f $CsvPath)
         return $false
     }
-    #this shouldn't get reached, but it is getting reached. 
-    return $false
+}
+
+<#
+    .SYNOPSIS 
+        Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
+    .PARAMETER Action 
+        The action to take, either Import or Export. Import will clear existing policy before writing.
+    .PARAMETER Path 
+        The path to a CSV file to either create or import.  
+    .EXAMPLE
+        Invoke-SecurityCmdlet -Action Import -Path .\test.csv
+#>
+function Invoke-SecurityCmdlet
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [ValidateSet("Import","Export")]
+        [System.String]
+        $Action,
+        
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path 
+    )
+
+    # Test if security cmdlets are present. If not, use auditpol directly.
+    if ($null -eq (Get-Module -ListAvailable -Name "SecurityCmdlets"))
+    {
+        Write-Verbose -Message ($localizedData.CmdletsNotFound)
+
+        if ($Action -ieq "Import")
+        {
+            Invoke-AuditPol -Command Restore -SubCommand "file:$path"
+        }
+        else
+        {
+            Invoke-AuditPol -Command Backup -SubCommand "file:$path"
+        }
+    }
+    else
+    {
+        Import-Module -Name SecurityCmdlets
+
+        if ($Action -eq "Import")
+        {
+            Restore-AuditPolicy $Path | Out-Null
+        }
+        elseif ($Action -eq "Export")
+        {
+            #no force option on Backup, manually check for file and delete it so we can write back again
+            if (Test-Path $path)
+            {
+                Remove-Item $path -force
+            }
+            Backup-AuditPolicy $Path | Out-Null
+        }
+    }
+}
+
+<#
+    .SYNOPSIS
+        Gets the current audit policy for the node.
+    .PARAMETER CsvPath
+        Specifies the path to store the exported results.
+#>
+function Remove-BackupFile
+{
+    [CmdletBinding()]
+    [OutputType([System.Collections.Hashtable])]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [System.String]
+        $CsvPath
+    )
+
+    try 
+    {
+        Remove-Item -Path $CsvPath
+        Write-Verbose -Message ($localizedData.RemoveFile -f $CsvPath)
+    }
+    catch 
+    {
+        Write-Error $error[0]
+    }
 }
 
 Export-ModuleMember -Function *-TargetResource
+
+## TODO Cleanup the temp files
