@@ -221,12 +221,12 @@ Describe "Function Invoke-Auditpol" {
         Context 'Restore' {
 
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command 'Restore' -SubCommand "/file:$path"} | 
+                {Invoke-AuditPol -Command 'Restore' -SubCommand "file:$path"} | 
                 Should Not Throw
             } 
             
             It 'Should not return anything when a restore is requested' {
-                (Invoke-AuditPol -Command 'Restore' -SubCommand "/file:$path") | 
+                (Invoke-AuditPol -Command 'Restore' -SubCommand "file:$path") | 
                 Should BeNullOrEmpty
             }
         }
