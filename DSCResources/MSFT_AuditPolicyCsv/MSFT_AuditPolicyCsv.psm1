@@ -112,43 +112,45 @@ function Test-TargetResource
 
     if (Test-Path $CsvPath)
     {
-        $targetResourceReturn = (Get-TargetResource -CsvPath $CsvPath).CsvPath
+        $currentAuditPolicy = @{}
+        $desiredAuditPolicy = @{}
 
-        <# 
-            Ignore "Machine Name" since it will cause a failure if the CSV was generated on a 
-            different machine.
-
-            Compare GUIDs and values to see if they are the same
-            Options have no GUIDs, just object names...
-
-            Clearing settings just writes "0"s on top, so discard those from consideration
-        #>
-
-        $currentAuditPolicy = Import-Csv -Path $targetResourceReturn |
-            Where-Object  { $_."Setting Value" -ne 0 -and $_."Setting Value" -ne ""} |
-            Select-Object -Property "Subcategory GUID", "Setting Value"
-
-        $desiredAuditPolicy = Import-Csv -Path $CsvPath |
-            Where-Object { $_."Setting Value" -ne 0 -and $_."Setting Value" -ne ""} |
-            Select-Object -Property "Subcategory GUID", "Setting Value"
-        
-        $compareResults = Compare-Object -ReferenceObject $desiredAuditPolicy -DifferenceObject $currentAuditPolicy
-
-        if ($null -ne $compareResults)
-        {
-            #TODO: branch on $force
-            foreach ($entry in $compareResults)
-            {
-                Write-Verbose -Message ($localizedData.testCsvFailed -f $($entry.InputObject.'Subcategory GUID'))
-            }
-            return $false
+        Import-Csv -Path (Get-TargetResource -CsvPath $CsvPath).CsvPath | Foreach-Object {
+            $currentAuditPolicy.Add($_.Subcategory ,$_."Setting Value")
         }
-        else
+
+        Import-Csv -Path $CsvPath | Foreach-Object {
+            $desiredAuditPolicy.Add($_.Subcategory ,$_."Setting Value")
+        }
+
+        # Assume in desired state until proven false.
+        $inDesiredState = $true
+
+        # Loop throgh the list of desired settings
+        foreach ($auditPolicySetting in $desiredAuditPolicy.GetEnumerator()) 
+        {
+            if (-not (Test-AuditFlagState `
+                        -CurrentSetting $currentAuditPolicy[$auditPolicySetting.Key] `
+                        -DesiredSetting $auditPolicySetting.Value `
+                        -Force:$Force)
+            )
+            {
+                Write-Verbose -Message ($localizedData.testCsvFailed -f $auditPolicySetting.Key)
+                    
+                $inDesiredState = $false
+            }
+        }
+
+        if ($inDesiredState)
         {
             # Since no changes are needed, cleanup the temp file 
             Remove-BackupFile -CsvPath $targetResourceReturn
             Write-Verbose -Message $localizedData.testCsvSuccess
             return $true
+        }
+        else
+        {
+            return $false
         }
     }
     else
@@ -226,7 +228,6 @@ function Invoke-SecurityCmdlet
 function Remove-BackupFile
 {
     [CmdletBinding()]
-    [OutputType([System.Collections.Hashtable])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -242,6 +243,78 @@ function Remove-BackupFile
     catch 
     {
         Write-Error $error[0]
+    }
+}
+
+<#
+    .SYNOPSIS
+        Checks the bit flags of the current audit policy against the desired state. 
+    .PARAMETER CurrentSetting
+        Specifies the current bit flag to test against.
+    .PARAMETER DesiredSetting
+        Specifies the desired bit flag to check.
+    .PARAMETER Force
+        Forces an exact match of all audit flags instead of a specific flag.
+#>
+function Test-AuditFlagState
+{
+    [CmdletBinding()]
+    [OutputType([System.Boolean])]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [System.Int32]
+        $CurrentSetting,
+
+        [parameter(Mandatory = $true)]
+        [System.Int32]
+        $DesiredSetting,
+
+        [parameter()]
+        [System.Boolean]
+        $Force
+    )
+    
+    # 
+    if ($force)
+    {
+        if ($CurrentSetting -eq $DesiredSetting)
+        {
+            return $true
+        }
+        else
+        {
+            return $false
+        }
+    }
+    else
+    {
+        <# 
+            Bit comparison against zero always returns 0, so if the Desired state 
+            is 0 and the current state is not 0, return false
+        #>
+        if ( ($DesiredSetting -eq 0) -and ($CurrentSetting -ne $DesiredSetting) )
+        {
+            return $false
+        }
+
+        # If the audit flags are equal return true. 
+        if ($CurrentSetting -ne $DesiredSetting)
+        {
+            # If the audit flags are not equal, compare the bits to see if the desired flag is set. 
+            if (( $CurrentSetting -band $DesiredSetting ) -eq $DesiredSetting )
+            {
+                return $true
+            }
+            else
+            {
+                return $false
+            }
+        }
+        else
+        {
+            return $true
+        }
     }
 }
 

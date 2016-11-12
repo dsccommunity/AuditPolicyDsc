@@ -34,6 +34,7 @@ if (-not (Test-Path C:\Temp))
 # Begin Testing
 try
 {
+    #region Pester Tests
 
     InModuleScope $script:DSCResourceName {
 
@@ -116,13 +117,262 @@ try
             # mock call to the helper module to isolate Get-TargetResource
             Mock Invoke-SecurityCmdlet { param($Action, $Path)}
             
-            It 'Calls Invoke-SecurityCmdlet 1 time' {
+            It 'Should call Invoke-SecurityCmdlet 1 time' {
                 Set-TargetResource -CSVPath $TestCSV -Ensure "Present" -Force $false
 
                 Assert-MockCalled Invoke-SecurityCmdlet -Exactly 1 -Scope It
             }
         }
-        #endregion
+
+        Describe 'Function Invoke-SecurityCmdlet' {
+            
+            Context 'Seucrity cmdlets are available' {
+                Mock Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
+                                -MockWith {"SecurityCmdlets"} -Verifiable
+                Mock Restore-AuditPolicy -MockWith {}
+                
+                It 'Should call ' {
+
+                }
+            }
+
+            Context 'Seucrity cmdlets are NOT available' {
+
+                Mock Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
+                                -MockWith {} -Verifiable
+                
+                Mock Invoke-AuditPol -MockWith {} -Verifiable
+
+                It 'Should call Invoke-AuditPol' {
+                
+                }
+            }
+        }
+
+        Describe 'Function Remove-BackupFile' {
+
+            Mock Remove-Item -MockWith {} -Verifiable
+
+            It 'Should call Remove-Item' {
+                {Remove-BackupFile} | Should BeNullOrEmpty
+                Assert-MockCalled Remove-Item -Times 1 -Scope It
+            }
+
+        }
+
+        Describe 'Function Test-AuditFlagState' {
+            
+            $force = $false
+
+            Context 'No Auditing with force Flag Set to False' {
+
+                It "Should return true when 'No Auditing' is tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting 0 -DesiredSetting 0 -Force $force |
+                    Should be $true
+                }
+
+                It "Should return false when 'Success' is tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting 0 -DesiredSetting 1 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return false when 'Failure' is tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting 0 -DesiredSetting 2 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return false when 'Success and Failure' is tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting 0 -DesiredSetting 3 -Force $force |
+                    Should be $false
+                }
+            }
+
+            Context 'Success with force Flag Set to False' {
+
+                It "Should return false when 'No Auditing' is tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting 1 -DesiredSetting 0 -Force $force |
+                    Should be $false
+                }
+                
+                It "Should return true when 'Success' is tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting 1 -DesiredSetting 1 -Force $force |
+                    Should be $true
+                }
+
+                It "Should return false when 'Failure' is tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting 1 -DesiredSetting 2 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return false when 'Success and Failure' are tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting 1 -DesiredSetting 3 -Force $force |
+                    Should be $false
+                }
+            }
+
+            Context 'Failure with force Flag Set to False' {
+
+                It "Should return false when 'No Auditing' is tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting 2 -DesiredSetting 0 -Force $force |
+                    Should be $false
+                }
+                
+                It "Should return false when 'Success' is tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting 2 -DesiredSetting 1 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return true when 'Failure' is tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting 2 -DesiredSetting 2 -Force $force |
+                    Should be $true
+                }
+
+                It "Should return false when 'Success and Failure' are tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting 2 -DesiredSetting 3 -Force $force |
+                    Should be $false
+                }
+            }
+
+            Context 'Success and Failure with force Flag Set to False' {
+
+                It "Should return false when 'No Auditing' is tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting 3 -DesiredSetting 0 -Force $force |
+                    Should be $false
+                }
+                
+                It "Should return true when 'Success' is tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting 3 -DesiredSetting 1 -Force $force |
+                    Should be $true
+                }
+
+                It "Should return true when 'Failure' is tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting 3 -DesiredSetting 2 -Force $force |
+                    Should be $true
+                }
+
+                It "Should return true when 'Success and Failure' are tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting 3 -DesiredSetting 3 -Force $force |
+                    Should be $true
+                }
+            }
+
+            $force = $true
+            
+            Context 'No Auditing with force flag Set to True' {
+                $currentSetting = 2
+
+                It "Should return true when 'No Auditing' is tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 0 -Force $force |
+                    Should be $true
+                }
+                
+                It "Should return false when 'Success' is tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 1 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return false when 'Failure' is tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 2 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return false when 'Success and Failure' are tested against 'No Auditing'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 3 -Force $force |
+                    Should be $false
+                }             
+            }
+
+            Context 'Success with force flag Set to True' {
+
+                $currentSetting = 1
+
+                It "Should return false when 'No Auditing' is tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 0 -Force $force |
+                    Should be $false
+                }
+                
+                It "Should return true when 'Success' is tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 1 -Force $force |
+                    Should be $true
+                }
+
+                It "Should return false when 'Failure' is tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 2 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return false when 'Success and Failure' are tested against 'Success'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 3 -Force $force |
+                    Should be $false
+                }             
+            }
+
+            Context 'Failure with force Flag Set to True' {
+
+                $currentSetting = 2
+
+                It "Should return false when 'No Auditing' is tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 0 -Force $force |
+                    Should be $false
+                }
+                
+                It "Should return false when 'Success' is tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 1 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return true when 'Failure' is tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 2 -Force $force |
+                    Should be $true
+                }
+
+                It "Should return false when 'Success and Failure' are tested against 'Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 3 -Force $force |
+                    Should be $false
+                }             
+            }
+
+            Context 'Success and Failure with force Flag Set to True' {
+                
+                $currentSetting = 3
+
+                It "Should return false when 'No Auditing' is tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 0 -Force $force |
+                    Should be $false
+                }
+                
+                It "Should return false when 'Success' is tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 1 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return false when 'Failure' is tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 2 -Force $force |
+                    Should be $false
+                }
+
+                It "Should return true when 'Success and Failure' are tested against 'Success and Failure'" {
+                    Test-AuditFlagState -CurrentSetting $currentSetting `
+                                        -DesiredSetting 3 -Force $force |
+                    Should be $true
+                }
+            }
+        }
     }
     #endregion
 }
