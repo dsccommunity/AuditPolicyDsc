@@ -29,6 +29,13 @@ try
         
         Context 'Should set policy without force flag' {
 
+            # set the system Subcategory to the incorect state to ensure a valid test.
+            & 'auditpol' '/set' "/subcategory:Credential Validation" '/failure:disable' '/Success:disable'
+            & 'auditpol' '/set' "/subcategory:Other Account Management Events" '/failure:disable' '/Success:disable'
+            & 'auditpol' '/set' "/subcategory:Logoff" '/failure:disable' '/Success:disable'
+            & 'auditpol' '/set' "/subcategory:Logon" '/failure:disable' '/Success:disable'
+            & 'auditpol' '/set' "/subcategory:Special Logon" '/failure:disable' '/Success:disable'
+            
             $force = $false
             #region DEFAULT TESTS
 
