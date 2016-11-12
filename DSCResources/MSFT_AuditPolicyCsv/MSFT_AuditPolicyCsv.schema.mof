@@ -1,4 +1,4 @@
-[ClassVersion("1.0.0.0"), FriendlyName("xAuditCsv")]
+[ClassVersion("1.0.0.0"), FriendlyName("AuditPolicyCsv")]
 class MSFT_AuditPolicyCsv : OMI_BaseResource
 {
     [Key, Description("Path to a .CSV backup of Auditing settings")] String CsvPath;
