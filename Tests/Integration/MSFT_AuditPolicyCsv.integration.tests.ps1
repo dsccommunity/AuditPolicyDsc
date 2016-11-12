@@ -27,12 +27,17 @@ try
 
     Describe "$($script:DSCResourceName)_Integration" {
         
-        Context 'Should set policy' {
-            
+        Context 'Should set policy without force flag' {
+
+            $force = $false
             #region DEFAULT TESTS
 
-            # Set the test system value to an incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/option:$optionName" '/value:disable'  
+            <# 
+                Since the tests read in CSV files, they are stored in a subfolder for the user and
+                system context to both access.
+            #>           
+            $CsvPath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath 'BackupCsv') `
+                                 -ChildPath 'audit.csv'
 
             It 'Should compile and apply the MOF without throwing' {
                 {
