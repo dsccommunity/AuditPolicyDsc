@@ -32,10 +32,10 @@ try
             # set the system Subcategory to the incorect state to ensure a valid test.
             & 'auditpol' '/set' "/subcategory:Credential Validation" '/failure:disable' '/Success:disable'
             & 'auditpol' '/set' "/subcategory:Other Account Management Events" '/failure:disable' '/Success:disable'
-            & 'auditpol' '/set' "/subcategory:Logoff" '/failure:disable' '/Success:disable'
-            & 'auditpol' '/set' "/subcategory:Logon" '/failure:disable' '/Success:disable'
-            & 'auditpol' '/set' "/subcategory:Special Logon" '/failure:disable' '/Success:disable'
-            
+            & 'auditpol' '/set' "/subcategory:Logoff" '/failure:enable' '/Success:disable'
+            & 'auditpol' '/set' "/subcategory:Logon" '/failure:enable' '/Success:disable'
+            & 'auditpol' '/set' "/subcategory:Special Logon" '/failure:disable' '/Success:enable'
+
             $force = $false
             #region DEFAULT TESTS
 
@@ -62,6 +62,30 @@ try
                     Should Not throw
             }
 
+            It 'Should have configured the Credential Validation policy correctly' {
+                $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Credential Validation' '/r')[2] 
+                ($auditpolReturn -split ",")[4] | Should Match "Success and Failure"
+            }
+
+            It 'Should have configured the Other Account Management Events policy correctly' {
+                $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Other Account Management Events' '/r')[2] 
+                ($auditpolReturn -split ",")[4] | Should Match "Success and Failure"
+            }
+
+            It 'Should have configured the Logoff policy correctly' {
+                $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Logoff' '/r')[2] 
+                ($auditpolReturn -split ",")[4] | Should Match "Success"
+            }
+
+            It 'Should have configured the Logon policy correctly' {
+                $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Logon' '/r')[2] 
+                ($auditpolReturn -split ",")[4] | Should Match "Success and Failure"
+            }
+
+            It 'Should have configured the Special Logon policy correctly' {
+                $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Special Logon' '/r')[2] 
+                ($auditpolReturn -split ",")[4] | Should Match "Failure"
+            }
             #endregion
         }
     }
