@@ -8,5 +8,5 @@ ConvertFrom-StringData -StringData @'
     testCsvSuccess  = Audit Policy in desired state
     FileNotFound    = {0} not found
     RemoveFile      = Removing {0}
-    CmdletsNotFound = Security cmdlets not found, switching to auditpol
+    CmdletsNotFound = Security cmdlets not found, switching to auditpol.exe
 '@
