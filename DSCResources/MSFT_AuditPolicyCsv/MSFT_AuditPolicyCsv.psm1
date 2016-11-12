@@ -139,6 +139,10 @@ function Test-TargetResource
                     
                 $inDesiredState = $false
             }
+            else 
+            {
+                Write-Verbose -Message ($localizedData.testCsvSucceed -f $auditPolicySetting.Key)
+            }
         }
 
         if ($inDesiredState)
