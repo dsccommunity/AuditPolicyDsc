@@ -203,12 +203,12 @@ Describe "Function Invoke-Auditpol" {
             $path = ([system.IO.Path]::GetTempFileName()).Replace('tmp','csv') 
             
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command 'Backup' -SubCommand "/file:$path"} | 
+                {Invoke-AuditPol -Command 'Backup' -SubCommand "file:$path"} | 
                 Should Not Throw
             }       
 
             It 'Should not return anything when a backup is requested' {    
-                (Invoke-AuditPol -Command 'Backup' -SubCommand "/file:$path") | 
+                (Invoke-AuditPol -Command 'Backup' -SubCommand "file:$path") | 
                 Should BeNullOrEmpty
             }
 
