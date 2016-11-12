@@ -1,6 +1,6 @@
 
-$script:DSCModuleName      = 'AuditPolicyDsc'
-$script:DSCResourceName    = 'MSFT_AuditPolicyCsv'
+$script:DSCModuleName   = 'AuditPolicyDsc'
+$script:DSCResourceName = 'MSFT_AuditPolicyCsv'
 
 #region HEADER
 [String] $script:moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
