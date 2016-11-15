@@ -51,8 +51,25 @@ try
             
             Context "Returns properly formatted hashtable " {
                
-                $Get = Get-TargetResource -CSVPath $TestCSV -Force $true
+                $Get = Get-TargetResource -CSVPath $TestCSV
 
+                Mock -CommandName Get-AuditOption -MockWith { 
+                    return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
+                
+                It 'Should not throw an exception' {
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                        Should Not Throw
+                }
+
+                It 'Should return the correct hashtable properties' {
+                    $script:getTargetResourceResult.Name  | Should Be $testParameters.Name
+                    $script:getTargetResourceResult.Value | Should Be $testParameters.Value
+                }
+
+                It 'Should call expected Mocks' {    
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
+                } 
                     It " is a hashtable" {
                         $isHashtable = $Get.GetType().Name -eq 'hashtable'
 
@@ -60,31 +77,12 @@ try
                     }
 
                     It "'s keys match the parameters" {
-                       $Get.ContainsKey("CSVPath")  | Should Be $true
-                       $Get.ContainsKey("Force")  | Should Be $true
+                       $Get.ContainsKey("CSVPath") | Should Be $true
                        $Get.ContainsKey("Ensure")  | Should Be $true
                     }
                 
                 Assert-MockCalled Invoke-SecurityCmdlet -Exactly 1 -Scope Describe
             }
-
-            Context "Ensure works properly" {
-               
-                It "Ensure='Present' works" {
-                    Copy-Item -Path $TestCSV -Destination C:\Temp\test.csv -Force 
-                    $Get = Get-TargetResource -CSVPath $TestCSV
-                    $Get.Ensure | Should Be "Present"
-                    Assert-MockCalled Invoke-SecurityCmdlet -Exactly 1 -Scope It
-                }
-                
-                It "Ensure='Absent' works" {
-                    Copy-Item -Path $BlankCSV -Destination C:\Temp\test.csv -Force 
-                    $Get = Get-TargetResource -CSVPath $TestCSV
-                    $Get.Ensure | Should Be "Absent"
-                    Assert-MockCalled Invoke-SecurityCmdlet -Exactly 1 -Scope It
-                }
-            }
-
         }
 
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
