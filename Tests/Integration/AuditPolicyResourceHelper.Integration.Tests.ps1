@@ -185,17 +185,17 @@ Describe "Function Invoke-Auditpol" {
         # These tests verify that the /r switch is passed to auditpol 
         It 'Should return a CSV format when a single word subcategory is passed in' {
             ( Invoke-Auditpol -Command "Get" -SubCommand "Subcategory:Logoff" )[0] | 
-            Should match ".,."
+                Should match ".,."
         }
 
         It 'Should return a CSV format when a multi-word subcategory is passed in' {
             ( Invoke-Auditpol -Command "Get" -SubCommand "Subcategory:""Credential Validation""" )[0] | 
-            Should match ".,."
+                Should match ".,."
         }
 
         It 'Should return a CSV format when an option is passed in' {
             ( Invoke-Auditpol -Command "Get" -SubCommand "option:CrashOnAuditFail" )[0] | 
-            Should match ".,."
+                Should match ".,."
         }
 
         Context 'Backup' {
@@ -203,31 +203,31 @@ Describe "Function Invoke-Auditpol" {
             $script:path = ([system.IO.Path]::GetTempFileName()).Replace('tmp','csv') 
             
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command 'Backup' -SubCommand "file:$script:path"} | 
-                Should Not Throw
+                {$script:auditpolBackupReturn = Invoke-AuditPol -Command 'Backup' `
+                                                                -SubCommand "file:$script:path"} | 
+                    Should Not Throw
             }       
 
             It 'Should not return anything when a backup is requested' {    
-                (Invoke-AuditPol -Command 'Backup' -SubCommand "file:$script:path") | 
-                Should BeNullOrEmpty
+                $script:auditpolBackupReturn | Should BeNullOrEmpty
             }
 
-            It 'Should produce a valid CSV to a temp file when the backup switch is used' {
-                (Import-csv -Path $script:path)[0] | 
-                Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
+            It 'Should produce a valid CSV in a temp file when the backup switch is used' {
+                (Get-Content -Path $script:path)[0] | 
+                    Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
             }
         }
         
         Context 'Restore' {
 
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command 'Restore' -SubCommand "file:$script:path"} | 
-                Should Not Throw
+                {$script:auditpolRestoreReturn = Invoke-AuditPol -Command 'Restore' `
+                                                                 -SubCommand "file:$script:path"} | 
+                    Should Not Throw
             } 
             
             It 'Should not return anything when a restore is requested' {
-                (Invoke-AuditPol -Command 'Restore' -SubCommand "file:$script:path") | 
-                Should BeNullOrEmpty
+                $script:auditpolRestoreReturn | Should BeNullOrEmpty
             }
         }
     }
