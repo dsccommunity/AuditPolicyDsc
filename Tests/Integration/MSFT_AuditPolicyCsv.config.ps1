@@ -5,11 +5,7 @@ configuration 'MSFT_AuditPolicyCsv_config'
     (
         [Parameter(Mandatory = $true)]
         [System.String]
-        $CsvPath,
-
-        [Parameter(Mandatory = $true)]
-        [System.Boolean]
-        $Force
+        $CsvPath
     )
 
     Import-DscResource -ModuleName 'AuditPolicyDsc'
@@ -19,7 +15,6 @@ configuration 'MSFT_AuditPolicyCsv_config'
         AuditPolicyCsv Integration_Test 
         {
             CsvPath = $CsvPath
-            Force   = $Force
         }
     }
 }

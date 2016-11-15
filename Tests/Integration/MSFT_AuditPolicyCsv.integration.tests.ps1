@@ -36,7 +36,6 @@ try
             & 'auditpol' '/set' "/subcategory:Logon" '/failure:enable' '/Success:enable'
             & 'auditpol' '/set' "/subcategory:Special Logon" '/failure:disable' '/Success:enable'
 
-            $force = $false
             #region DEFAULT TESTS
 
             <# 
@@ -49,7 +48,6 @@ try
             It 'Should compile and apply the MOF without throwing' {
                 {
                     & "$($script:DSCResourceName)_Config" -CsvPath $CsvPath `
-                                                          -Force $force `
                                                           -OutputPath $TestEnvironment.WorkingFolder
                     
                     Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
