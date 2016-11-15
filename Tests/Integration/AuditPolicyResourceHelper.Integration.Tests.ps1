@@ -200,20 +200,20 @@ Describe "Function Invoke-Auditpol" {
 
         Context 'Backup' {
 
-            $path = ([system.IO.Path]::GetTempFileName()).Replace('tmp','csv') 
+            $script:path = ([system.IO.Path]::GetTempFileName()).Replace('tmp','csv') 
             
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command 'Backup' -SubCommand "file:$path"} | 
+                {Invoke-AuditPol -Command 'Backup' -SubCommand "file:$script:path"} | 
                 Should Not Throw
             }       
 
             It 'Should not return anything when a backup is requested' {    
-                (Invoke-AuditPol -Command 'Backup' -SubCommand "file:$path") | 
+                (Invoke-AuditPol -Command 'Backup' -SubCommand "file:$script:path") | 
                 Should BeNullOrEmpty
             }
 
             It 'Should produce a valid CSV to a temp file when the backup switch is used' {
-                (Import-csv -Path $path)[0] | 
+                (Import-csv -Path $script:path)[0] | 
                 Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
             }
         }
@@ -221,12 +221,12 @@ Describe "Function Invoke-Auditpol" {
         Context 'Restore' {
 
             It 'Should be able to call Invoke-Audtipol with backup and not throw' {    
-                {Invoke-AuditPol -Command 'Restore' -SubCommand "file:$path"} | 
+                {Invoke-AuditPol -Command 'Restore' -SubCommand "file:$script:path"} | 
                 Should Not Throw
             } 
             
             It 'Should not return anything when a restore is requested' {
-                (Invoke-AuditPol -Command 'Restore' -SubCommand "file:$path") | 
+                (Invoke-AuditPol -Command 'Restore' -SubCommand "file:$script:path") | 
                 Should BeNullOrEmpty
             }
         }
