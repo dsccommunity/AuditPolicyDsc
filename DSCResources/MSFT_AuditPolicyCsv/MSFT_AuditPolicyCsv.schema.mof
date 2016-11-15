@@ -2,5 +2,4 @@
 class MSFT_AuditPolicyCsv : OMI_BaseResource
 {
     [Key, Description("Path to a .CSV backup of Auditing settings")] String CsvPath;
-    [Write, Description("Only allow settings defined in the desired state. Defaults to False")] Boolean Force;
 };

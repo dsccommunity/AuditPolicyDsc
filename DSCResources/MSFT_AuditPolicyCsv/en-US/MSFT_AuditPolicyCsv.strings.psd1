@@ -6,7 +6,6 @@ ConvertFrom-StringData -StringData @'
     ImportSucceeded = Succeeded import of {0}
     testCsvFailed   = {0} not in desired state
     testCsvSucceed  = {0} in desired state
-    testCsvSuccess  = Audit Policy in desired state
     FileNotFound    = {0} not found
     RemoveFile      = Removing {0}
     CmdletsNotFound = Security cmdlets not found, switching to auditpol.exe

@@ -91,8 +91,6 @@ None
 
 * **[String] CsvPath _(Key)_**: The path to the CSV file to apply to the node.
 
-* **[Boolean] Force _(Write)_**: Only allow settings defined in the csv. 
-
 #### Read-Only Properties from Get-TargetResource
 
 None

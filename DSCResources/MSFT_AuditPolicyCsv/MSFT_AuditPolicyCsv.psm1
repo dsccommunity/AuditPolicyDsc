@@ -1,7 +1,8 @@
 
-Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
-                               -ChildPath 'AuditPolicyResourceHelper\AuditPolicyResourceHelper.psm1') `
-                               -Force                              
+Import-Module -Name (Join-Path -Path ( Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
+                                                 -ChildPath 'AuditPolicyResourceHelper' ) `
+                               -ChildPath 'AuditPolicyResourceHelper.psd1')
+              -Force                              
 
 # Localized messages for Write-Verbose statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
@@ -10,7 +11,8 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
     .SYNOPSIS
         Gets the current audit policy for the node.
     .PARAMETER CsvPath
-        Specifies the path to store the exported results.
+        This parameter is ignored in the Get operation, but does return the path to the 
+        backup of the current audit policy settings. 
 #>
 function Get-TargetResource
 {
@@ -44,9 +46,7 @@ function Get-TargetResource
     .SYNOPSIS
         Sets the current audit policy for the node.
     .PARAMETER CsvPath
-        Specifies the path to store the exported results.
-    .PARAMETER Force
-        Clears the current audit policy and applies the desired state policy.
+        Specifies the path to desired audit policy settings to apply to the node.
 #>
 function Set-TargetResource
 {
@@ -55,26 +55,15 @@ function Set-TargetResource
     (
         [parameter(Mandatory = $true)]
         [System.String]
-        $CsvPath,
-
-        [parameter()]
-        [System.Boolean]
-        $Force
+        $CsvPath
     )
 
     if (Test-Path $CsvPath)
     {
         try
         {
-            if ($Force)
-            {
-                # Need to import settings, null them out and reset.
-            }
-            else
-            {
-                Invoke-SecurityCmdlet -Action "Import" -Path $CsvPath | Out-Null
-                Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)    
-            }
+            Invoke-SecurityCmdlet -Action "Import" -Path $CsvPath | Out-Null
+            Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)    
         }
         catch
         {
@@ -91,9 +80,7 @@ function Set-TargetResource
     .SYNOPSIS
         Tests the current audit policy against the desired policy.
     .PARAMETER CsvPath
-        Specifies the path to store the exported results.
-    .PARAMETER Force
-        Clears the current audit policy and applies the desired state policy.
+        Specifies the path to desired audit policy settings to test against the node.
 #>
 function Test-TargetResource
 {
@@ -103,53 +90,54 @@ function Test-TargetResource
     (
         [parameter(Mandatory = $true)]
         [System.String]
-        $CsvPath,
-
-        [parameter()]
-        [System.Boolean]
-        $Force
+        $CsvPath
     )
 
     if (Test-Path $CsvPath)
     {
-        $currentAuditPolicy = @{}
-        $desiredAuditPolicy = @{}
-
-        Import-Csv -Path (Get-TargetResource -CsvPath $CsvPath).CsvPath | Foreach-Object {
-            $currentAuditPolicy.Add($_.Subcategory ,$_."Setting Value")
-        }
-
-        Import-Csv -Path $CsvPath | Foreach-Object {
-            $desiredAuditPolicy.Add($_.Subcategory ,$_."Setting Value")
-        }
+        # The path to the CSV that contains the current audit policy backup. 
+        $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath).CsvPath
+        
+        $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath | 
+            Select-Object -Property Subcategory, @{
+                'Name' = 'Value';
+                'Expression' = {$_.'Setting Value'}
+            } 
+        
+        $desiredAuditPolicy = Import-Csv -Path $CsvPath | 
+            Select-Object -Property Subcategory, @{
+                'Name' = 'Value';
+                'Expression' = {$_.'Setting Value'}
+            }
 
         # Assume in desired state until proven false.
         $inDesiredState = $true
 
-        # Loop throgh the list of desired settings
-        foreach ($auditPolicySetting in $desiredAuditPolicy.GetEnumerator()) 
+        foreach ($desiredAuditPolicySetting in $desiredAuditPolicy)
         {
-            if (-not (Test-AuditFlagState `
-                        -CurrentSetting $currentAuditPolicy[$auditPolicySetting.Key] `
-                        -DesiredSetting $auditPolicySetting.Value `
-                        -Force:$Force)
-            )
+            $currentAuditPolicySetting = $currentAuditPolicy.Where({
+                $_.Subcategory -eq $desiredAuditPolicySetting.Subcategory
+            })
+
+            if ($desiredAuditPolicySetting.Value -ne $currentAuditPolicySetting.Value)
             {
-                Write-Verbose -Message ($localizedData.testCsvFailed -f $auditPolicySetting.Key)
+                Write-Verbose -Message ($localizedData.testCsvFailed -f 
+                    $desiredAuditPolicySetting.Subcategory)
                     
                 $inDesiredState = $false
             }
             else 
             {
-                Write-Verbose -Message ($localizedData.testCsvSucceed -f $auditPolicySetting.Key)
+                Write-Verbose -Message ($localizedData.testCsvSucceed -f 
+                    $desiredAuditPolicySetting.Subcategory)
             }
         }
 
+        # Cleanup the temp file, since it is no longer needed. 
+        Remove-BackupFile -CsvPath $currentAuditPolicyBackupPath
+
         if ($inDesiredState)
-        {
-            # Since no changes are needed, cleanup the temp file 
-            Remove-BackupFile -CsvPath $targetResourceReturn
-            Write-Verbose -Message $localizedData.testCsvSuccess
+        {            
             return $true
         }
         else
@@ -196,29 +184,29 @@ function Invoke-SecurityCmdlet
 
         if ($Action -ieq "Import")
         {
-            Invoke-AuditPol -Command Restore -SubCommand "file:$path"
+            Invoke-AuditPol -Command Restore -SubCommand "file:$Path"
         }
         else
         {
-            Invoke-AuditPol -Command Backup -SubCommand "file:$path"
+            Invoke-AuditPol -Command Backup -SubCommand "file:$Path"
         }
     }
     else
     {
         Import-Module -Name SecurityCmdlets
 
-        if ($Action -eq "Import")
+        if ($Action -ieq "Import")
         {
-            Restore-AuditPolicy $Path | Out-Null
+            Restore-AuditPolicy -Path $Path | Out-Null
         }
-        elseif ($Action -eq "Export")
+        elseif ($Action -ieq "Export")
         {
             #no force option on Backup, manually check for file and delete it so we can write back again
-            if (Test-Path $path)
+            if (Test-Path -Path $Path)
             {
-                Remove-Item $path -force
+                Remove-Item -Path $Path -Force
             }
-            Backup-AuditPolicy $Path | Out-Null
+            Backup-AuditPolicy -Path $Path | Out-Null
         }
     }
 }
@@ -249,79 +237,3 @@ function Remove-BackupFile
         Write-Error $error[0]
     }
 }
-
-<#
-    .SYNOPSIS
-        Checks the bit flags of the current audit policy against the desired state. 
-    .PARAMETER CurrentSetting
-        Specifies the current bit flag to test against.
-    .PARAMETER DesiredSetting
-        Specifies the desired bit flag to check.
-    .PARAMETER Force
-        Forces an exact match of all audit flags instead of a specific flag.
-#>
-function Test-AuditFlagState
-{
-    [CmdletBinding()]
-    [OutputType([System.Boolean])]
-    param
-    (
-        [parameter(Mandatory = $true)]
-        [System.Int32]
-        $CurrentSetting,
-
-        [parameter(Mandatory = $true)]
-        [System.Int32]
-        $DesiredSetting,
-
-        [parameter()]
-        [System.Boolean]
-        $Force
-    )
-    
-    # 
-    if ($force)
-    {
-        if ($CurrentSetting -eq $DesiredSetting)
-        {
-            return $true
-        }
-        else
-        {
-            return $false
-        }
-    }
-    else
-    {
-        <# 
-            Bit comparison against zero always returns 0, so if the Desired state 
-            is 0 and the current state is not 0, return false
-        #>
-        if ( ($DesiredSetting -eq 0) -and ($CurrentSetting -ne $DesiredSetting) )
-        {
-            return $false
-        }
-
-        # If the audit flags are equal return true. 
-        if ($CurrentSetting -ne $DesiredSetting)
-        {
-            # If the audit flags are not equal, compare the bits to see if the desired flag is set. 
-            if (( $CurrentSetting -band $DesiredSetting ) -eq $DesiredSetting )
-            {
-                return $true
-            }
-            else
-            {
-                return $false
-            }
-        }
-        else
-        {
-            return $true
-        }
-    }
-}
-
-Export-ModuleMember -Function *-TargetResource
-
-## TODO Cleanup the temp files
