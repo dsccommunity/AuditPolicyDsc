@@ -1,8 +1,7 @@
 
 Import-Module -Name (Join-Path -Path ( Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
                                                  -ChildPath 'AuditPolicyResourceHelper' ) `
-                               -ChildPath 'AuditPolicyResourceHelper.psd1')
-              -Force                              
+                               -ChildPath 'AuditPolicyResourceHelper.psm1')                         
 
 # Localized messages for Write-Verbose statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
