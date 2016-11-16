@@ -229,7 +229,7 @@ try
                 }
             }
 
-            Context 'Restore when seucrity cmdlets are NOT available' {
+            Context 'Restore when security cmdlets are NOT available' {
 
                 Mock -CommandName Get-Module -ParameterFilter { $Name -eq "SecurityCmdlets" } `
                      -MockWith {} -Verifiable
