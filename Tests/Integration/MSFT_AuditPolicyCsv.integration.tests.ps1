@@ -48,7 +48,7 @@ try
             @(",System,Logoff,{0cce9216-69ae-11d9-bed3-505054503030},Success,,1")
             @(",System,Logon,{0cce9215-69ae-11d9-bed3-505054503030},Success and Failure,,3")
             @(",System,Special Logon,{0cce921b-69ae-11d9-bed3-505054503030},Failure,,2")) | 
-                Out-File $script:currentAuditpolicyCsv -Encoding utf8 -Force
+                Out-File $csvPath -Encoding utf8 -Force
             #region DEFAULT TESTS
 
             It 'Should compile and apply the MOF without throwing' {
