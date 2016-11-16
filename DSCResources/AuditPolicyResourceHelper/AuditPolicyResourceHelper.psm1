@@ -1,7 +1,5 @@
 #Requires -Version 4.0
 
-Write-host $PSScriptRoot
-Write-output 'hllo'
 <# 
     This PS module contains functions for Desired State Configuration (DSC) AuditPolicyDsc provider. 
     It enables querying, creation, removal and update of Windows advanced audit policies through 
