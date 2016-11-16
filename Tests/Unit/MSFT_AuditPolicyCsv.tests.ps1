@@ -27,8 +27,11 @@ try
 
     InModuleScope $script:DSCResourceName {
 
-        $testParameters = @{
-            CSVPath  = 'C:\projects\testBackup.csv'
+        $script:currentAuditpolicyCsv = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
+        $script:desiredAuditpolicyCsv = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
+
+        $script:testParameters = @{
+            CSVPath  = $script:currentAuditpolicyCsv
         }
 
         # Create the auditpol backup file to use in testing. 
@@ -37,13 +40,11 @@ try
         @(",System,System Integrity,{0CCE9212-69AE-11D9-BED3-505054503030},Success,,1")
         @(",System,Security System Extension,{0CCE9211-69AE-11D9-BED3-505054503030},No Auditing,,0")
         @(",,Option:CrashOnAuditFail,,Disabled,,0")
-        @(",,RegistryGlobalSacl,,,,")) | Out-File $testParameters.CSVPath -Encoding utf8 -Force
+        @(",,RegistryGlobalSacl,,,,")) | Out-File $script:currentAuditpolicyCsv -Encoding utf8 -Force
 
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
-            $tempCsv = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
-
-            Mock -CommandName Invoke-SecurityCmdlet -MockWith { return $tempCsv } `
+            Mock -CommandName Invoke-SecurityCmdlet -MockWith { } `
                  -ModuleName MSFT_AuditPolicyCsv -Verifiable
                     
             It 'Should not throw an exception' {
@@ -52,7 +53,7 @@ try
             }
 
             It 'Should return the correct hashtable property' {
-                $script:getTargetResourceResult.CSVPath | Should Be $tempCsv
+                $script:getTargetResourceResult.CSVPath | Should Not Be $script:testParameters.CSVPath
             }
 
             It 'Should call expected Mocks' {    
@@ -62,11 +63,23 @@ try
         }
 
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
+            
+            $script:testParameters.CSVPath  = $script:desiredAuditpolicyCsv
 
-            Mock -CommandName Invoke-SecurityCmdlet -MockWith { param($Action, $Path)}
+            # Create the auditpol desired state backup file testing. 
+            @(@("Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting,Setting Value")
+            @(",System,IPsec Driver,{0CCE9213-69AE-11D9-BED3-505054503030},Success,,1")
+            @(",System,System Integrity,{0CCE9212-69AE-11D9-BED3-505054503030},Failure,,2")
+            @(",System,Security System Extension,{0CCE9211-69AE-11D9-BED3-505054503030},No Auditing,,0")
+            @(",,Option:CrashOnAuditFail,,Enabled,,1")
+            @(",,RegistryGlobalSacl,,,,")) | Out-File $script:desiredAuditpolicyCsv -Encoding utf8 -Force
+            
+            Mock -CommandName Invoke-SecurityCmdlet -MockWith { }
 
             Context 'CSVs are different' {
-
+               
+                Mock -CommandName Get-TargetResource    -MockWith { $script:currentAuditpolicyCsv }
+                
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
                         Should Not Throw
@@ -78,7 +91,8 @@ try
             }
 
             Context 'CSVs are the same' {
-                
+                Mock -CommandName Get-TargetResource    -MockWith { $script:desiredAuditpolicyCsv }
+
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
                         Should Not Throw
@@ -92,11 +106,12 @@ try
 
         Describe "$($script:DSCResourceName)Set-TargetResource" {
             
-            # mock call to the helper module to isolate Get-TargetResource
-            Mock Invoke-SecurityCmdlet { param($Action, $Path)}
+            $script:testParameters.CSVPath  = $script:desiredAuditpolicyCsv
+
+            Mock Invoke-SecurityCmdlet { }
             
             It 'Should call Invoke-SecurityCmdlet 1 time' {
-                Set-TargetResource -CSVPath $TestCSV -Ensure "Present" -Force $false
+                Set-TargetResource @testParameters
                 Assert-MockCalled Invoke-SecurityCmdlet -Exactly 1 -Scope It
             }
         }
@@ -129,10 +144,13 @@ try
 
         Describe 'Function Remove-BackupFile' {
 
-            Mock Remove-Item -MockWith {} -Verifiable
+            $script:testParameters.CSVPath  = $script:currentAuditpolicyCsv
 
-            It 'Should call Remove-Item' {
-                Remove-BackupFile | Should BeNullOrEmpty
+            Mock Remove-Item -ParameterFilter {Path -eq "$script:currentAuditpolicyCsv"} ` 
+            -MockWith {} -Verifiable
+
+            It 'Should call Remove-Item to clean up temp file' {
+                Remove-BackupFile @testParameters | Should BeNullOrEmpty
                 Assert-MockCalled Remove-Item -Times 1 -Scope It
             }
         }
