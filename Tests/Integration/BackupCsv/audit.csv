@@ -1,6 +1,0 @@
-Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting,Setting Value
-,System,Credential Validation,{0cce923f-69ae-11d9-bed3-505054503030},Success and Failure,,3
-,System,Other Account Management Events,{0cce923a-69ae-11d9-bed3-505054503030},Success and Failure,,3
-,System,Logoff,{0cce9216-69ae-11d9-bed3-505054503030},Success,,1
-,System,Logon,{0cce9215-69ae-11d9-bed3-505054503030},Success and Failure,,3
-,System,Special Logon,{0cce921b-69ae-11d9-bed3-505054503030},Failure,,2

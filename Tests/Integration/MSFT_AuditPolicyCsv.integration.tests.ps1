@@ -27,7 +27,7 @@ try
 
     Describe "$($script:DSCResourceName)_Integration" {
         
-        Context 'Should set policy without force flag' {
+        Context 'Should set policy' {
 
             # set the system Subcategories to the incorect state to ensure a valid test.
             & 'auditpol' '/set' "/subcategory:Credential Validation" '/failure:disable' '/Success:enable'
@@ -35,19 +35,25 @@ try
             & 'auditpol' '/set' "/subcategory:Logoff" '/failure:enable' '/Success:disable'
             & 'auditpol' '/set' "/subcategory:Logon" '/failure:enable' '/Success:enable'
             & 'auditpol' '/set' "/subcategory:Special Logon" '/failure:disable' '/Success:enable'
-
-            #region DEFAULT TESTS
-
             <# 
                 Since the tests read in CSV files, they are stored in a subfolder for the user and
                 system context to both access.
-            #>           
-            $CsvPath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath 'BackupCsv') `
-                                 -ChildPath 'audit.csv'
+            #> 
+            $csvPath = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
+
+            # Create the desired auditpol backup file to test with. 
+            @(@("Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting,Setting Value")
+            @(",System,Credential Validation,{0cce923f-69ae-11d9-bed3-505054503030},Success and Failure,,3")
+            @(",System,Other Account Management Events,{0cce923a-69ae-11d9-bed3-505054503030},Success and Failure,,3")
+            @(",System,Logoff,{0cce9216-69ae-11d9-bed3-505054503030},Success,,1")
+            @(",System,Logon,{0cce9215-69ae-11d9-bed3-505054503030},Success and Failure,,3")
+            @(",System,Special Logon,{0cce921b-69ae-11d9-bed3-505054503030},Failure,,2")) | 
+                Out-File $script:currentAuditpolicyCsv -Encoding utf8 -Force
+            #region DEFAULT TESTS
 
             It 'Should compile and apply the MOF without throwing' {
                 {
-                    & "$($script:DSCResourceName)_Config" -CsvPath $CsvPath `
+                    & "$($script:DSCResourceName)_Config" -CsvPath $csvPath `
                                                           -OutputPath $TestEnvironment.WorkingFolder
                     
                     Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
