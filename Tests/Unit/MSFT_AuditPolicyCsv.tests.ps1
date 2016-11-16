@@ -28,7 +28,7 @@ try
     InModuleScope $script:DSCResourceName {
 
         $testParameters = @{
-            CSVPath  = 'C:\temp\testBackup.csv'
+            CSVPath  = 'C:\projects\testBackup.csv'
         }
 
         # Create the auditpol backup file to use in testing. 
@@ -104,7 +104,7 @@ try
         Describe 'Function Invoke-SecurityCmdlet' {
             
             Context 'Seucrity cmdlets are available' {
-                
+
                 Mock Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
                                 -MockWith {"SecurityCmdlets"} -Verifiable
                 Mock Restore-AuditPolicy -MockWith {}
