@@ -24,12 +24,12 @@ function Get-TargetResource
         $CsvPath
     )
     
-    $tempFile = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
+    [string] $tempFile = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
 
     try
     {
         Write-Verbose -Message ($localizedData.BackupFilePath -f $tempFile)
-        Invoke-SecurityCmdlet -Action "Export" -CsvPath $tempFile 
+        Invoke-SecurityCmdlet -Action "Export" -CsvPath $tempFile
     }
     catch
     {
@@ -109,15 +109,17 @@ function Test-TargetResource
                 'Expression' = {$_.'Setting Value'}
             }
 
-        # Assume in desired state until proven false.
+        # Assume the node is in the desired state until proven false.
         $inDesiredState = $true
 
         foreach ($desiredAuditPolicySetting in $desiredAuditPolicy)
         {
+            # Get the current setting name that mathches the desired setting name   
             $currentAuditPolicySetting = $currentAuditPolicy.Where({
                 $_.Subcategory -eq $desiredAuditPolicySetting.Subcategory
             })
 
+            # If the current and desired setting do not mathc, set the flag to $false 
             if ($desiredAuditPolicySetting.Value -ne $currentAuditPolicySetting.Value)
             {
                 Write-Verbose -Message ($localizedData.testCsvFailed -f 
@@ -167,7 +169,7 @@ function Invoke-SecurityCmdlet
     param
     (
         [parameter(Mandatory = $true)]
-        [ValidateSet("Import","Export")]
+        [ValidateSet('Import','Export')]
         [System.String]
         $Action,
         
@@ -176,7 +178,7 @@ function Invoke-SecurityCmdlet
         $CsvPath 
     )
 
-    # Test if security cmdlets are present. If not, use auditpol directly.
+    # Use the security cmdlets if present. If not, use Invoke-AuditPol to call auditpol.exe.
     if ($null -eq (Get-Module -ListAvailable -Name "SecurityCmdlets"))
     {
         Write-Verbose -Message ($localizedData.CmdletsNotFound)
@@ -218,9 +220,9 @@ function Invoke-SecurityCmdlet
 
 <#
     .SYNOPSIS
-        Gets the current audit policy for the node.
+       Removes the temporary file that is created by the Get\Test functions.
     .PARAMETER CsvPath
-        Specifies the path to store the exported results.
+        Specifies the path of the temp file to remove.
 #>
 function Remove-BackupFile
 {

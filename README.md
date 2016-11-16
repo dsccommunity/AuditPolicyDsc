@@ -100,7 +100,6 @@ None
 * [Apply auditpol backup](
   https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsv.ps1)
 
-
 ## Versions
 
 ### Unreleased

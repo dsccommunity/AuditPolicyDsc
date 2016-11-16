@@ -27,12 +27,14 @@ try
 
     InModuleScope $script:DSCResourceName {
 
+        # The script scope does not pierce the InModuleScope  
+        $script:DSCResourceName = 'MSFT_AuditPolicyCsv'
+
+        # Create temporary files to hold the test data. 
         $script:currentAuditpolicyCsv = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
         $script:desiredAuditpolicyCsv = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
 
-        $script:testParameters = @{
-            CSVPath  = $script:desiredAuditpolicyCsv
-        }
+        $script:csvPath = $script:desiredAuditpolicyCsv
 
         # Create the current auditpol backup file to test against. 
         @(@("Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting,Setting Value")
@@ -48,12 +50,12 @@ try
                  -MockWith { } -Verifiable            
             
             It 'Should not throw an exception' {
-                { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                { $script:getTargetResourceResult = Get-TargetResource -CsvPath $script:csvPath } | 
                     Should Not Throw
             }
 
             It 'Should return the correct hashtable property' {
-                $script:getTargetResourceResult.CSVPath | Should Not Be $script:testParameters.CsvPath
+                $script:getTargetResourceResult.CSVPath | Should Not Be $script:csvPath
             }
 
             It 'Should call expected Mocks' {    
@@ -71,8 +73,6 @@ try
             @(",System,Security System Extension,{0CCE9211-69AE-11D9-BED3-505054503030},No Auditing,,0")
             @(",,Option:CrashOnAuditFail,,Enabled,,1")
             @(",,RegistryGlobalSacl,,,,")) | Out-File $script:desiredAuditpolicyCsv -Encoding utf8 -Force
-            
-            Mock -CommandName Invoke-SecurityCmdlet -MockWith { }
 
             Context 'CSVs are different' {
 
@@ -83,7 +83,7 @@ try
                 Mock -CommandName Remove-BackupFile -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
+                    { $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath } | 
                         Should Not Throw
                 }            
 
@@ -94,7 +94,7 @@ try
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-TargetResource -Exactly 1
-                    Assert-MockCalled -CommandName Remove-BackupFile -Exactly 1
+                    Assert-MockCalled -CommandName Remove-BackupFile  -Exactly 1
                 } 
             }
 
@@ -107,7 +107,7 @@ try
                 Mock -CommandName Remove-BackupFile -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
+                    { $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath } | 
                         Should Not Throw
                 }            
 
@@ -118,18 +118,18 @@ try
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-TargetResource -Exactly 1
-                    Assert-MockCalled -CommandName Remove-BackupFile -Exactly 1
+                    Assert-MockCalled -CommandName Remove-BackupFile  -Exactly 1
                 } 
             }
         }
 
-        Describe "$($script:DSCResourceName)Set-TargetResource" {
+        Describe "$($script:DSCResourceName)\Set-TargetResource" {
 
             Mock -CommandName Invoke-SecurityCmdlet -ParameterFilter { $Action -eq 'Import' } `
                  -MockWith { } -Verifiable
 
             It 'Should not throw an exception' {
-                { $script:setTargetResourceResult = Set-TargetResource @testParameters } | 
+                { $script:setTargetResourceResult = Set-TargetResource -CsvPath $script:csvPath } | 
                     Should Not Throw
             }            
 
@@ -139,13 +139,13 @@ try
 
             It 'Should call expected Mocks' {
                 Assert-VerifiableMocks
-                Assert-MockCalled Invoke-SecurityCmdlet -Exactly 1 -Scope Describe
+                Assert-MockCalled -CommandName Invoke-SecurityCmdlet -Exactly 1 -Scope Describe
             }
         }
 
         Describe 'Function Invoke-SecurityCmdlet' {
             
-            # Create function to mock since security cmdlets are not in appveyor yet 
+            # Create function to mock since security cmdlets are not in appveyor 
             function Restore-AuditPolicy { }
             function Backup-AuditPolicy { }   
 
@@ -154,7 +154,7 @@ try
                 Mock -CommandName Get-Module -ParameterFilter { $Name -eq "SecurityCmdlets"} `
                      -MockWith {"SecurityCmdlets"} -Verifiable
 
-                Mock -CommandName Import-Module -ParameterFilter { $Name -eq "SecurityCmdlets"} `
+                Mock -CommandName Import-Module -ParameterFilter { $Name -eq "SecurityCmdlets"}
 
                 Mock -CommandName Backup-AuditPolicy -MockWith {} -Verifiable
                 
@@ -170,9 +170,9 @@ try
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
-                    Assert-MockCalled Get-Module         -Exactly 1 -Scope Context
-                    Assert-MockCalled Import-Module      -Exactly 1 -Scope Context
-                    Assert-MockCalled Backup-AuditPolicy -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Get-Module         -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Import-Module      -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Backup-AuditPolicy -Exactly 1 -Scope Context
                 }
             }
             
@@ -181,7 +181,7 @@ try
                 Mock -CommandName Get-Module -ParameterFilter { $Name -eq "SecurityCmdlets"} `
                      -MockWith {"SecurityCmdlets"} -Verifiable
                 
-                Mock -CommandName Import-Module -ParameterFilter { $Name -eq "SecurityCmdlets"} `
+                Mock -CommandName Import-Module -ParameterFilter { $Name -eq "SecurityCmdlets"}
 
                 Mock -CommandName Restore-AuditPolicy -MockWith {} -Verifiable
                 
@@ -197,9 +197,9 @@ try
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
-                    Assert-MockCalled Get-Module          -Exactly 1 -Scope Context
-                    Assert-MockCalled Import-Module       -Exactly 1 -Scope Context
-                    Assert-MockCalled Restore-AuditPolicy -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Get-Module          -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Import-Module       -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Restore-AuditPolicy -Exactly 1 -Scope Context
                 }
             }
 
@@ -223,9 +223,9 @@ try
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
-                    Assert-MockCalled Get-Module         -Exactly 1 -Scope Context
-                    Assert-MockCalled Import-Module      -Exactly 0 -Scope Context
-                    Assert-MockCalled Invoke-AuditPol -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Get-Module      -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Import-Module   -Exactly 0 -Scope Context
+                    Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -Scope Context
                 }
             }
 
@@ -249,24 +249,28 @@ try
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
-                    Assert-MockCalled Get-Module          -Exactly 1 -Scope Context
-                    Assert-MockCalled Import-Module       -Exactly 0 -Scope Context
-                    Assert-MockCalled Invoke-AuditPol -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Get-Module      -Exactly 1 -Scope Context
+                    Assert-MockCalled -CommandName Import-Module   -Exactly 0 -Scope Context
+                    Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -Scope Context
                 }
             }
         }
 
         Describe 'Function Remove-BackupFile' {
 
-            $script:testParameters.CSVPath  = $script:currentAuditpolicyCsv
+            $script:csvPath = $script:currentAuditpolicyCsv
 
             Mock -CommandName Remove-Item -ParameterFilter { $Path -eq $script:currentAuditpolicyCsv} `
                 -MockWith { } -Verifiable
 
             It 'Should call Remove-Item to clean up temp file' {
-                Remove-BackupFile @testParameters | Should BeNullOrEmpty
-                Assert-MockCalled Remove-Item -Times 1 -Scope Describe
+                Remove-BackupFile -CsvPath $script:csvPath | Should BeNullOrEmpty
+                Assert-MockCalled -CommandName Remove-Item -Times 1 -Scope Describe
             }
+
+            It 'Should call expected Mocks' {
+                    Assert-VerifiableMocks
+                    Assert-MockCalled -CommandName Remove-Item -Times 1 -Scope Describe
         }
     }
     #endregion

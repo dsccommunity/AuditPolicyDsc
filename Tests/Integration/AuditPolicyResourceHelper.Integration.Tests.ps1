@@ -162,40 +162,24 @@ Describe 'auditpol.exe output' {
 Describe "Function Invoke-Auditpol" {
 
     InModuleScope AuditPolicyResourceHelper {
+        
+        Context 'Subcategory and Option' {
 
-        $command = Get-Command -Name Invoke-Auditpol
+            # These tests verify that the /r switch is passed to auditpol 
+            It 'Should return a CSV format when a single word subcategory is passed in' {
+                ( Invoke-Auditpol -Command "Get" -SubCommand "Subcategory:Logoff" )[0] | 
+                    Should match ".,."
+            }
 
-        It "Should find command Invoke-Auditpol" {
-            $command.Name | Should Be 'Invoke-Auditpol' 
-        }
+            It 'Should return a CSV format when a multi-word subcategory is passed in' {
+                ( Invoke-Auditpol -Command "Get" -SubCommand "Subcategory:""Credential Validation""" )[0] | 
+                    Should match ".,."
+            }
 
-        It 'Should have a parameter Command' {
-            $command.Parameters.Command | Should Not BeNullOrEmpty
-        }
-
-        It 'Should have a ValidSet (Set|Get|List|Backup|Restore)' {
-            $command.Parameters.Command.Attributes.ValidValues | 
-            Should Be @('Set','Get','List','Backup','Restore')
-        }
-
-        It 'Should have a parameter Subcommand' {
-            $command.Parameters.Subcommand | Should Not BeNullOrEmpty
-        }
-
-        # These tests verify that the /r switch is passed to auditpol 
-        It 'Should return a CSV format when a single word subcategory is passed in' {
-            ( Invoke-Auditpol -Command "Get" -SubCommand "Subcategory:Logoff" )[0] | 
-                Should match ".,."
-        }
-
-        It 'Should return a CSV format when a multi-word subcategory is passed in' {
-            ( Invoke-Auditpol -Command "Get" -SubCommand "Subcategory:""Credential Validation""" )[0] | 
-                Should match ".,."
-        }
-
-        It 'Should return a CSV format when an option is passed in' {
-            ( Invoke-Auditpol -Command "Get" -SubCommand "option:CrashOnAuditFail" )[0] | 
-                Should match ".,."
+            It 'Should return a CSV format when an option is passed in' {
+                ( Invoke-Auditpol -Command "Get" -SubCommand "option:CrashOnAuditFail" )[0] | 
+                    Should match ".,."
+            }
         }
 
         Context 'Backup' {
@@ -237,18 +221,28 @@ Describe 'Test-ValidSubcategory' {
 
     InModuleScope AuditPolicyResourceHelper {
 
-        $command = Get-Command -Name Test-ValidSubcategory
+        Context 'Invalid Input' {
 
-        It "Should find command Test-ValidSubcategory" {
-            $command.Name | Should Be 'Test-ValidSubcategory' 
+            It 'Should not throw an exception' {
+                { $script:testValidSubcategoryResult = Test-ValidSubcategory -Name 'Invalid' } | 
+                    Should Not Throw
+            }
+
+            It 'Should return false when an invalid Subcategory is passed ' {
+                $script:testValidSubcategoryResult | Should Be $false
+            }
         }
 
-        It 'Should return false when an invalid Subcategory is passed ' {
-            Test-ValidSubcategory -Name 'Invalid' | Should Be $false
-        }
+        Context 'Valid Input' {
 
-        It 'Should return true when a valid Subcategory is passed ' {
-            Test-ValidSubcategory -Name 'logon' | Should Be $true
+            It 'Should not throw an exception' {
+                { $script:testValidSubcategoryResult = Test-ValidSubcategory -Name 'logon' } | 
+                    Should Not Throw
+            }
+
+            It 'Should return true when a valid Subcategory is passed ' {
+                $script:testValidSubcategoryResult | Should Be $true
+            }
         }
     }
 }

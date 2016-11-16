@@ -1,5 +1,7 @@
 #Requires -Version 4.0
 
+Write-host $PSScriptRoot
+Write-output 'hllo'
 <# 
     This PS module contains functions for Desired State Configuration (DSC) AuditPolicyDsc provider. 
     It enables querying, creation, removal and update of Windows advanced audit policies through 
@@ -92,7 +94,7 @@ function Invoke-AuditPol
     param
     (
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Get', 'Set', 'List', 'Restore', 'Backup')]
+        [ValidateSet('Get', 'Set', 'List','Restore','Backup')]
         [System.String]
         $Command,
 
@@ -100,8 +102,6 @@ function Invoke-AuditPol
         [System.String[]]
         $SubCommand
     )
-
-    $VerbosePreference = $PSCmdlet.GetVariableValue('VerbosePreference')
 
     # Localized messages for Write-Verbose statements in this resource
     $localizedData = Get-LocalizedData -HelperName 'AuditPolicyResourceHelper'
@@ -113,13 +113,9 @@ function Invoke-AuditPol
     #>
 
     # set the base commands to execute
-    if ($Command -eq 'Get') 
+    if ( $Command -eq 'Get') 
     { 
         $commandString = @("/$Command","/$SubCommand","/r" )
-    }
-    elseif($Command -eq 'Backup')
-    {
-        $commandString = @("/$Command","/$SubCommand")
     }
     else
     {
@@ -127,7 +123,7 @@ function Invoke-AuditPol
         $commandString = @("/$Command","/$($SubCommand[0])",$SubCommand[1] )
     }
 
-    Write-Verbose -Message ( $localizedData.ExecuteAuditpolCommand -f ( $commandString -join ' ' ) )
+    Write-Debug -Message ( $localizedData.ExecuteAuditpolCommand -f $commandString )
 
     try
     {
@@ -223,6 +219,63 @@ function Test-ValidSubcategory
     else 
     {
         return $false    
+    }
+}
+
+<#
+    .SYNOPSIS 
+        Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
+    .PARAMETER Action 
+        The action to take, either Import or Export. Import will clear existing policy before writing.
+    .PARAMETER Path 
+        The path to a CSV file to either create or import.  
+    .EXAMPLE
+        Invoke-SecurityCmdlet -Action Import -Path .\test.csv
+#>
+function Invoke-SecurityCmdlet
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [ValidateSet("Import","Export")]
+        [System.String]
+        $Action,
+        
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path 
+    )
+
+    # Test if security cmdlets are present. If not, use auditpol directly.
+    if ($null -eq (Get-Module -ListAvailable -Name "SecurityCmdlets"))
+    {
+        if ($Action -ieq "Import")
+        {
+            Invoke-AuditPol -Command "/restore" -SubCommand "/file:$path"
+        }
+        else
+        {
+            Invoke-AuditPol -Command "/backup" -SubCommand "/file:$path"
+        }
+    }
+    else
+    {
+        Import-Module -Name SecurityCmdlets
+
+        if ($Action -eq "Import")
+        {
+            Restore-AuditPolicy $Path | Out-Null
+        }
+        elseif ($Action -eq "Export")
+        {
+            #no force option on Backup, manually check for file and delete it so we can write back again
+            if (Test-Path $path)
+            {
+                Remove-Item $path -force
+            }
+            Backup-AuditPolicy $Path | Out-Null
+        }
     }
 }
 

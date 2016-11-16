@@ -66,29 +66,29 @@ try
                     Should Not throw
             }
 
-            It 'Should have configured the Credential Validation policy correctly' {
+            It 'Should have added Failure flag when configured for Success only' {
                 $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Credential Validation' '/r')[2] 
-                ($auditpolReturn -split ",")[4] | Should Match "Success and Failure"
+                ($auditpolReturn -split ",")[4] | Should Be "Success and Failure"
             }
 
-            It 'Should have configured the Other Account Management Events policy correctly' {
+            It 'Should have added Success flag when configured for Failure only' {
                 $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Other Account Management Events' '/r')[2] 
-                ($auditpolReturn -split ",")[4] | Should Match "Success and Failure"
+                ($auditpolReturn -split ",")[4] | Should Be "Success and Failure"
             }
 
-            It 'Should have configured the Logoff policy correctly' {
+            It 'Should have removed Failure flag and added Success flag' {
                 $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Logoff' '/r')[2] 
-                ($auditpolReturn -split ",")[4] | Should Match "Success"
+                ($auditpolReturn -split ",")[4] | Should Be "Success"
             }
 
-            It 'Should have configured the Logon policy correctly' {
-                $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Logon' '/r')[2] 
-                ($auditpolReturn -split ",")[4] | Should Match "Success and Failure"
-            }
-
-            It 'Should have configured the Special Logon policy correctly' {
+            It 'Should have removed Success flag and added Failure flag' {
                 $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Special Logon' '/r')[2] 
-                ($auditpolReturn -split ",")[4] | Should Match "Failure"
+                ($auditpolReturn -split ",")[4] | Should Be "Failure"
+            }
+
+            It 'Should have not made any changes when configured correctly' {
+                $auditpolReturn = (& 'auditpol' '/get' '/subcategory:Logon' '/r')[2] 
+                ($auditpolReturn -split ",")[4] | Should Be "Success and Failure"
             }
             #endregion
         }
