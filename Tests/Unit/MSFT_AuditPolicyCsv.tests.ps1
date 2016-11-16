@@ -271,6 +271,7 @@ try
             It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Remove-Item -Times 1 -Scope Describe
+            }
         }
     }
     #endregion
