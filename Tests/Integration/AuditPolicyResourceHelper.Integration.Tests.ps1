@@ -214,7 +214,7 @@ Describe "Function Invoke-Auditpol" {
 
             It 'Should produce a valid CSV in a temp file when the backup switch is used' {
                 (Get-Content -Path $script:path)[0] | 
-                    Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
+                    Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting,Setting Value"
             }
         }
         
