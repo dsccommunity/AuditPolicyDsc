@@ -29,7 +29,7 @@ function Get-TargetResource
     try
     {
         Write-Verbose -Message ($localizedData.BackupFilePath -f $tempFile)
-        Invoke-SecurityCmdlet -Action "Export" -Path $tempFile 
+        Invoke-SecurityCmdlet -Action "Export" -CsvPath $tempFile 
     }
     catch
     {
@@ -57,11 +57,11 @@ function Set-TargetResource
         $CsvPath
     )
 
-    if (Test-Path $CsvPath)
+    if (Test-Path -Path $CsvPath)
     {
         try
         {
-            Invoke-SecurityCmdlet -Action "Import" -Path $CsvPath | Out-Null
+            Invoke-SecurityCmdlet -Action "Import" -CsvPath $CsvPath | Out-Null
             Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)    
         }
         catch
@@ -92,7 +92,7 @@ function Test-TargetResource
         $CsvPath
     )
 
-    if (Test-Path $CsvPath)
+    if (Test-Path -Path $CsvPath)
     {
         # The path to the CSV that contains the current audit policy backup. 
         $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath).CsvPath
@@ -156,10 +156,10 @@ function Test-TargetResource
         Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
     .PARAMETER Action 
         The action to take, either Import or Export. Import will clear existing policy before writing.
-    .PARAMETER Path 
+    .PARAMETER CsvPath 
         The path to a CSV file to either create or import.  
     .EXAMPLE
-        Invoke-SecurityCmdlet -Action Import -Path .\test.csv
+        Invoke-SecurityCmdlet -Action Import -CsvPath .\test.csv
 #>
 function Invoke-SecurityCmdlet
 {
@@ -173,7 +173,7 @@ function Invoke-SecurityCmdlet
         
         [Parameter(Mandatory = $true)]
         [System.String]
-        $Path 
+        $CsvPath 
     )
 
     # Test if security cmdlets are present. If not, use auditpol directly.
@@ -183,11 +183,17 @@ function Invoke-SecurityCmdlet
 
         if ($Action -ieq "Import")
         {
-            Invoke-AuditPol -Command Restore -SubCommand "file:$Path"
+            Invoke-AuditPol -Command Restore -SubCommand "file:$CsvPath"
         }
         else
         {
-            Invoke-AuditPol -Command Backup -SubCommand "file:$Path"
+            # No force option on Backup, manually check for file and delete it so we can write back again
+            if (Test-Path -Path $CsvPath)
+            {
+                Remove-Item -Path $CsvPath -Force
+            }
+
+            Invoke-AuditPol -Command Backup -SubCommand "file:$CsvPath"
         }
     }
     else
@@ -196,16 +202,16 @@ function Invoke-SecurityCmdlet
 
         if ($Action -ieq "Import")
         {
-            Restore-AuditPolicy -Path $Path | Out-Null
+            Restore-AuditPolicy -Path $CsvPath | Out-Null
         }
         elseif ($Action -ieq "Export")
         {
-            #no force option on Backup, manually check for file and delete it so we can write back again
-            if (Test-Path -Path $Path)
+            # No force option on Backup, manually check for file and delete it so we can write back again
+            if (Test-Path -Path $CsvPath)
             {
-                Remove-Item -Path $Path -Force
+                Remove-Item -Path $CsvPath -Force
             }
-            Backup-AuditPolicy -Path $Path | Out-Null
+            Backup-AuditPolicy -Path $CsvPath | Out-Null
         }
     }
 }
