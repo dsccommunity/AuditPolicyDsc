@@ -44,8 +44,7 @@ try
 
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
-            Mock -CommandName Invoke-SecurityCmdlet -MockWith { } `
-                 -ModuleName MSFT_AuditPolicyCsv -Verifiable
+            Mock -CommandName Invoke-SecurityCmdlet -MockWith { } -Verifiable
                     
             It 'Should not throw an exception' {
                 { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
@@ -78,8 +77,8 @@ try
 
             Context 'CSVs are different' {
                
-                Mock -CommandName Get-TargetResource    -MockWith { $script:currentAuditpolicyCsv }
-                
+                Mock -CommandName Get-TargetResource -MockWith { $script:currentAuditpolicyCsv }
+
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
                         Should Not Throw
@@ -91,7 +90,7 @@ try
             }
 
             Context 'CSVs are the same' {
-                Mock -CommandName Get-TargetResource    -MockWith { $script:desiredAuditpolicyCsv }
+                Mock -CommandName Get-TargetResource -MockWith { $script:desiredAuditpolicyCsv }
 
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
@@ -108,7 +107,7 @@ try
             
             $script:testParameters.CSVPath  = $script:desiredAuditpolicyCsv
 
-            Mock Invoke-SecurityCmdlet { }
+            Mock -CommandName Invoke-SecurityCmdlet { }
             
             It 'Should call Invoke-SecurityCmdlet 1 time' {
                 Set-TargetResource @testParameters
@@ -118,26 +117,49 @@ try
 
         Describe 'Function Invoke-SecurityCmdlet' {
             
+            # Create function to mock since security cmdlets are not in appveyor yet 
+            function Restore-AuditPolicy
+            {
+
+            }
+
             Context 'Seucrity cmdlets are available' {
 
-                Mock Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
-                                -MockWith {"SecurityCmdlets"} -Verifiable
-                Mock Restore-AuditPolicy -MockWith {}
+                Mock -CommandName Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
+                     -MockWith {"SecurityCmdlets"} -Verifiable
+
+                Mock -CommandName Restore-AuditPolicy -MockWith {}
                 
-                It 'Should call ' {
+                It 'Should call Restore-AuditPolicy' {
 
                 }
             }
 
-            Context 'Seucrity cmdlets are NOT available' {
+            Context 'Backup when seucrity cmdlets are NOT available' {
 
-                Mock Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
-                                -MockWith {} -Verifiable
+                Mock -CommandName Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
+                     -MockWith {} -Verifiable
                 
-                Mock Invoke-AuditPol -MockWith {} -Verifiable
+                Mock -CommandName Invoke-AuditPol -ParameterFilter {Command -eq "Backup"} `
+                     -MockWith { } -Verifiable
 
-                It 'Should call Invoke-AuditPol' {
+                It 'Should call Invoke-AuditPol backup' {
+                    Invoke-SecurityCmdlet -Action 'Export' -Path $script:desiredAuditpolicyCsv 
+                    Assert-VerifiableMocks -Exactly 1 -Scope It
+                }
+            }
+
+            Context 'Restore when seucrity cmdlets are NOT available' {
+
+                Mock -CommandName Get-Module -ParameterFilter {Name -eq "SecurityCmdlets"} `
+                     -MockWith {} -Verifiable
                 
+                Mock -CommandName Invoke-AuditPol -ParameterFilter {Command -eq "Restore"} `
+                     -MockWith { } -Verifiable
+
+                It 'Should call Invoke-AuditPol restore' {
+                    Invoke-SecurityCmdlet -Action 'Import' -Path $script:desiredAuditpolicyCsv 
+                    Assert-VerifiableMocks -Exactly 1 -Scope It
                 }
             }
         }
@@ -146,8 +168,8 @@ try
 
             $script:testParameters.CSVPath  = $script:currentAuditpolicyCsv
 
-            Mock Remove-Item -ParameterFilter {Path -eq "$script:currentAuditpolicyCsv"} ` 
-            -MockWith {} -Verifiable
+            Mock -CommandName Remove-Item -ParameterFilter {Path -eq "$script:currentAuditpolicyCsv"} `
+                -MockWith { } -Verifiable
 
             It 'Should call Remove-Item to clean up temp file' {
                 Remove-BackupFile @testParameters | Should BeNullOrEmpty
