@@ -113,8 +113,6 @@ function Test-TargetResource
         # The CsvPath in Get-TargetResource is ignored and a temp file is returned for comparison. 
         $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath `
                                                             -IsSingleInstance $IsSingleInstance).CsvPath
-        
-        Write-Verbose "Current policy path $currentAuditPolicyBackupPath"
 
         $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath | 
             Select-Object -Property Subcategory, @{
@@ -127,8 +125,6 @@ function Test-TargetResource
                 'Name' = 'Value';
                 'Expression' = {$_.'Setting Value'}
             }
-        
-        Write-Verbose "Desired policy path $CsvPath"
        
        # Assume the node is in the desired state until proven false.
         $inDesiredState = $true
