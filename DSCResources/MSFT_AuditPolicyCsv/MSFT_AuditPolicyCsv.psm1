@@ -110,9 +110,12 @@ function Test-TargetResource
 
     if (Test-Path -Path $CsvPath)
     {
-        # The path to the CSV that contains the current audit policy backup. 
-        $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath -IsSingleInstance 'Yes').CsvPath
+        # The CsvPath in Get-TargetResource is ignored and a temp file is returned for comparison. 
+        $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath `
+                                                            -IsSingleInstance $IsSingleInstance).CsvPath
         
+        Write-Verbose "Current policy path $currentAuditPolicyBackupPath"
+
         $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath | 
             Select-Object -Property Subcategory, @{
                 'Name' = 'Value';
@@ -124,8 +127,10 @@ function Test-TargetResource
                 'Name' = 'Value';
                 'Expression' = {$_.'Setting Value'}
             }
-
-        # Assume the node is in the desired state until proven false.
+        
+        Write-Verbose "Desired policy path $CsvPath"
+       
+       # Assume the node is in the desired state until proven false.
         $inDesiredState = $true
 
         foreach ($desiredAuditPolicySetting in $desiredAuditPolicy)
@@ -135,7 +140,7 @@ function Test-TargetResource
                 $_.Subcategory -eq $desiredAuditPolicySetting.Subcategory
             })
 
-            # If the current and desired setting do not matcH, set the flag to $false 
+            # If the current and desired setting do not match, set the flag to $false 
             if ($desiredAuditPolicySetting.Value -ne $currentAuditPolicySetting.Value)
             {
                 Write-Verbose -Message ($localizedData.testCsvFailed -f 
@@ -151,7 +156,7 @@ function Test-TargetResource
         }
 
         # Cleanup the temp file, since it is no longer needed. 
-        Remove-BackupFile -CsvPath $currentAuditPolicyBackupPath
+        Remove-BackupFile -CsvPath $currentAuditPolicyBackupPath -Verbose
 
         if ($inDesiredState)
         {            
