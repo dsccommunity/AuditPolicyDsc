@@ -90,7 +90,9 @@ None
 #### Parameters
 
 * **[String] CsvPath _(Required)_**: The path to the CSV file to apply to the node.
-* **[String] IsSingleInstance _(Key)_**: Specifies if the resource is a single instance, the value must be 'Yes'
+
+* **[String] IsSingleInstance _(Key)_**: Specifies if the resource is a single instance, the value must be 'Yes'.
+
 #### Read-Only Properties from Get-TargetResource
 
 None
