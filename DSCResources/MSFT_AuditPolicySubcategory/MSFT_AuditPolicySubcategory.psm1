@@ -224,7 +224,6 @@ function Get-AuditSubCategory
     return $subcategoryFlags[4] -replace ' ',''
 }
 
-
 <#
     .SYNOPSIS 
         Sets the audit flag state for a specifc subcategory. 
