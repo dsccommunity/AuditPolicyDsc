@@ -82,8 +82,8 @@ try
                 {
                     & "$($script:DSCResourceName)_Config" -OptionName $optionName `
                                                           -OptionValue $optionValue `
-                                                          -OutputPath $TestEnvironment.WorkingFolder
-                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                                                          -OutputPath $TestDrive
+                    Start-DscConfiguration -Path $TestDrive `
                         -ComputerName localhost -Wait -Verbose -Force
                 } | Should not throw
             }

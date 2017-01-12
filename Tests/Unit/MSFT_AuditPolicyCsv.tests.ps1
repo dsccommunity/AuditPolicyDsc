@@ -112,7 +112,7 @@ try
 
                 It 'Should not throw an exception' {
                     { 
-                        $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath 
+                        $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath `
                                                                                -IsSingleInstance 'Yes'
                     } | Should Not Throw
                 }            
