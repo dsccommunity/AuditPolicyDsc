@@ -111,7 +111,7 @@ function Test-TargetResource
     if (Test-Path -Path $CsvPath)
     {
         # The path to the CSV that contains the current audit policy backup. 
-        $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath).CsvPath
+        $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath -IsSingleInstance 'Yes').CsvPath
         
         $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath | 
             Select-Object -Property Subcategory, @{
@@ -135,7 +135,7 @@ function Test-TargetResource
                 $_.Subcategory -eq $desiredAuditPolicySetting.Subcategory
             })
 
-            # If the current and desired setting do not mathc, set the flag to $false 
+            # If the current and desired setting do not matcH, set the flag to $false 
             if ($desiredAuditPolicySetting.Value -ne $currentAuditPolicySetting.Value)
             {
                 Write-Verbose -Message ($localizedData.testCsvFailed -f 
