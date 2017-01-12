@@ -14,6 +14,7 @@ configuration 'MSFT_AuditPolicyCsv_config'
     {
         AuditPolicyCsv Integration_Test 
         {
+            IsSingleInstance = 'Yes'
             CsvPath = $CsvPath
         }
     }
