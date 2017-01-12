@@ -15,9 +15,9 @@ Configuration Sample_AuditPolicyCsv
     {
         AuditPolicyCsv auditPolicy
         {
+            IsSingleInstance = 'Yes'
             CsvPath = "C:\data\AuditPolBackup.csv"
         }
-    
     }
 }
 

@@ -20,6 +20,11 @@ function Get-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateSet('Yes')]
+        [String]
+        $IsSingleInstance,
+        
+        [parameter(Mandatory = $true)]
         [System.String]
         $CsvPath
     )
@@ -38,6 +43,7 @@ function Get-TargetResource
 
     return @{
         CsvPath = $tempFile
+        IsSingleInstance = 'Yes'
     }
 }
 
@@ -52,6 +58,11 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
+        [parameter(Mandatory = $true)]
+        [ValidateSet('Yes')]
+        [String]
+        $IsSingleInstance,
+        
         [parameter(Mandatory = $true)]
         [System.String]
         $CsvPath
@@ -87,6 +98,11 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
+        [parameter(Mandatory = $true)]
+        [ValidateSet('Yes')]
+        [String]
+        $IsSingleInstance,
+        
         [parameter(Mandatory = $true)]
         [System.String]
         $CsvPath
