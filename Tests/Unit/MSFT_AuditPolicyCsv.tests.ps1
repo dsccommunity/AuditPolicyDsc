@@ -50,8 +50,10 @@ try
                  -MockWith { } -Verifiable            
             
             It 'Should not throw an exception' {
-                { $script:getTargetResourceResult = Get-TargetResource -CsvPath $script:csvPath } | 
-                    Should Not Throw
+                { 
+                    $script:getTargetResourceResult = Get-TargetResource -CsvPath $script:csvPath `
+                                                                         -IsSingleInstance 'Yes'
+                } | Should Not Throw
             }
 
             It 'Should return the correct hashtable property' {
@@ -83,8 +85,10 @@ try
                 Mock -CommandName Remove-BackupFile -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath } | 
-                        Should Not Throw
+                    { 
+                        $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath `
+                                                                               -IsSingleInstance 'Yes'
+                    } | Should Not Throw
                 }            
 
                 It 'Should return false' {
@@ -107,8 +111,10 @@ try
                 Mock -CommandName Remove-BackupFile -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath } | 
-                        Should Not Throw
+                    { 
+                        $script:testTargetResourceResult = Test-TargetResource -CsvPath $script:csvPath 
+                                                                               -IsSingleInstance 'Yes'
+                    } | Should Not Throw
                 }            
 
                 It 'Should return true' {
@@ -129,8 +135,10 @@ try
                  -MockWith { } -Verifiable
 
             It 'Should not throw an exception' {
-                { $script:setTargetResourceResult = Set-TargetResource -CsvPath $script:csvPath } | 
-                    Should Not Throw
+                { 
+                    $script:setTargetResourceResult = Set-TargetResource -CsvPath $script:csvPath `
+                                                                         -IsSingleInstance 'Yes'
+                } | Should Not Throw
             }            
 
             It 'Should not return anything' {
@@ -159,9 +167,10 @@ try
                 Mock -CommandName Backup-AuditPolicy -MockWith {} -Verifiable
                 
                 It 'Should not throw an exception' {
-                { $script:backupAuditPolicyResult = Invoke-SecurityCmdlet -Action Export `
-                                                        -CsvPath $script:currentAuditpolicyCsv } | 
-                    Should Not Throw
+                    { 
+                        $script:backupAuditPolicyResult = Invoke-SecurityCmdlet -Action Export `
+                                                          -CsvPath $script:currentAuditpolicyCsv 
+                    } | Should Not Throw
                 }            
 
                 It 'Should not return anything' {
