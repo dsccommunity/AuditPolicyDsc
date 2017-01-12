@@ -54,9 +54,9 @@ try
             It 'Should compile and apply the MOF without throwing' {
                 {
                     & "$($script:DSCResourceName)_Config" -CsvPath $csvPath `
-                                                          -OutputPath $TestEnvironment.WorkingFolder
+                                                          -OutputPath $TestDrive
                     
-                    Start-DscConfiguration -Path $TestEnvironment.WorkingFolder `
+                    Start-DscConfiguration -Path $TestDrive `
                         -ComputerName localhost -Wait -Verbose -Force
                 } | Should not throw
             }
