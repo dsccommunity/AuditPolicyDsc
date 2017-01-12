@@ -128,7 +128,7 @@ function Invoke-AuditPol
     try
     {
         # Use the call operator to process the auditpol command
-        $return = & "auditpol.exe" $commandString 2>&1
+        $auditPolicyCommandResult = & "auditpol.exe" $commandString 2>&1
 
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ( $LASTEXITCODE -ne 0 )
@@ -138,7 +138,7 @@ function Invoke-AuditPol
 
         if ($Command -notmatch "Restore|Backup")
         {
-            $return
+            return $auditPolicyCommandResult
         }       
     }
     catch [System.Management.Automation.CommandNotFoundException]
