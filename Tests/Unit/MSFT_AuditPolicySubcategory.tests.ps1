@@ -1,6 +1,6 @@
 
-$script:DSCModuleName      = 'AuditPolicyDsc'
-$script:DSCResourceName    = 'MSFT_AuditPolicySubcategory'
+$script:DSCModuleName   = 'AuditPolicyDsc'
+$script:DSCResourceName = 'MSFT_AuditPolicySubcategory'
 
 #region HEADER
 [String] $script:moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $script:MyInvocation.MyCommand.Path))
@@ -915,7 +915,6 @@ try
                 } 
             }
         }
-        #endregion
     }
     #endregion
 }

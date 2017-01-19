@@ -92,7 +92,7 @@ function Invoke-AuditPol
     param
     (
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Get', 'Set', 'List')]
+        [ValidateSet('Get', 'Set', 'List','Restore','Backup')]
         [System.String]
         $Command,
 
@@ -117,7 +117,7 @@ function Invoke-AuditPol
     }
     else
     {
-        # the set subcommand comes in an array of the subcategory and flag 
+        # The set subcommand comes in an array of the subcategory and flag 
         $commandString = @("/$Command","/$($SubCommand[0])",$SubCommand[1] )
     }
 
@@ -126,7 +126,7 @@ function Invoke-AuditPol
     try
     {
         # Use the call operator to process the auditpol command
-        $return = & "auditpol.exe" $commandString 2>&1
+        $auditPolicyCommandResult = & "auditpol.exe" $commandString 2>&1
 
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ( $LASTEXITCODE -ne 0 )
@@ -134,16 +134,19 @@ function Invoke-AuditPol
             throw New-Object System.ArgumentException
         }
 
-        $return
+        if ($Command -notmatch "Restore|Backup")
+        {
+            return $auditPolicyCommandResult
+        }       
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
-        # catch error if the auditpol command is not found on the system
+        # Catch error if the auditpol command is not found on the system
         Write-Error -Message $localizedData.AuditpolNotFound
     }
     catch [System.ArgumentException]
     {
-        # catch the error thrown if the lastexitcode is not 0 
+        # Catch the error thrown if the lastexitcode is not 0 
         [String] $errorString = $error[0].Exception
         $errorString = $errorString + "`$LASTEXITCODE = $LASTEXITCODE;"
         $errorString = $errorString + " Command = auditpol $commandString"
@@ -152,7 +155,7 @@ function Invoke-AuditPol
     }
     catch
     {
-        # catch any other errors
+        # Catch any other errors
         Write-Error -Message ( $localizedData.UnknownError -f $error[0] )
     }
 }
@@ -217,4 +220,5 @@ function Test-ValidSubcategory
     }
 }
 
-Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Test-ValidSubcategory' )
+Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 
+    'Test-ValidSubcategory' )
