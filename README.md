@@ -24,7 +24,7 @@ policy subcategory audit flags.
 
 * [AuditPolicyOption](#AuditPolicyOption): Provides a mechanism to manage audit policy options. 
 
-* [AuditPolicyCsv](#AuditPolicyCsv): Provides a mechanism to restore an audit policy backup. 
+* [AuditPolicyCsv](#AuditPolicyCsv): Provides a mechanism to restore an audit policy backup from a CSV file. 
 
 ### AuditPolicySubcategory
 Provides a mechanism to manage advanced audit policy subcategory audit flags. 
@@ -99,14 +99,14 @@ None
 
 #### Examples
 
-* [Apply auditpol backup](
+* [Apply audit policy backup from a CSV file](
   https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsv.ps1)
 
 ## Versions
 
 ### Unreleased
 
-* Added the AuditPolicyCsv module. 
+* Added the AuditPolicyCsv resource. 
 
 ### 1.0.0.0
 

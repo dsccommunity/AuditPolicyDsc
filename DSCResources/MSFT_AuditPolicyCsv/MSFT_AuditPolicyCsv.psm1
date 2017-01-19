@@ -154,14 +154,7 @@ function Test-TargetResource
         # Cleanup the temp file, since it is no longer needed. 
         Remove-BackupFile -CsvPath $currentAuditPolicyBackupPath -Verbose
 
-        if ($inDesiredState)
-        {            
-            return $true
-        }
-        else
-        {
-            return $false
-        }
+        return $inDesiredState
     }
     else
     {
@@ -237,7 +230,7 @@ function Invoke-SecurityCmdlet
 
 <#
     .SYNOPSIS
-       Removes the temporary file that is created by the Get\Test functions.
+        Removes the temporary file that is created by the Get\Test functions.
     .PARAMETER CsvPath
         Specifies the path of the temp file to remove.
 #>
