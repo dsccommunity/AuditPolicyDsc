@@ -233,7 +233,6 @@ try
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-Module      -Exactly 1 -Scope Context
-                    Assert-MockCalled -CommandName Import-Module   -Exactly 0 -Scope Context
                     Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -Scope Context
                 }
             }
@@ -259,7 +258,6 @@ try
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-Module      -Exactly 1 -Scope Context
-                    Assert-MockCalled -CommandName Import-Module   -Exactly 0 -Scope Context
                     Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -Scope Context
                 }
             }
