@@ -65,7 +65,7 @@ try
             }
             
             It 'Should return $true' {
-                Test-DscConfiguration -Path $TestDrive | Should Be $true
+                (Test-DscConfiguration -Path $TestDrive).InDesiredState | Should Be $true
             }
         }
 
@@ -104,7 +104,7 @@ try
             }
             
             It 'Should return $true' {
-                Test-DscConfiguration -Path $TestDrive | Should Be $true
+                (Test-DscConfiguration -Path $TestDrive).InDesiredState | Should Be $true
             }
         }
     }
