@@ -24,6 +24,7 @@ policy subcategory audit flags.
 
 * [AuditPolicyOption](#AuditPolicyOption): Provides a mechanism to manage audit policy options. 
 
+* [AuditPolicyCsv](#AuditPolicyCsv): Provides a mechanism to restore an audit policy backup from a CSV file. 
 
 ### AuditPolicySubcategory
 Provides a mechanism to manage advanced audit policy subcategory audit flags. 
@@ -78,9 +79,36 @@ None
 * [Set Audit Policy Option](
   https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyOption.ps1)
 
+### AuditPolicyCsv
+Provides a mechanism to restore an audit policy backup.
+This resource works on Nano Server.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] CsvPath _(Required)_**: The path to the CSV file to apply to the node.
+
+* **[String] IsSingleInstance _(Key)_**: Specifies if the resource is a single instance, the value must be 'Yes'.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Apply audit policy backup from a CSV file](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsv.ps1)
+
 ## Versions
 
 ### Unreleased
+
+### 1.1.0.0
+
+* Added the AuditPolicyCsv resource. 
 
 ### 1.0.0.0
 

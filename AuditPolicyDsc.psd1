@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.0.0.0'
+ModuleVersion = '1.1.0.0'
 
 # ID used to uniquely identify this module
 GUID = '644501e3-ebc7-451e-9155-366a4f8d4a9a'
@@ -104,9 +104,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Initial release with the following resources:
-        * AuditPolicySubcategory
-        * AuditPolicyOption'
+        ReleaseNotes = '* Added the AuditPolicyCsv resource. 
+
+'
 
     } # End of PSData hashtable
 
