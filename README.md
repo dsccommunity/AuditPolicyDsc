@@ -106,6 +106,8 @@ None
 
 ### Unreleased
 
+### 1.1.0.0
+
 * Added the AuditPolicyCsv resource. 
 
 ### 1.0.0.0
