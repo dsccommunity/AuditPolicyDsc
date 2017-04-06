@@ -1,4 +1,4 @@
-#Requires -Version 4.0
+﻿#Requires -Version 4.0
 
 # This PS module contains functions for Desired State Configuration (DSC) xAuditPolicy provider. 
 # It enables querying, creation, removal and update of Windows advanced audit policies through 
@@ -11,7 +11,7 @@ DATA localizedData
         AuditpolNotFound          = (ERROR) auditpol.exe was not found on the system
         RequiredPrivilegeMissing  = (ERROR) A required privilege is not held by the client
         IncorrectParameter        = (ERROR) The parameter is incorrect
-        UnknownError              = (ERROR) An unknow error has occured
+        UnknownError              = (ERROR) An unknown error has occured
         ExecuteAuditpolCommand    = Executing 'auditpol.exe {0}'
         GetAuditpolOptionSucceed     = (GET) '{0}'
         GetAuditpolOptionFailed      = (ERROR) getting '{0}'
@@ -31,6 +31,15 @@ DATA localizedData
         SetAuditpolResourceSACLFailed       = 
         TestAuditpolResourceSACLCorrect     = 
         TestAuditpolResourceSACLIncorrect   =
+        FileNotFound     = (ERROR) File '{0}' not found
+        GetCsvSucceed    = (GET) '{0}'
+        GetCsvFailed     = (ERROR) getting '{0}'
+        TestCsvSucceed   = '{0}' is '{1}'
+        TestCsvFailed    = '{0}' is NOT in desired state
+        SetCsvSucceed    =  (SET) '{0}' to '{1}'
+        SetCsvFailed     = (ERROR) setting '{0}' to value '{1}'
+        ExportFailed     = (ERROR) Failed to create temporary file at '{0}'
+        ImportFailed     = (ERROR) Failed to import CSV '{0}'
 '@
 }
 
@@ -54,6 +63,7 @@ function Invoke_AuditPol
     try
     {
         $return = Invoke-Expression -Command "$env:SystemRoot\System32\auditpol.exe $CommandToExecute" 2>&1
+        Write-Verbose $CommandToExecute
         
         if($LASTEXITCODE -eq 87)
         {
@@ -221,7 +231,7 @@ function Set_AuditpolSubcommand
         [parameter(Mandatory = $true,
                    ParameterSetName="SubCategory")]
         [parameter(ParameterSetName="ResourceSACL")]
-        [ValidateSet("Success","Failure")]
+        [ValidateSet("Success","Failure", "SuccessAndFailure", "NoAuditing")]
         [System.String]
         $AuditFlag,
 
@@ -251,17 +261,24 @@ function Set_AuditpolSubcommand
         { 
             # translate $ensure=present to enable and $ensure=absent to disable
             $auditState = @{"Present"="enable";"Absent"="disable"}
-            
-            # select the line needed from the auditpol output
-            if($AuditFlag -eq 'Success')
-            { 
-                [string]$commandToExecute = '/set /subcategory:"' +
-                $SubCategory + '" /success:' + $($auditState[$Ensure]) 
-            }
-            else   
+            switch -regex ($AuditFlag)
             {
-                [string]$commandToExecute = '/set /subcategory:"' +
-                $SubCategory + '" /failure:' + $($auditState[$Ensure]) 
+                "Success"
+                {
+                    $commandToExecute = [string]('/set /subcategory:"' + $SubCategory + '" /success:' + $($auditState[$Ensure]))
+                }
+                
+                "Failure"
+                {
+                    $commandToExecute = [string]('/set /subcategory:"' + $SubCategory + '" /failure:' + $($auditState[$Ensure]))
+                }
+
+                "NoAuditing"
+                {
+                    $commandToExecute = [string]('/set /subcategory:"' +$SubCategory + '" /success:' + $($auditState["Absent"]) + ' /failure:' + $($auditState["Absent"])) 
+                }
+
+                Default { Write-Error "$_ is not a valid AuditFlag" }
             }
             
             if($PSCmdlet.ShouldProcess($Option))
@@ -273,7 +290,7 @@ function Set_AuditpolSubcommand
                 # Return a sting when the -whatif switch is set 
                 "Set $SubCategory $AuditFlag to $($auditState[$Ensure])"
             }
-
+            
             Break
         }
 
@@ -291,6 +308,7 @@ function Set_AuditpolSubcommand
                 {$AuditFlag -eq "Success" }           {$flag="/Success "        ;Break}
                 {$AuditFlag -eq "Failure" }           {$flag="/Failure "        ;Break}
                 {$AuditFlag -eq "SuccessAndFailure" } {$flag="/Success /Failure";Break}
+                {$AuditFlag -eq "No Auditing" } { $flag = "/remove"; Break }
             }
 
             $ResourceSACL = Invoke_Auditpol `
@@ -316,7 +334,7 @@ function Set_AuditpolSubcommand
             if($PSCmdlet.ShouldProcess($Name))
             {
                 Invoke_Auditpol `
-                    -CommandToExecute "/set /option:$Name /value:$($valueHashTable[$value])"
+                    -CommandToExecute "/set /option:$Name /value:$($valueHashTable[1])"
             }
             else
             {
@@ -326,74 +344,6 @@ function Set_AuditpolSubcommand
 
             Break
         }
-    }
-}
-
-<#
-    .SYNOPSIS 
-    Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
-
-    .PARAMETER Action 
-    The action to take, either Import or Export. Import will clear existing policy before writing.
-
-    .PARAMETER Path 
-    The path to a CSV file to either create or import.
-        
-    .EXAMPLE
-    Invoke-SecurityCmdlet -Action Import -Path .\test.csv
-#>
-function Invoke-SecurityCmdlet
-{
-    [CmdletBinding()]
-    param
-    (
-        [parameter(Mandatory = $true)]
-        [ValidateSet("Import","Export")]
-        [System.String]
-        $Action,
-        
-        [Parameter(Mandatory = $true)]
-        [System.String]
-        $Path 
-    )
-    #test if cmdlet is present. if not, use auditpol directly.
-    if (!(Get-Module -ListAvailable -Name "SecurityCmdlets"))
-    {
-
-        if ($Action -eq "Import")
-        {
-            #Ignore output - causes return values we don't want
-            Invoke_AuditPol "/restore /file:$path" | Out-Null
-        }
-        elseif ($Action -eq "Export")
-        {
-
-            Invoke_AuditPol "/backup /file:$path" | Out-Null
-        }
-    }
-    else
-    {
-        #cmdlet is present, see if it's loaded, and start using it
-        if (! (Get-Module SecurityCmdlets)  )
-        {
-
-            Import-Module SecurityCmdlets
-        }
-        if ($Action -eq "Import")
-        {
-            #Ignore output - causes return values we don't want
-            Restore-AuditPolicy $Path | Out-Null
-        }
-        elseif ($Action -eq "Export")
-        {
-            #no force option on Backup, manually check for file and delete it so we can write back again
-            if (Test-Path $path)
-            {
-                Remove-Item $path -force
-            }
-            Backup-AuditPolicy $Path | Out-Null
-        }
-
     }
 }
 
@@ -466,6 +416,74 @@ function Set-AuditCategory
     )
  
     Set_AuditpolSubcommand @PSBoundParameters
+}
+
+<#
+    .SYNOPSIS 
+    Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
+
+    .PARAMETER Action 
+    The action to take, either Import or Export. Import will clear existing policy before writing.
+
+    .PARAMETER Path 
+    The path to a CSV file to either create or import.
+        
+    .EXAMPLE
+    Invoke-SecurityCmdlet -Action Import -Path .\test.csv
+#>
+function Invoke-SecurityCmdlet
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [ValidateSet("Import","Export")]
+        [System.String]
+        $Action,
+        
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path 
+    )
+    #test if cmdlet is present. if not, use auditpol directly.
+    if (!(Get-Module -ListAvailable -Name "SecurityCmdlets"))
+    {
+
+        if ($Action -eq "Import")
+        {
+            #Ignore output - causes return values we don't want
+            Invoke_AuditPol "/restore /file:$path" | Out-Null
+        }
+        elseif ($Action -eq "Export")
+        {
+
+            Invoke_AuditPol "/backup /file:$path" | Out-Null
+        }
+    }
+    else
+    {
+        #cmdlet is present, see if it's loaded, and start using it
+        if (! (Get-Module SecurityCmdlets)  )
+        {
+
+            Import-Module SecurityCmdlets
+        }
+        if ($Action -eq "Import")
+        {
+            #Ignore output - causes return values we don't want
+            Restore-AuditPolicy $Path | Out-Null
+        }
+        elseif ($Action -eq "Export")
+        {
+            #no force option on Backup, manually check for file and delete it so we can write back again
+            if (Test-Path $path)
+            {
+                Remove-Item $path -force
+            }
+            Backup-AuditPolicy $Path | Out-Null
+        }
+
+    }
 }
 
 #endregion
