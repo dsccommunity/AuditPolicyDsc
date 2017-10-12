@@ -187,15 +187,10 @@ function Get-ValidSubcategoryList
         $script:validSubcategoryList = @()
 
         # Populating $validSubcategoryList uses Invoke-AuditPol and needs to follow the definition.
-        Invoke-AuditPol -Command List -SubCommand "Subcategory:*" | 
-            Where-Object { $_ -notlike 'Category/Subcategory*' } | 
-                ForEach-Object {
-            # The categories do not have any space in front of them, but the subcategories do.
-            if ( $_ -like " *" )
-            {
-                $script:validSubcategoryList += $_.trim()
-            }
-        } 
+        # Populating $validSubcategoryList uses Invoke-AuditPol and needs to follow the definition.
+        $script:validSubcategoryList = Invoke-AuditPol -Command Get -SubCommand "category:*" | 
+            ConvertFrom-Csv | 
+                Select-Object -Property Subcategory -ExpandProperty Subcategory
     }
 
     return $script:validSubcategoryList
