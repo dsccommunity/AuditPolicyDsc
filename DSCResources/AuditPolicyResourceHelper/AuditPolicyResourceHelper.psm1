@@ -113,35 +113,43 @@ function Invoke-AuditPol
     # set the base commands to execute
     if ( $Command -eq 'Get') 
     { 
-        $commandString = @("/$Command","/$SubCommand","/r" )
+        $arguments = @("/$Command","/$SubCommand","/r" )
     }
     else
     {
         # The set subcommand comes in an array of the subcategory and flag 
-        $commandString = @("/$Command","/$($SubCommand[0])",$SubCommand[1] )
+        $arguments = @("/$Command","/$($SubCommand[0])",$SubCommand[1] )
     }
 
-    Write-Debug -Message ( $localizedData.ExecuteAuditpolCommand -f $commandString )
+    Write-Debug -Message ( $localizedData.ExecuteAuditpolCommand -f $arguments )
 
     try
     {
-        # Use the call operator to process the auditpol command
-        $auditPolicyCommandResult = & "auditpol.exe" $commandString 2>&1
+        # Use System.Diagnostics.Process to process the auditpol command
+        $process = New-Object System.Diagnostics.Process
+        $process.StartInfo.Arguments = $arguments
+        $process.StartInfo.CreateNoWindow = $true
+        $process.StartInfo.FileName = 'auditpol.exe'
+        $process.StartInfo.RedirectStandardOutput = $true
+        $process.StartInfo.UseShellExecute = $false
+        $null = $process.Start()
+
+        $return = $process.StandardOutput.ReadToEnd()
 
         # auditpol does not throw exceptions, so test the results and throw if needed
-        if ( $LASTEXITCODE -ne 0 )
+        if ( $process.ExitCode -ne 0 )
         {
             throw New-Object System.ArgumentException
         }
-
         if ($Command -notmatch "Restore|Backup")
         {
             return $auditPolicyCommandResult
-        }       
+        }
+        $return.Split("`n")
     }
-    catch [System.Management.Automation.CommandNotFoundException]
+    catch [System.ComponentModel.Win32Exception]
     {
-        # Catch error if the auditpol command is not found on the system
+        # catch error if the auditpol command is not found on the system
         Write-Error -Message $localizedData.AuditpolNotFound
     }
     catch [System.ArgumentException]
