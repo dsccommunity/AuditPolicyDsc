@@ -134,7 +134,7 @@ function Invoke-AuditPol
         $process.StartInfo.UseShellExecute = $false
         $null = $process.Start()
 
-        $return = $process.StandardOutput.ReadToEnd()
+        $auditpolReturn = $process.StandardOutput.ReadToEnd()
 
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ( $process.ExitCode -ne 0 )
@@ -144,7 +144,7 @@ function Invoke-AuditPol
 
         if ($Command -notmatch "Restore|Backup")
         {
-            return $return | ConvertFrom-Csv
+            return ( ConvertFrom-Csv -InputObject $auditpolReturn )
         }
 
         
