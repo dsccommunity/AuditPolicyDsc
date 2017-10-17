@@ -307,7 +307,7 @@ function Get-CsvFile
 
     <#
         If CsvPath is a csv file (ByFileExtension), then return the path as no further processing is
-        needed. If it is not a file path,then assume it is inline Csv and output the content to a 
+        needed. If it is not a file path, then assume it is inline Csv and output the content to a 
         temp csv file and return the path.
     #>
     if ( $CsvPath -match '\.csv$' )
