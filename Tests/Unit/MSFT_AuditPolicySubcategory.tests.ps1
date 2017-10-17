@@ -395,7 +395,10 @@ try
         }
 
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
-            
+
+            Mock -CommandName Test-ValidSubcategory -MockWith { return $true } `
+                 -ModuleName MSFT_AuditPolicySubcategory
+
             $testParameters = @{
                 Name      = 'Invalid'
                 AuditFlag = 'Success'
@@ -421,9 +424,10 @@ try
             $testParameters.Name = 'Logon'
 
             Context 'Single word subcategory Success flag present and should be' {
+
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
-
+                
                 It 'Should not throw an exception' {
                     { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
@@ -591,7 +595,10 @@ try
         }
 
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
-            
+
+            Mock -CommandName Test-ValidSubcategory -MockWith { return $true } `
+                 -ModuleName MSFT_AuditPolicySubcategory
+
             $testParameters = @{
                 Name      = 'Logon'
                 AuditFlag = 'Success'
@@ -724,8 +731,8 @@ try
 
         Describe 'Function Get-AuditSubcategory'  {
             
-            [String] $subCategory = 'Logon'
-            
+            [String] $subCategory     = 'Logon'
+            [String] $subCategoryGuid = '{0CCE9215-69AE-11D9-BED3-505054503030}'
             Context 'Get single word audit category success flag' {
     
                 [String] $auditFlag   = 'Success'
@@ -734,8 +741,15 @@ try
                     ComputerName,System,Subcategory,GUID,AuditFlags
                  #>
                  Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                     @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    } 
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
@@ -754,14 +768,21 @@ try
 
             Context 'Get single word audit category failure flag' {
 
-                [String] $auditFlag   = 'failure'
+                [String] $auditFlag = 'failure'
                 <# 
                     The return is 3 lines Header, blank line, data
                     ComputerName,System,Subcategory,GUID,AuditFlags
                  #>
                  Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    } 
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
@@ -778,16 +799,23 @@ try
                 } 
             }
 
-            [String] $subCategory = 'Credential Validation'
-
+            [String] $subCategory     = 'Credential Validation'
+            [String] $subCategoryGuid = '{0CCE923F-69AE-11D9-BED3-505054503030}'
             Context 'Get single word audit category success flag' {
 
                 [String] $auditFlag   = 'Success'
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                  Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    } 
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
@@ -810,8 +838,15 @@ try
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
                  Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    } 
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
