@@ -2,5 +2,5 @@
 class MSFT_AuditPolicyCsv : OMI_BaseResource
 {
     [Key, Description("Specifies the resource is a single instance, the value must be 'Yes'"), ValueMap{"Yes"}, Values{"Yes"}] String IsSingleInstance;
-    [Required, Description("Path to a CSV backup of Auditing settings")] String CsvPath[];
+    [Required, Description("Path to a CSV backup of auditing settings or the csv contents of the backup.")] String CsvPath[];
 };

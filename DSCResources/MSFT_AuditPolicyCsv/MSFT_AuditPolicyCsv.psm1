@@ -1,7 +1,7 @@
 
 Import-Module -Name (Join-Path -Path ( Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
                                                  -ChildPath 'AuditPolicyResourceHelper' ) `
-                               -ChildPath 'AuditPolicyResourceHelper.psm1')                         
+                               -ChildPath 'AuditPolicyResourceHelper.psm1')
 
 # Localized messages for Write-Verbose statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
@@ -10,8 +10,8 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
     .SYNOPSIS
         Gets the current audit policy for the node.
     .PARAMETER CsvPath
-        This parameter is ignored in the Get operation, but does return the path to the 
-        backup of the current audit policy settings. 
+        This parameter is ignored in the Get operation, but does return the path to the
+        backup of the current audit policy settings.
 #>
 function Get-TargetResource
 {
@@ -23,12 +23,12 @@ function Get-TargetResource
         [ValidateSet('Yes')]
         [String]
         $IsSingleInstance,
-        
+
         [parameter(Mandatory = $true)]
         [String[]]
         $CsvPath
     )
-    
+
     [String] $tempFile = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
 
     try
@@ -62,7 +62,7 @@ function Set-TargetResource
         [ValidateSet('Yes')]
         [String]
         $IsSingleInstance,
-        
+
         [parameter(Mandatory = $true)]
         [String]
         $CsvPath
@@ -73,7 +73,7 @@ function Set-TargetResource
         try
         {
             Invoke-SecurityCmdlet -Action "Import" -CsvPath $CsvPath | Out-Null
-            Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)    
+            Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)
         }
         catch
         {
@@ -102,74 +102,67 @@ function Test-TargetResource
         [ValidateSet('Yes')]
         [String]
         $IsSingleInstance,
-        
+
         [parameter(Mandatory = $true)]
-        [String]
+        [String[]]
         $CsvPath
     )
 
-    if (Test-Path -Path $CsvPath)
-    {
-        # The CsvPath in Get-TargetResource is ignored and a temp file is returned for comparison. 
-        $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath `
-                                                            -IsSingleInstance $IsSingleInstance).CsvPath
+    # The CsvPath in Get-TargetResource is ignored but a temp file is returned for comparison.
+    $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath `
+                                                        -IsSingleInstance $IsSingleInstance).CsvPath
+    [String] $csvPropertyToTest = 'Subcategory'
 
-        $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath | 
-            Select-Object -Property Subcategory, @{
-                'Name' = 'Value';
-                'Expression' = {$_.'Setting Value'}
-            } 
-        
-        $desiredAuditPolicy = Import-Csv -Path $CsvPath | 
-            Select-Object -Property Subcategory, @{
-                'Name' = 'Value';
-                'Expression' = {$_.'Setting Value'}
-            }
-       
-       # Assume the node is in the desired state until proven false.
-        $inDesiredState = $true
-
-        foreach ($desiredAuditPolicySetting in $desiredAuditPolicy)
-        {
-            # Get the current setting name that mathches the desired setting name   
-            $currentAuditPolicySetting = $currentAuditPolicy.Where({
-                $_.Subcategory -eq $desiredAuditPolicySetting.Subcategory
-            })
-
-            # If the current and desired setting do not match, set the flag to $false 
-            if ($desiredAuditPolicySetting.Value -ne $currentAuditPolicySetting.Value)
-            {
-                Write-Verbose -Message ($localizedData.testCsvFailed -f 
-                    $desiredAuditPolicySetting.Subcategory)
-                    
-                $inDesiredState = $false
-            }
-            else 
-            {
-                Write-Verbose -Message ($localizedData.testCsvSucceed -f 
-                    $desiredAuditPolicySetting.Subcategory)
-            }
+    $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath |
+        Select-Object -Property $csvPropertyToTest, @{
+            'Name' = 'Value';
+            'Expression' = {$_.'Setting Value'}
         }
 
-        # Cleanup the temp file, since it is no longer needed. 
-        Remove-BackupFile -CsvPath $currentAuditPolicyBackupPath -Verbose
+    $desiredAuditPolicy = Get-CsvContent -CsvPath $CsvPath |
+        Select-Object -Property $csvPropertyToTest, @{
+            'Name' = 'Value';
+            'Expression' = {$_.'Setting Value'}
+        }
 
-        return $inDesiredState
-    }
-    else
+    # Assume the node is in the desired state until proven false.
+    [Boolean] $inDesiredState = $true
+
+    foreach ($desiredAuditPolicySetting in $desiredAuditPolicy)
     {
-        Write-Verbose -Message ($localizedData.FileNotFound -f $CsvPath)
-        return $false
+        # Get the current setting name that mathches the desired setting name
+        $currentAuditPolicySetting = $currentAuditPolicy.Where({
+            $_.$csvPropertyToTest -eq $desiredAuditPolicySetting.$csvPropertyToTest
+        })
+
+        # If the current and desired setting do not match, set the flag to $false
+        if ($desiredAuditPolicySetting.Value -ne $currentAuditPolicySetting.Value)
+        {
+            Write-Warning -Message ($localizedData.testCsvFailed -f
+                $desiredAuditPolicySetting.$csvPropertyToTest)
+
+            $inDesiredState = $false
+        }
+        else
+        {
+            Write-Verbose -Message ($localizedData.testCsvSucceed -f
+                $desiredAuditPolicySetting.$csvPropertyToTest)
+        }
     }
+
+    # Cleanup the temp file, since it is no longer needed.
+    Remove-BackupFile -CsvPath $currentAuditPolicyBackupPath -Verbose
+
+    return $inDesiredState
 }
 
 <#
-    .SYNOPSIS 
+    .SYNOPSIS
         Helper function to use SecurityCmdlet modules if present. If not, go through AuditPol.exe.
-    .PARAMETER Action 
+    .PARAMETER Action
         The action to take, either Import or Export. Import will clear existing policy before writing.
-    .PARAMETER CsvPath 
-        The path to a CSV file to either create or import.  
+    .PARAMETER CsvPath
+        The path to a CSV file to either create or import.
     .EXAMPLE
         Invoke-SecurityCmdlet -Action Import -CsvPath .\test.csv
 #>
@@ -182,10 +175,10 @@ function Invoke-SecurityCmdlet
         [ValidateSet('Import','Export')]
         [String]
         $Action,
-        
+
         [Parameter(Mandatory = $true)]
         [String]
-        $CsvPath 
+        $CsvPath
     )
 
     # Use the security cmdlets if present. If not, use Invoke-AuditPol to call auditpol.exe.
@@ -244,13 +237,52 @@ function Remove-BackupFile
         $CsvPath
     )
 
-    try 
+    try
     {
         Remove-Item -Path $CsvPath
         Write-Verbose -Message ($localizedData.RemoveFile -f $CsvPath)
     }
-    catch 
+    catch
     {
         Write-Error $error[0]
+    }
+}
+
+<#
+    .SYNOPSIS
+        Get the contents of a Csv whether it is from an external file or inline to the configuration.
+    .PARAMETER CsvPath
+        Specifies the Csv content to get.
+#>
+function Get-CsvContent
+{
+    [CmdletBinding()]
+    [OutputType([Object])]
+    param
+    (
+        [parameter(Mandatory = $true)]
+        [String[]]
+        $CsvPath
+    )
+
+    <#
+        If CsvPath is a csv file (ByFileExtension), then import the contents and return the object.
+        If it is not a file path, then assume it is inline Csv and convert it into an object. Csv
+        content validation should occur before it is provded to the resource for processing.
+    #>
+    if ( $CsvPath -match '\.csv$' )
+    {
+        if ( Test-Path -Path $CsvPath )
+        {
+            return ( Import-Csv -Path $CsvPath )
+        }
+        else
+        {
+            Write-Verbose -Message ($localizedData.FileNotFound -f $CsvPath)
+        }
+    }
+    else
+    {
+        return ( ConvertFrom-Csv -InputObject $CsvPath )
     }
 }
