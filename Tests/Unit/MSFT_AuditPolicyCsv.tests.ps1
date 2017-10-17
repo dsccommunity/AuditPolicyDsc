@@ -303,7 +303,7 @@ try
                     Get-CsvContent -CsvPath $script:csvPath | Should BeNullOrEmpty
                     Assert-MockCalled -CommandName Test-Path -Times 1 -Scope Describe
                     Assert-MockCalled -CommandName Import-Csv -Times 0 -Scope Describe
-                    Assert-MockCalled -CommandName Write-Verbose -Times 1 -Scope Describe
+                    Assert-MockCalled -CommandName Write-Error -Times 1 -Scope Describe
                 }
             }
 
@@ -351,7 +351,7 @@ try
                 Mock -CommandName Export-Csv -MockWith { } -Verifiable
 
                 It 'Should return a temp csv file' {
-                    Get-CsvFile -CsvPath "InlineStrings" | Should Match "\\Temp\\\w+\.csv$"
+                    Get-CsvFile -CsvPath "InlineStrings" | Should Match "\.csv$"
                     Assert-MockCalled -CommandName Test-Path -Times 0 -Scope Describe
                     Assert-MockCalled -CommandName ConvertFrom-Csv -Times 1 -Scope Describe
                     Assert-MockCalled -CommandName Export-Csv -Times 1 -Scope Describe
