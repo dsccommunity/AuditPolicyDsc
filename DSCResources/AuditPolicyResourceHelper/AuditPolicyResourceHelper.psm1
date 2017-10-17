@@ -190,8 +190,7 @@ function Get-ValidSubcategoryList
 
         # Populating $validSubcategoryList uses Invoke-AuditPol and needs to follow the definition.
         # Populating $validSubcategoryList uses Invoke-AuditPol and needs to follow the definition.
-        $script:validSubcategoryList = Invoke-AuditPol -Command Get -SubCommand "category:*" | 
-            ConvertFrom-Csv | 
+        $script:validSubcategoryList = Invoke-AuditPol -Command Get -SubCommand "category:*" |
                 Select-Object -Property Subcategory -ExpandProperty Subcategory
     }
 
