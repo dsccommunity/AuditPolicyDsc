@@ -16,7 +16,7 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyCsv'
 function Get-TargetResource
 {
     [CmdletBinding()]
-    [OutputType([System.Collections.Hashtable])]
+    [OutputType([Hashtable])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -25,11 +25,11 @@ function Get-TargetResource
         $IsSingleInstance,
         
         [parameter(Mandatory = $true)]
-        [System.String]
+        [String[]]
         $CsvPath
     )
     
-    [string] $tempFile = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
+    [String] $tempFile = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
 
     try
     {
@@ -64,7 +64,7 @@ function Set-TargetResource
         $IsSingleInstance,
         
         [parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $CsvPath
     )
 
@@ -95,7 +95,7 @@ function Set-TargetResource
 function Test-TargetResource
 {
     [CmdletBinding()]
-    [OutputType([System.Boolean])]
+    [OutputType([Boolean])]
     param
     (
         [parameter(Mandatory = $true)]
@@ -104,7 +104,7 @@ function Test-TargetResource
         $IsSingleInstance,
         
         [parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $CsvPath
     )
 
@@ -180,11 +180,11 @@ function Invoke-SecurityCmdlet
     (
         [parameter(Mandatory = $true)]
         [ValidateSet('Import','Export')]
-        [System.String]
+        [String]
         $Action,
         
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $CsvPath 
     )
 
@@ -240,7 +240,7 @@ function Remove-BackupFile
     param
     (
         [parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $CsvPath
     )
 
