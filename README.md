@@ -89,7 +89,7 @@ None
 
 #### Parameters
 
-* **[String] CsvPath _(Required)_**: The path to the CSV file to apply to the node.
+* **[String[]] CsvPath _(Required)_**: The path to the local CSV file or inline CSV content to apply to the node.
 
 * **[String] IsSingleInstance _(Key)_**: Specifies if the resource is a single instance, the value must be 'Yes'.
 
@@ -99,12 +99,17 @@ None
 
 #### Examples
 
-* [Apply audit policy backup from a CSV file](
-  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsv.ps1)
+* [Apply audit policy backup from an external CSV file](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsvExternal.ps1)
 
+* [Apply audit policy backup from inline CSV content](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsvInline.ps1)
 ## Versions
 
 ### Unreleased
+* Updated the CsvPath property in the AuditPolicyCsv resource to accept inline CSV content.
+* Updated Invoke-Auditpol to call auditpol.exe with System.Diagnostics.Process.
+* Invoke-Auditpol now returns objects instead of strings that need additional processing.
 
 ### 1.1.0.0
 
