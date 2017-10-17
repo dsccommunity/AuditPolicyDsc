@@ -17,29 +17,29 @@ $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicyOption'
 function Get-TargetResource
 {
     [CmdletBinding()]
-    [OutputType([System.Collections.Hashtable])]
+    [OutputType([Hashtable])]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateSet('CrashOnAuditFail', 'FullPrivilegeAuditing', 'AuditBaseObjects',
         'AuditBaseDirectories')]
-        [System.String]
+        [String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Enabled', 'Disabled')]
-        [System.String]
+        [String]
         $Value
     )
     
-    # Get the option's current value 
+    # Get the option's current value
     $optionValue = Get-AuditOption -Name $Name
 
     Write-Verbose -Message ( $localizedData.GetAuditpolOptionSucceed -f $Name )
 
     return @{
-        Name   = $Name
-        Value  = $optionValue
+        Name  = $Name
+        Value = $optionValue
     }
 }
 
@@ -59,12 +59,12 @@ function Set-TargetResource
         [Parameter(Mandatory = $true)]
         [ValidateSet('CrashOnAuditFail', 'FullPrivilegeAuditing', 'AuditBaseObjects',
         'AuditBaseDirectories')]
-        [System.String]
+        [String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Enabled', 'Disabled')]
-        [System.String]
+        [String]
         $Value
     )
 
@@ -96,12 +96,12 @@ function Test-TargetResource
         [Parameter(Mandatory = $true)]
         [ValidateSet('CrashOnAuditFail', 'FullPrivilegeAuditing', 'AuditBaseObjects',
         'AuditBaseDirectories')]
-        [System.String]
+        [String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Enabled', 'Disabled')]
-        [System.String]
+        [String]
         $Value
     )
 
@@ -135,25 +135,22 @@ function Test-TargetResource
 function Get-AuditOption
 {
     [CmdletBinding()]
-    [OutputType([System.String])]
+    [OutputType([String])]
     param
     (
-        [Parameter(Mandatory=$true)]
-        [System.String]
+        [Parameter(Mandatory = $true)]
+        [String]
         $Name
     )
     <#
         When PowerShell cmdlets are released for individual audit policy settings a condition 
         will be placed here to use native PowerShell cmdlets to set the option details. 
     #>
-    # get the auditpol raw csv output
-    $returnCsv =  Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name"
-    
-    # split the details into an array
-    $optionDetails = ( $returnCsv[2] ) -Split ','
+    # Get the converted auditpol csv object
+    $auditOption = Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name"
 
-    # return the option value
-    return $optionDetails[4]
+    # The option value is stored in the 'Inclusion Setting' property of the output CSV.
+    return $auditOption.'Inclusion Setting'
 }
 
 <#
@@ -169,15 +166,15 @@ function Get-AuditOption
 #>
 function Set-AuditOption
 {
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
-        [Parameter(Mandatory=$true)]
-        [System.String]
+        [Parameter(Mandatory = $true)]
+        [String]
         $Name,
         
-        [Parameter(Mandatory=$true)]
-        [System.String]
+        [Parameter(Mandatory = $true)]
+        [String]
         $Value
     )
 
