@@ -1,8 +1,8 @@
 <#
-    This example will apply the audit policy settings in the CSV file to the target node. The csv 
-    file content from C:\data\AuditPolBackup.csv is loaded into the configuration (MOF) as raw 
+    This example will apply the audit policy settings in the CSV file to the target node. The csv
+    file content from C:\data\AuditPolBackup.csv is loaded into the configuration (MOF) as raw
     strings and does not require an external file on the target node. The raw strings are required
-    and not the Csv objects, so it is important to use Get-Content and not Import-Csv when 
+    and not the Csv objects, so it is important to use Get-Content and not Import-Csv when
     retrieving the backup data. Get-Content also reduces the size of the MOF.
     For external Csv files see Sample_AuditPolicyCsvExternal.
     To use this example, run it using PowerShell.

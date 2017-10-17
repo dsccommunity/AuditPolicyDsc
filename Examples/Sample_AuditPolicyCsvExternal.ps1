@@ -4,7 +4,7 @@
     or other automated method. For inline Csv see Sample_AuditPolicyCsvInline
     To use this example, run it using PowerShell.
 #>
-Configuration Sample_AuditPolicyCsv
+Configuration Sample_AuditPolicyCsvExternal
 {
     param
     (
@@ -23,4 +23,4 @@ Configuration Sample_AuditPolicyCsv
     }
 }
 
-Sample_AuditPolicyCsv
+Sample_AuditPolicyCsvExternal

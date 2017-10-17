@@ -1,8 +1,8 @@
 #Requires -Version 4.0
 
-<# 
-    This PS module contains functions for Desired State Configuration (DSC) AuditPolicyDsc provider. 
-    It enables querying, creation, removal and update of Windows advanced audit policies through 
+<#
+    This PS module contains functions for Desired State Configuration (DSC) AuditPolicyDsc provider.
+    It enables querying, creation, removal and update of Windows advanced audit policies through
     Get, Set, and Test operations on DSC managed nodes.
 #>
 
@@ -33,13 +33,13 @@ function Get-LocalizedData
         $HelperName
     )
 
-    # With the helper module just update the name and path variables as if it were a resource. 
+    # With the helper module just update the name and path variables as if it were a resource.
     if ($PSCmdlet.ParameterSetName -eq 'helper')
     {
         $resourceDirectory = $PSScriptRoot
         $ResourceName = $HelperName
     }
-    else 
+    else
     {
         # Step up one additional level to build the correct path to the resource culture.
         $resourceDirectory = Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
@@ -64,24 +64,24 @@ function Get-LocalizedData
 
 <#
  .SYNOPSIS
-    Invoke-AuditPol is a private function that wraps auditpol.exe providing a 
-    centralized function to manage access to and the output of auditpol.exe.    
+    Invoke-AuditPol is a private function that wraps auditpol.exe providing a
+    centralized function to manage access to and the output of auditpol.exe.
  .DESCRIPTION
     The function will accept a string to pass to auditpol.exe for execution. Any 'get' or
-    'set' opertions can be passed to the central wrapper to execute. All of the 
-    nuances of auditpol.exe can be further broken out into specalized functions that 
-    call Invoke-AuditPol.   
-    
+    'set' opertions can be passed to the central wrapper to execute. All of the
+    nuances of auditpol.exe can be further broken out into specalized functions that
+    call Invoke-AuditPol.
+
     Since the call operator is being used to run auditpol, the input is restricted to only execute
-    against auditpol.exe. Any input that is an invalid flag or parameter in 
+    against auditpol.exe. Any input that is an invalid flag or parameter in
     auditpol.exe will return an error to prevent abuse of the call.
-    The call operator will not parse the parameters, so they are split in the function. 
- .PARAMETER Command 
+    The call operator will not parse the parameters, so they are split in the function.
+ .PARAMETER Command
     The action that audtipol should take on the subcommand.
- .PARAMETER SubCommand 
+ .PARAMETER SubCommand
     The subcommand to execute.
  .OUTPUTS
-    The raw string output of auditpol.exe with the /r switch to return a CSV string. 
+    The raw string output of auditpol.exe with the /r switch to return a CSV string.
  .EXAMPLE
     Invoke-AuditPol -Command 'Get' -SubCommand 'Subcategory:Logon'
 #>
@@ -103,7 +103,7 @@ function Invoke-AuditPol
 
     # Localized messages for Write-Verbose statements in this resource
     $localizedData = Get-LocalizedData -HelperName 'AuditPolicyResourceHelper'
-    <# 
+    <#
         The raw auditpol data with the /r switch is a 3 line CSV
         0 - header row
         1 - blank row
@@ -111,13 +111,13 @@ function Invoke-AuditPol
     #>
 
     # set the base commands to execute
-    if ( $Command -eq 'Get') 
-    { 
+    if ( $Command -eq 'Get')
+    {
         $arguments = @("/$Command","/$SubCommand","/r" )
     }
     else
     {
-        # The set subcommand comes in an array of the subcategory and flag 
+        # The set subcommand comes in an array of the subcategory and flag
         $arguments = @("/$Command","/$($SubCommand[0])",$SubCommand[1] )
     }
 
@@ -146,8 +146,6 @@ function Invoke-AuditPol
         {
             return ( ConvertFrom-Csv -InputObject $auditpolReturn )
         }
-
-        
     }
     catch [System.ComponentModel.Win32Exception]
     {
@@ -156,11 +154,10 @@ function Invoke-AuditPol
     }
     catch [System.ArgumentException]
     {
-        # Catch the error thrown if the lastexitcode is not 0 
+        # Catch the error thrown if the lastexitcode is not 0
         [String] $errorString = $error[0].Exception
         $errorString = $errorString + "`$LASTEXITCODE = $LASTEXITCODE;"
         $errorString = $errorString + " Command = auditpol $commandString"
-        
         Write-Error -Message $errorString
     }
     catch
@@ -174,9 +171,9 @@ function Invoke-AuditPol
     .SYNOPSIS
         Returns the list of valid Subcategories.
     .DESCRIPTION
-        This funciton will check if the list of valid subcategories has already been created. 
-        If the list exists it will simply return it. If it doe not exists, it will generate 
-        it and return it.  
+        This funciton will check if the list of valid subcategories has already been created.
+        If the list exists it will simply return it. If it doe not exists, it will generate
+        it and return it.
 #>
 function Get-ValidSubcategoryList
 {
@@ -218,9 +215,9 @@ function Test-ValidSubcategory
     {
         return $true
     }
-    else 
+    else
     {
-        return $false    
+        return $false
     }
 }
 
