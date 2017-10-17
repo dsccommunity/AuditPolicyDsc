@@ -68,21 +68,22 @@ function Set-TargetResource
         $CsvPath
     )
 
-    if (Test-Path -Path $CsvPath)
+    $csvToSet = Get-CsvFile -CsvPath $CsvPath
+
+    try
     {
-        try
-        {
-            Invoke-SecurityCmdlet -Action "Import" -CsvPath $CsvPath | Out-Null
-            Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)
-        }
-        catch
-        {
-            Write-Verbose -Message ($localizedData.ImportFailed -f $CsvPath)
-        }
+        Invoke-SecurityCmdlet -Action "Import" -CsvPath $csvToSet | Out-Null
+        Write-Verbose -Message ($localizedData.ImportSucceeded -f $csvToSet)
     }
-    else
+    catch
     {
-        Write-Verbose -Message ($localizedData.FileNotFound -f $CsvPath)
+        Write-Verbose -Message ($localizedData.ImportFailed -f $csvToSet)
+    }
+
+    # Only remove temp files that are created by the resource
+    if($csvToSet -ne $CsvPath)
+    {
+        Remove-BackupFile -CsvPath $csvToSet
     }
 }
 
@@ -278,11 +279,52 @@ function Get-CsvContent
         }
         else
         {
-            Write-Verbose -Message ($localizedData.FileNotFound -f $CsvPath)
+            Write-Error -Message ($localizedData.FileNotFound -f $CsvPath)
         }
     }
     else
     {
         return ( ConvertFrom-Csv -InputObject $CsvPath )
+    }
+}
+
+<#
+    .SYNOPSIS
+        Get the contents of a Csv whether it is from an external file or inline to the configuration.
+    .PARAMETER CsvPath
+        Specifies the Csv content to set.
+#>
+function Get-CsvFile
+{
+    [CmdletBinding()]
+    [OutputType([String])]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [String[]]
+        $CsvPath
+    )
+
+    <#
+        If CsvPath is a csv file (ByFileExtension), then return the path as no further processing is
+        needed. If it is not a file path,then assume it is inline Csv and output the content to a 
+        temp csv file and return the path.
+    #>
+    if ( $CsvPath -match '\.csv$' )
+    {
+        if ( Test-Path -Path $CsvPath )
+        {
+            return $CsvPath
+        }
+        else
+        {
+            Write-Error -Message ($localizedData.FileNotFound -f $CsvPath)
+        }
+    }
+    else
+    {
+        [String] $tempFile = ([system.IO.Path]::GetTempFileName()).Replace('.tmp','.csv')
+        $CsvPath | ConvertFrom-Csv | Export-Csv -Path $tempFile
+        return $tempFile
     }
 }

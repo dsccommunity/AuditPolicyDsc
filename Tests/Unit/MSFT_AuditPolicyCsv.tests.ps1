@@ -297,7 +297,7 @@ try
             Context 'File Path Not Found' {
                 Mock -CommandName Test-Path -MockWith { return $false } -Verifiable
                 Mock -CommandName Import-Csv -MockWith { return 'MockCsv' } -Verifiable
-                Mock -CommandName Write-Verbose -MockWith { } -Verifiable
+                Mock -CommandName Write-Error -MockWith { } -Verifiable
 
                 It 'Should Not call Import-Csv' {
                     Get-CsvContent -CsvPath $script:csvPath | Should BeNullOrEmpty
@@ -318,6 +318,43 @@ try
                     Assert-MockCalled -CommandName Test-Path -Times 0 -Scope Describe
                     Assert-MockCalled -CommandName Import-Csv -Times 0 -Scope Describe
                     Assert-MockCalled -CommandName ConvertFrom-Csv -Times 1 -Scope Describe
+                }
+            }
+        }
+
+        Describe 'Function Get-CsvFile' {
+            
+            Context 'File Path Found' {
+                Mock -CommandName Test-Path -MockWith { return $true } -Verifiable
+
+                It 'Should return csv path' {
+                    Get-CsvFile -CsvPath 'TestPath.csv' | Should Be 'TestPath.csv'
+                    Assert-MockCalled -CommandName Test-Path -Times 1 -Scope Describe
+                }
+            }
+
+            Context 'File Path Not Found' {
+                Mock -CommandName Test-Path -MockWith { return $false } -Verifiable
+                Mock -CommandName Write-Error -MockWith { } -Verifiable
+
+                It 'Should Not return csv path and write an error' {
+                    Get-CsvFile -CsvPath 'TestPath.csv' | Should BeNullOrEmpty
+                    Assert-MockCalled -CommandName Test-Path -Times 1 -Scope Describe
+                    Assert-MockCalled -CommandName Write-Error -Times 1 -Scope Describe
+                }
+            }
+
+            Context 'Inline Content' {
+
+                Mock -CommandName Test-Path -MockWith { $false } -Verifiable
+                Mock -CommandName ConvertFrom-Csv -MockWith { 'Csv,Data' } -Verifiable
+                Mock -CommandName Export-Csv -MockWith { } -Verifiable
+
+                It 'Should return a temp csv file' {
+                    Get-CsvFile -CsvPath "InlineStrings" | Should Match "\\Temp\\\w+\.csv$"
+                    Assert-MockCalled -CommandName Test-Path -Times 0 -Scope Describe
+                    Assert-MockCalled -CommandName ConvertFrom-Csv -Times 1 -Scope Describe
+                    Assert-MockCalled -CommandName Export-Csv -Times 1 -Scope Describe
                 }
             }
         }
