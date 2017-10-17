@@ -87,17 +87,17 @@ function Get-LocalizedData
 #>
 function Invoke-AuditPol
 {
-    [OutputType([System.String])]
+    [OutputType([Object])]
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [ValidateSet('Get', 'Set', 'List','Restore','Backup')]
-        [System.String]
+        [String]
         $Command,
 
         [Parameter(Mandatory = $true)]
-        [System.String[]]
+        [String[]]
         $SubCommand
     )
 
@@ -141,11 +141,13 @@ function Invoke-AuditPol
         {
             throw New-Object System.ArgumentException
         }
+
         if ($Command -notmatch "Restore|Backup")
         {
-            return $auditPolicyCommandResult
+            return $return | ConvertFrom-Csv
         }
-        $return.Split("`n")
+
+        
     }
     catch [System.ComponentModel.Win32Exception]
     {
