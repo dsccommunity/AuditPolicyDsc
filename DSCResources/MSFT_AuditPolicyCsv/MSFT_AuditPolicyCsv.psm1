@@ -1,4 +1,3 @@
-
 Import-Module -Name (Join-Path -Path ( Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
                                                  -ChildPath 'AuditPolicyResourceHelper' ) `
                                -ChildPath 'AuditPolicyResourceHelper.psm1')
@@ -25,7 +24,7 @@ function Get-TargetResource
         $IsSingleInstance,
 
         [Parameter(Mandatory = $true)]
-        [String[]]
+        [String]
         $CsvPath
     )
 
@@ -64,7 +63,7 @@ function Set-TargetResource
         $IsSingleInstance,
 
         [Parameter(Mandatory = $true)]
-        [String[]]
+        [String]
         $CsvPath
     )
 
@@ -73,7 +72,7 @@ function Set-TargetResource
         try
         {
             Invoke-SecurityCmdlet -Action "Import" -CsvPath $CsvPath | Out-Null
-            Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)    
+            Write-Verbose -Message ($localizedData.ImportSucceeded -f $CsvPath)
         }
         catch
         {
@@ -110,17 +109,17 @@ function Test-TargetResource
 
     if ( Test-Path -Path $CsvPath )
     {
-        # The CsvPath in Get-TargetResource is ignored and a temp file is returned for comparison. 
+        # The CsvPath in Get-TargetResource is ignored and a temp file is returned for comparison.
         $currentAuditPolicyBackupPath = (Get-TargetResource -CsvPath $CsvPath `
                                                             -IsSingleInstance $IsSingleInstance).CsvPath
 
-        $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath | 
+        $currentAuditPolicy = Import-Csv -Path $currentAuditPolicyBackupPath |
             Select-Object -Property Subcategory, @{
                 'Name' = 'Value';
                 'Expression' = {$_.'Setting Value'}
-            } 
+            }
 
-        $desiredAuditPolicy = Import-Csv -Path $CsvPath | 
+        $desiredAuditPolicy = Import-Csv -Path $CsvPath |
             Select-Object -Property Subcategory, @{
                 'Name' = 'Value';
                 'Expression' = {$_.'Setting Value'}
