@@ -30,7 +30,7 @@ function Get-TargetResource
         [String]
         $Value
     )
-    
+
     # Get the option's current value
     $optionValue = Get-AuditOption -Name $Name
 
@@ -67,7 +67,7 @@ function Set-TargetResource
         $Value
     )
 
-    try 
+    try
     {
         Set-AuditOption -Name $Name -Value $Value
         Write-Verbose -Message ( $localizedData.SetAuditpolOptionSucceed -f $Name, $Value )
@@ -80,7 +80,7 @@ function Set-TargetResource
 
 <#
     .SYNOPSIS
-        Tests that the audit policy option is in the desired state 
+        Tests that the audit policy option is in the desired state
     .PARAMETER Name
         Specifies the option to test.
     .PARAMETER Value
@@ -124,12 +124,12 @@ function Test-TargetResource
         Gets the audit policy option state.
     .DESCRIPTION
         Ths is one of the public functions that calls into Get-AuditOptionCommand.
-        This function enforces parameters that will be passed through to the 
-        Get-AuditOptionCommand function and aligns to a specifc parameterset. 
-    .PARAMETER Option 
+        This function enforces parameters that will be passed through to the
+        Get-AuditOptionCommand function and aligns to a specifc parameterset.
+    .PARAMETER Option
         The name of an audit option.
     .OUTPUTS
-        A string that is the state of the option (Enabled|Disables). 
+        A string that is the state of the option (Enabled|Disables).
 #>
 function Get-AuditOption
 {
@@ -142,8 +142,8 @@ function Get-AuditOption
         $Name
     )
     <#
-        When PowerShell cmdlets are released for individual audit policy settings a condition 
-        will be placed here to use native PowerShell cmdlets to set the option details. 
+        When PowerShell cmdlets are released for individual audit policy settings a condition
+        will be placed here to use native PowerShell cmdlets to set the option details.
     #>
     # Get the converted auditpol csv object
     $auditOption = Invoke-AuditPol -Command "Get" -SubCommand "Option:$Name"
@@ -156,11 +156,11 @@ function Get-AuditOption
     .SYNOPSIS
         Sets an audit policy option to enabled or disabled.
     .DESCRIPTION
-        This public function calls Set-AuditOptionCommand and enforces parameters 
-        that will be passed to Set-AuditOptionCommand and aligns to a specifc parameterset. 
+        This public function calls Set-AuditOptionCommand and enforces parameters
+        that will be passed to Set-AuditOptionCommand and aligns to a specifc parameterset.
     .PARAMETER Name
         The specific option to set.
-    .PARAMETER Value 
+    .PARAMETER Value
         The value to set the provided option to.
 #>
 function Set-AuditOption
@@ -171,27 +171,27 @@ function Set-AuditOption
         [Parameter(Mandatory = $true)]
         [String]
         $Name,
-        
+
         [Parameter(Mandatory = $true)]
         [String]
         $Value
     )
 
     <#
-        When PowerShell cmdlets are released for individual audit policy settings a condition 
-        will be placed here to use native PowerShell cmdlets to set the option details. 
+        When PowerShell cmdlets are released for individual audit policy settings a condition
+        will be placed here to use native PowerShell cmdlets to set the option details.
     #>
-    if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) ) 
+    if ( $pscmdlet.ShouldProcess( "$Name","Set $Value" ) )
     {
-        <# 
-            The output text of auditpol is in simple past tense, but the input is in simple 
+        <#
+            The output text of auditpol is in simple past tense, but the input is in simple
             present tense, so the hashtable converts the input accordingly.
         #>
         $pastToPresentValues = @{
             'Enabled'  = 'enable'
             'Disabled' = 'disable'
         }
-        
+
         [String[]] $subCommand = @( "Option:$Name", "/value:$($pastToPresentValues[$value])" )
 
         Invoke-AuditPol -Command 'Set' -SubCommand $subCommand | Out-Null
