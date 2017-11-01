@@ -14,19 +14,20 @@ or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any addi
 or comments.
 
 ## Contributing
+
 Please check out common DSC Resources [contributing guidelines](
   https://github.com/PowerShell/DscResources/blob/master/CONTRIBUTING.md).
 
 ## Resources
 
-* [AuditPolicySubcategory](#AuditPolicySubcategory): Provides a mechanism to manage advanced audit
-policy subcategory audit flags.
+* [AuditPolicySubcategory](#AuditPolicySubcategory): Provides a mechanism to manage advanced auditpolicy subcategory audit flags.
 
 * [AuditPolicyOption](#AuditPolicyOption): Provides a mechanism to manage audit policy options.
 
 * [AuditPolicyCsv](#AuditPolicyCsv): Provides a mechanism to restore an audit policy backup from a CSV file.
 
 ### AuditPolicySubcategory
+
 Provides a mechanism to manage advanced audit policy subcategory audit flags.
 This resource works on Nano Server.
 
@@ -36,15 +37,11 @@ None
 
 #### Parameters
 
-* **[String] Name _(Key)_**: The name of the subcategory in the advanced audit policy to
-manage.
+* **[String] Name _(Key)_**: The name of the subcategory in the advanced audit policy to manage.
 
-* **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory.
-{ Success | Failure }.
+* **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory. { Success | Failure }.
 
-* **[String] Ensure _(Write)_**: Indicates whether the service is present or absent.
-Defaults to Present. { *Present* | Absent }.
-
+* **[String] Ensure _(Write)_**: Indicates whether the service is present or absent. Defaults to Present. { *Present* | Absent }.
 
 #### Read-Only Properties from Get-TargetResource
 
@@ -55,8 +52,8 @@ None
 * [Set Audit Policy Subcategory Audit Flags](
   https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicySubcategory.ps1)
 
-
 ### AuditPolicyOption
+
 Provides a mechanism to manage audit policy options.
 This resource works on Nano Server.
 
@@ -80,6 +77,7 @@ None
   https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyOption.ps1)
 
 ### AuditPolicyCsv
+
 Provides a mechanism to restore an audit policy backup.
 This resource works on Nano Server.
 
@@ -105,7 +103,9 @@ None
 ## Versions
 
 ### Unreleased
+
 Moved auditpol call to external process
+
 ### 1.1.0.0
 
 * Added the AuditPolicyCsv resource.
