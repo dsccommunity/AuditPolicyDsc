@@ -1,4 +1,3 @@
-
 $script:DSCModuleName   = 'AuditPolicyDsc'
 $script:DSCResourceName = 'MSFT_AuditPolicySubcategory'
 
@@ -17,7 +16,7 @@ Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHel
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $script:DSCModuleName `
     -DSCResourceName $script:DSCResourceName `
-    -TestType Unit 
+    -TestType Unit
 #endregion
 
 # Begin Testing
@@ -28,7 +27,7 @@ try
     InModuleScope $script:DSCResourceName {
 
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
-            
+
             $testParameters = @{
                 Name      = 'Logon'
                 AuditFlag = 'Success'
@@ -40,7 +39,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -50,19 +49,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Single word subcategory submit 'Success' and return 'Failure'" {
-                
+
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -72,10 +71,10 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Single word subcategory submit 'Success' and return 'NoAuditing'" {
@@ -84,7 +83,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -94,19 +93,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Single word subcategory submit 'Success' and return 'SuccessandFailure'" {
 
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
-            
+
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -116,10 +115,10 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             $testParameters.AuditFlag = 'Failure'
@@ -130,7 +129,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -140,19 +139,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Single word subcategory submit 'Failure' and return 'Failure'" {
-                
+
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -162,10 +161,10 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Single word subcategory submit 'Failure' and return 'NoAuditing'" {
@@ -174,7 +173,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -184,19 +183,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Single word subcategory submit 'Failure' and return 'SuccessandFailure'" {
 
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
-            
+
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -206,10 +205,10 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             $testParameters.Name      = 'Credential Validation'
@@ -221,7 +220,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -231,19 +230,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Mulit-word subcategory submit 'Success' and return 'Failure'" {
-                
+
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -253,10 +252,10 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Mulit-word subcategory submit 'Success' and return 'NoAuditing'" {
@@ -265,7 +264,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -275,19 +274,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Mulit-word subcategory submit 'Success' and return 'SuccessandFailure'" {
 
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
-            
+
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -297,10 +296,10 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             $testParameters.AuditFlag = 'Failure'
@@ -311,7 +310,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -321,19 +320,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Mulit-word subcategory submit 'Failure' and return 'Failure'" {
-                
+
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -343,10 +342,10 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Mulit-word subcategory submit 'Failure' and return 'NoAuditing'" {
@@ -355,7 +354,7 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -365,19 +364,19 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Absent'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context "Mulit-word subcategory submit 'Failure' and return 'SuccessandFailure'" {
 
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
-            
+
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -387,20 +386,23 @@ try
                     $script:getTargetResourceResult.Ensure    | Should Be 'Present'
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
         }
 
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
-            
+
+            Mock -CommandName Test-ValidSubcategory -MockWith { return $true } `
+                 -ModuleName MSFT_AuditPolicySubcategory
+
             $testParameters = @{
                 Name      = 'Invalid'
                 AuditFlag = 'Success'
                 Ensure    = 'Present'
-            }    
+            }
 
             Context 'Invalid subcategory' {
 
@@ -408,19 +410,20 @@ try
                      -ModuleName MSFT_AuditPolicySubcategory
 
                 It 'Should throw an exception' {
-                    { $getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Throw
                 }
 
-                It 'Should NOT call expected Mocks' {    
+                It 'Should NOT call expected Mocks' {
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Times 0
-                } 
+                }
             }
 
             # Update the Subcategory to a valid name
             $testParameters.Name = 'Logon'
 
             Context 'Single word subcategory Success flag present and should be' {
+
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
@@ -433,14 +436,14 @@ try
                     $script:testTargetResourceResult | Should Be $true
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Single word subcategory Success flag present and should not be' {
-                
+
                 $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
@@ -453,12 +456,12 @@ try
                     $script:testTargetResourceResult | Should Be $false
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
             }
-            
+
             $testParameters.AuditFlag   = 'Failure'
 
             Context 'Single word subcategory failure flag present and should be' {
@@ -476,14 +479,14 @@ try
                     $script:testTargetResourceResult | Should Be $true
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Single word subcategory failure flag present and should not be' {
-                
+
                 $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
@@ -496,7 +499,7 @@ try
                     $script:testTargetResourceResult | Should Be $false
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
@@ -506,7 +509,7 @@ try
             $testParameters.Name = 'Credential Validation'
 
             Context 'Multi-word subcategory Success flag present and should be' {
-                
+
                 $testParameters.Ensure = 'Present'
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
@@ -520,14 +523,14 @@ try
                     $script:testTargetResourceResult | Should Be $true
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Multi-word subcategory Success flag present and should not be' {
-                
+
                 $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
@@ -540,7 +543,7 @@ try
                     $script:testTargetResourceResult | Should Be $false
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
@@ -563,14 +566,14 @@ try
                     $script:testTargetResourceResult | Should Be $true
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Multi-word subcategory failure flag present and should not be' {
-                
+
                 $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditSubcategory -MockWith { return 'failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
@@ -583,7 +586,7 @@ try
                     $script:testTargetResourceResult | Should Be $false
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Get-AuditSubcategory -Exactly 1
                 }
@@ -591,12 +594,15 @@ try
         }
 
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
-            
+
+            Mock -CommandName Test-ValidSubcategory -MockWith { return $true } `
+                 -ModuleName MSFT_AuditPolicySubcategory
+
             $testParameters = @{
                 Name      = 'Logon'
                 AuditFlag = 'Success'
                 Ensure    = 'Present'
-            }  
+            }
 
             Context 'Set single word subcategory success flag to present' {
 
@@ -604,27 +610,27 @@ try
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Set single word subcategory failure flag to present' {
-                
+
                 $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditSubcategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Set single word subcategory success flag to absent' {
@@ -635,27 +641,27 @@ try
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Set single word subcategory failure flag to absent' {
-                
+
                 $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditSubcategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Set multi-word subcategory success flag to present' {
@@ -667,27 +673,27 @@ try
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Set multi-word subcategory failure flag to present' {
-                
+
                 $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditSubcategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Set single word subcategory success flag to absent' {
@@ -698,110 +704,131 @@ try
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
 
             Context 'Set single word subcategory failure flag to absent' {
-                
+
                 $testParameters.AuditFlag = 'Failure'
                 Mock -CommandName Set-AuditSubcategory -MockWith { } -Verifiable
 
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
-                } 
+                }
             }
         }
 
         Describe 'Function Get-AuditSubcategory'  {
-            
-            [String] $subCategory = 'Logon'
-            
+
+            [String] $subCategory     = 'Logon'
+            [String] $subCategoryGuid = '{0CCE9215-69AE-11D9-BED3-505054503030}'
             Context 'Get single word audit category success flag' {
-    
+
                 [String] $auditFlag   = 'Success'
-                <# 
+                <#
                     The return is 3 lines Header, blank line, data
                     ComputerName,System,Subcategory,GUID,AuditFlags
                  #>
-                 Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                 Mock -CommandName Invoke-Auditpol -MockWith {
+                     @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    }
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } |
                         Should Not Throw
-                } 
-                
+                }
+
                 It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
             Context 'Get single word audit category failure flag' {
 
-                [String] $auditFlag   = 'failure'
-                <# 
+                [String] $auditFlag = 'failure'
+                <#
                     The return is 3 lines Header, blank line, data
                     ComputerName,System,Subcategory,GUID,AuditFlags
                  #>
-                 Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                 Mock -CommandName Invoke-Auditpol -MockWith {
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    }
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } |
                         Should Not Throw
-                } 
-                
+                }
+
                 It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
-            [String] $subCategory = 'Credential Validation'
-
+            [String] $subCategory     = 'Credential Validation'
+            [String] $subCategoryGuid = '{0CCE923F-69AE-11D9-BED3-505054503030}'
             Context 'Get single word audit category success flag' {
 
                 [String] $auditFlag   = 'Success'
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
-                 Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                 Mock -CommandName Invoke-Auditpol -MockWith {
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    }
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } |
                         Should Not Throw
-                } 
-                
+                }
+
                 It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
             Context 'Get single word audit category failure flag' {
@@ -809,33 +836,40 @@ try
                 [String] $auditFlag   = 'failure'
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
-                 Mock -CommandName Invoke-Auditpol -MockWith { 
-                     @("","","$env:ComputerName,system,$subCategory,[GUID],$auditFlag") } `
-                     -ParameterFilter { $Command -eq 'Get' } -Verifiable
+                 Mock -CommandName Invoke-Auditpol -MockWith {
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = 'System'
+                        'Subcategory' = $subCategory
+                        'Subcategory GUID' = $subCategoryGuid
+                        'Inclusion Setting' = $auditFlag
+                        'Exclusion Setting' = ''
+                    }
+                } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } | 
+                    { $script:getAuditCategoryResult = Get-AuditSubcategory -Name $subCategory } |
                         Should Not Throw
-                } 
-                
+                }
+
                 It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $auditFlag
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
         }
 
         Describe 'Function Set-AuditSubcategory' {
 
             Context 'Set single word audit category Success flag to Present' {
-                
+
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
                     $Command -eq 'Set' } -Verifiable
-                    
+
                 $comamnd = @{
                     Name      = "Logon"
                     AuditFlag = "Success"
@@ -843,20 +877,20 @@ try
                 }
 
                 It 'Should not throw an error' {
-                    { Set-AuditSubcategory @comamnd } | Should Not Throw 
+                    { Set-AuditSubcategory @comamnd } | Should Not Throw
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
             Context 'Set single word audit category Success flag to Absent' {
-                
+
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
                     $Command -eq 'Set' } -Verifiable
-                    
+
                 $comamnd = @{
                     Name      = "Logon"
                     AuditFlag = "Success"
@@ -864,20 +898,20 @@ try
                 }
 
                 It 'Should not throw an exception' {
-                    { Set-AuditSubcategory @comamnd } | Should Not Throw 
+                    { Set-AuditSubcategory @comamnd } | Should Not Throw
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
             Context 'Set multi-word audit category Success flag to Present' {
-                
+
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
                     $Command -eq 'Set' } -Verifiable
-                    
+
                 $comamnd = @{
                     Name      = "Object Access"
                     AuditFlag = "Success"
@@ -885,20 +919,20 @@ try
                 }
 
                 It 'Should not throw an exception' {
-                    { Set-AuditSubcategory @comamnd } | Should Not Throw 
+                    { Set-AuditSubcategory @comamnd } | Should Not Throw
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
             Context 'Set multi-word audit category Success flag to Absent' {
-                
+
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter {
                     $Command -eq 'Set' } -Verifiable
-                    
+
                 $comamnd = @{
                     Name      = "Object Access"
                     AuditFlag = "Success"
@@ -906,13 +940,13 @@ try
                 }
 
                 It 'Should not throw an exception' {
-                    { Set-AuditSubcategory @comamnd } | Should Not Throw 
+                    { Set-AuditSubcategory @comamnd } | Should Not Throw
                 }
 
-                It 'Should call expected Mocks' {    
+                It 'Should call expected Mocks' {
                     Assert-VerifiableMocks
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
         }
     }
