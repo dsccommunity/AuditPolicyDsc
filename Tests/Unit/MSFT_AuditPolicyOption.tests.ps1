@@ -26,6 +26,9 @@ try
 
     InModuleScope $script:DSCResourceName {
 
+        # The script scope does not pierce the InModuleScope
+        $script:DSCResourceName = 'MSFT_AuditPolicyOption'
+
         #region Pester Test Initialization
 
         # set the audit option test strings to Mock

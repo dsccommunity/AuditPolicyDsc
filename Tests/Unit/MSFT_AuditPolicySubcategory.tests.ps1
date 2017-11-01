@@ -26,6 +26,9 @@ try
 
     InModuleScope $script:DSCResourceName {
 
+        # The script scope does not pierce the InModuleScope
+        $script:DSCResourceName = 'MSFT_AuditPolicySubcategory'
+
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
             $testParameters = @{
