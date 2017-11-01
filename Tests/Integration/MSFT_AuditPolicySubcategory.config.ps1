@@ -1,12 +1,12 @@
 
-configuration 'MSFT_AuditPolicySubcategory_Config' 
+configuration 'MSFT_AuditPolicySubcategory_Config'
 {
-    param 
+    param
     (
         [Parameter(Mandatory = $true)]
         [System.String]
         $Name,
-        
+
         [Parameter(Mandatory = $true)]
         [System.String]
         $AuditFlag,
@@ -17,8 +17,8 @@ configuration 'MSFT_AuditPolicySubcategory_Config'
     )
 
     Import-DscResource -ModuleName 'AuditPolicyDsc'
-    
-    node localhost 
+
+    node localhost
     {
         AuditPolicySubcategory Integration_Test
         {

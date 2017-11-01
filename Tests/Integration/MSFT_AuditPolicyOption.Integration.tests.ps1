@@ -26,18 +26,18 @@ try
 {
     #region Integration Tests
     $ConfigFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:DSCResourceName).config.ps1"
-    . $ConfigFile 
+    . $ConfigFile
 
     Describe "$($script:DSCResourceName)_Integration" {
-        
+
         Context 'Should set option to Enabled' {
-            
+
             #region DEFAULT TESTS
 
             # Set the option value to test
             $optionValue = 'Enabled'
             # Set the test system value to an incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/option:$optionName" '/value:disable'  
+            & 'auditpol' '/set' "/option:$optionName" '/value:disable'
 
             It 'Should compile and apply the MOF without throwing' {
                 {
@@ -50,7 +50,7 @@ try
             }
 
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                { $script:currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop } | 
+                { $script:currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop } |
                     Should Not throw
             }
 
@@ -63,7 +63,7 @@ try
             It 'Should return the correct option value' {
                 $script:currentConfig.Value | Should Be $optionValue
             }
-            
+
             It 'Should return $true' {
                 (Test-DscConfiguration -Path $TestDrive).InDesiredState | Should Be $true
             }
@@ -76,7 +76,7 @@ try
             # Set the option value to test
             $optionValue = 'Disabled'
             # Set the system value to an incorrect state to ensure a valid test.
-            & 'auditpol' '/set' "/option:$optionName" '/value:enable'  
+            & 'auditpol' '/set' "/option:$optionName" '/value:enable'
 
             It 'Should compile and apply the MOF without throwing' {
                 {
@@ -89,7 +89,7 @@ try
             }
 
             It 'Should be able to call Get-DscConfiguration without throwing' {
-                { $script:currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop } | 
+                { $script:currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop } |
                     Should Not throw
             }
 
@@ -102,7 +102,7 @@ try
             It 'Should return the correct option value' {
                 $script:currentConfig.Value | Should Be $optionValue
             }
-            
+
             It 'Should return $true' {
                 (Test-DscConfiguration -Path $TestDrive).InDesiredState | Should Be $true
             }

@@ -32,13 +32,13 @@ try
 
         Context 'Should enable failure audit flag' {
             #region DEFAULT TESTS
-            
+
             $auditFlag       = 'Failure'
             $auditFlagEnsure = 'Present'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
             & 'auditpol' '/set' "/subcategory:$subCategory" '/failure:disable'
-            
+
             It 'Should compile without throwing' {
                 {
                     & "$($script:DSCResourceName)_Config" -Name $subCategory `
@@ -54,11 +54,11 @@ try
                 { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not Throw
             }
             #endregion
-            
+
             $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
 
             It 'Should return the correct configuration' {
-            
+
                 $currentConfig.Name      | Should Be $subCategory
                 $currentConfig.AuditFlag | Should Match $auditFlag
                 $currentConfig.Ensure    | Should Be $auditFlagEnsure
@@ -67,13 +67,13 @@ try
 
         Context 'Should disable failure audit flag' {
             #region DEFAULT TESTS
-            
+
             $auditFlag       = 'Failure'
             $auditFlagEnsure = 'Absent'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
             & 'auditpol' '/set' "/subcategory:$subCategory" '/failure:enable'
-            
+
             It 'Should compile without throwing' {
                 {
                     & "$($script:DSCResourceName)_Config" -Name $subCategory `
@@ -89,11 +89,11 @@ try
                 { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
             }
             #endregion
-            
+
             $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
 
             It 'Should return the correct configuration' {
-            
+
                 $currentConfig.Name      | Should Be $subCategory
                 $currentConfig.AuditFlag | Should Not Match $auditFlag
                 $currentConfig.Ensure    | Should Be $auditFlagEnsure
@@ -102,13 +102,13 @@ try
 
         Context 'Should enable success audit flag' {
             #region DEFAULT TESTS
-            
+
             $auditFlag       = 'Success'
             $auditFlagEnsure = 'Present'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
             & 'auditpol' '/set' "/subcategory:$subCategory" '/success:disable'
-            
+
             It 'Should compile without throwing' {
                 {
                     & "$($script:DSCResourceName)_Config" -Name $subCategory `
@@ -124,11 +124,11 @@ try
                 { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
             }
             #endregion
-            
+
             $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
 
             It 'Should return the correct configuration' {
-            
+
                 $currentConfig.Name      | Should Be $subCategory
                 $currentConfig.AuditFlag | Should Match $auditFlag
                 $currentConfig.Ensure    | Should Be $auditFlagEnsure
@@ -137,13 +137,13 @@ try
 
         Context 'Should disable success audit flag' {
             #region DEFAULT TESTS
-            
+
             $auditFlag       = 'Success'
             $auditFlagEnsure = 'Absent'
 
             # set the system Subcategory to the incorrect state to ensure a valid test.
             & 'auditpol' '/set' "/subcategory:$subCategory" '/success:enable'
-            
+
             It 'Should compile without throwing' {
                 {
                     & "$($script:DSCResourceName)_Config" -Name $subCategory `
@@ -159,11 +159,11 @@ try
                 { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
             }
             #endregion
-            
+
             $currentConfig = Get-DscConfiguration -Verbose -ErrorAction Stop
 
             It 'Should return the correct configuration' {
-            
+
                 $currentConfig.Name      | Should Be $subCategory
                 $currentConfig.AuditFlag | Should Not Match $auditFlag
                 $currentConfig.Ensure    | Should Be $auditFlagEnsure

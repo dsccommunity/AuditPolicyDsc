@@ -1,7 +1,7 @@
 
 configuration 'MSFT_AuditPolicyCsv_config'
 {
-    param 
+    param
     (
         [Parameter(Mandatory = $true)]
         [System.String]
@@ -10,9 +10,9 @@ configuration 'MSFT_AuditPolicyCsv_config'
 
     Import-DscResource -ModuleName 'AuditPolicyDsc'
 
-    node localhost 
+    node localhost
     {
-        AuditPolicyCsv Integration_Test 
+        AuditPolicyCsv Integration_Test
         {
             IsSingleInstance = 'Yes'
             CsvPath = $CsvPath
