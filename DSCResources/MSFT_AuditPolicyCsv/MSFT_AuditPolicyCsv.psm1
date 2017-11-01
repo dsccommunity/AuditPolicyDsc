@@ -104,7 +104,7 @@ function Test-TargetResource
         $IsSingleInstance,
 
         [Parameter(Mandatory = $true)]
-        [String[]]
+        [String]
         $CsvPath
     )
 
