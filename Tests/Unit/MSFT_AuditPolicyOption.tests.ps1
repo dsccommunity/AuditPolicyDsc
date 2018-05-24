@@ -58,7 +58,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
                 }
             }
@@ -80,7 +80,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
                 }
             }
@@ -107,7 +107,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
                 }
             }
@@ -127,7 +127,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
                 }
             }
@@ -149,7 +149,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
                 }
             }
@@ -169,7 +169,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
                 }
             }
@@ -191,7 +191,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
                 }
             }
@@ -208,7 +208,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
                 }
             }
@@ -245,7 +245,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
                 }
             }
@@ -275,7 +275,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
                 }
             }
@@ -297,7 +297,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
                 }
             }
@@ -314,7 +314,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
                 }
             }

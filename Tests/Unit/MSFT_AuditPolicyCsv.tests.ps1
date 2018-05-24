@@ -61,7 +61,7 @@ try
             }
 
             It 'Should call expected Mocks' {
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
                 Assert-MockCalled -CommandName Invoke-SecurityCmdlet -Exactly 1
             }
         }
@@ -96,7 +96,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-TargetResource -Exactly 1
                     Assert-MockCalled -CommandName Remove-BackupFile  -Exactly 1
                 }
@@ -122,7 +122,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-TargetResource -Exactly 1
                     Assert-MockCalled -CommandName Remove-BackupFile  -Exactly 1
                 }
@@ -146,7 +146,7 @@ try
             }
 
             It 'Should call expected Mocks' {
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
                 Assert-MockCalled -CommandName Invoke-SecurityCmdlet -Exactly 1 -Scope Describe
             }
         }
@@ -178,7 +178,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-Module         -Exactly 1 -Scope Context
                     Assert-MockCalled -CommandName Import-Module      -Exactly 1 -Scope Context
                     Assert-MockCalled -CommandName Backup-AuditPolicy -Exactly 1 -Scope Context
@@ -205,7 +205,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-Module          -Exactly 1 -Scope Context
                     Assert-MockCalled -CommandName Import-Module       -Exactly 1 -Scope Context
                     Assert-MockCalled -CommandName Restore-AuditPolicy -Exactly 1 -Scope Context
@@ -231,7 +231,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-Module      -Exactly 1 -Scope Context
                     Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -Scope Context
                 }
@@ -256,7 +256,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-Module      -Exactly 1 -Scope Context
                     Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -Scope Context
                 }
@@ -276,7 +276,7 @@ try
             }
 
             It 'Should call expected Mocks' {
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
                 Assert-MockCalled -CommandName Remove-Item -Times 1 -Scope Describe
             }
         }
