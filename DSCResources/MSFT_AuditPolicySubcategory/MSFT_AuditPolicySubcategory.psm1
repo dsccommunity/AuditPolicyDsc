@@ -137,7 +137,7 @@ function Test-TargetResource
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
         [String]
-        $Ensure
+        $Ensure = 'Present'
     )
 
     [Boolean] $isInDesiredState = $false
