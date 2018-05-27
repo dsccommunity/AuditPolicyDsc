@@ -45,7 +45,7 @@ Describe 'auditpol.exe output' {
         Should BeExactly "Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting"
     }
 
-    foreach ( $subcategory in $subcategories )
+    foreach ( $subcategory in $script:subcategories )
     {
         Context "Subcategory: $($subcategory.subcategory)" {
 

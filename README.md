@@ -1,6 +1,3 @@
-master: [![Build status](https://ci.appveyor.com/api/projects/status/9nsi30ladk1jaax5/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/auditpolicydsc/branch/master)
-dev: [![Build status](https://ci.appveyor.com/api/projects/status/9nsi30ladk1jaax5/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/auditpolicydsc/branch/dev)
-
 # AuditPolicyDsc
 
 The **AuditPolicyDsc** module allows you to configure and manage the advanced audit policy on all
@@ -12,6 +9,26 @@ For more information see the [Code of Conduct FAQ](
   https://opensource.microsoft.com/codeofconduct/faq/)
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions
 or comments.
+
+## Branches
+
+### master
+
+[![Build status](https://ci.appveyor.com/api/projects/status/9nsi30ladk1jaax5/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/AuditPolicyDsc/branch/master)
+[![codecov](https://codecov.io/gh/PowerShell/AuditPolicyDsc/branch/master/graph/badge.svg)](https://codecov.io/gh/PowerShell/SqlServerDsc/branch/master)
+
+This is the branch containing the latest release -
+no contributions should be made directly to this branch.
+
+### dev
+
+[![Build status](https://ci.appveyor.com/api/projects/status/9nsi30ladk1jaax5/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/AuditPolicyDsc/branch/dev)
+[![codecov](https://codecov.io/gh/PowerShell/AuditPolicyDsc/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/SqlServerDsc/branch/dev)
+
+This is the development branch
+to which contributions should be proposed by contributors as pull requests.
+This development branch will periodically be merged to the master branch,
+and be released to [PowerShell Gallery](https://www.powershellgallery.com/).
 
 ## Contributing
 
@@ -104,7 +121,10 @@ None
 
 ### Unreleased
 
-Moved auditpol call to external process
+Moved auditpol call in the helper module to an external process to better control output
+auditpol output is now converted to CSV to remove the need to parse the text output
+All resources have been updated to use the new helper module functionality
+Added the Ensure parameter default value of Present to the AuditPolicySubcategory resource Test-TargetResource function
 
 ### 1.1.0.0
 
