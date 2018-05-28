@@ -1,12 +1,12 @@
 
 configuration 'MSFT_AuditPolicyOption_config'
 {
-    param 
+    param
     (
         [Parameter(Mandatory = $true)]
         [System.String]
         $OptionName,
-        
+
         [Parameter(Mandatory = $true)]
         [System.String]
         $OptionValue
@@ -14,9 +14,9 @@ configuration 'MSFT_AuditPolicyOption_config'
 
     Import-DscResource -ModuleName 'AuditPolicyDsc'
 
-    node localhost 
+    node localhost
     {
-        AuditPolicyOption Integration_Test 
+        AuditPolicyOption Integration_Test
         {
             Name  = $OptionName
             Value = $OptionValue

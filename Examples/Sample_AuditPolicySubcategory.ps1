@@ -1,5 +1,5 @@
 <#
-    This example will set the Logon Success and Failure flags on the localhost. 
+    This example will set the Logon Success and Failure flags on the localhost.
     To use this example, run it using PowerShell.
 #>
 Configuration Sample_AuditSubcategory
@@ -7,8 +7,8 @@ Configuration Sample_AuditSubcategory
     param
     (
         [String] $NodeName = 'localhost'
-    )    
-   
+    )
+
     Import-DscResource -ModuleName AuditPolicyDsc
 
     Node $NodeName
@@ -17,8 +17,8 @@ Configuration Sample_AuditSubcategory
         {
             Name      = 'Logon'
             AuditFlag = 'Success'
-            Ensure    = 'Absent' 
-        } 
+            Ensure    = 'Absent'
+        }
 
         AuditPolicySubcategory LogonFailure
         {

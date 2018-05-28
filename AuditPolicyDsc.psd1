@@ -104,7 +104,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added the AuditPolicyCsv resource. 
+        ReleaseNotes = '* Added the AuditPolicyCsv resource.
 
 '
 
