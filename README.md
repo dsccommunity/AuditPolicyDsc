@@ -121,6 +121,8 @@ None
 
 ### Unreleased
 
+### 1.2.0.0
+
 *  Moved auditpol call in the helper module to an external process to better control output
 * auditpol output is now converted to CSV to remove the need to parse the text output
 * All resources have been updated to use the new helper module functionality
