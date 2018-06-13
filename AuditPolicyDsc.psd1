@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.1.0.0'
+moduleVersion = '1.2.0.0'
 
 # ID used to uniquely identify this module
 GUID = '644501e3-ebc7-451e-9155-366a4f8d4a9a'
@@ -104,7 +104,10 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added the AuditPolicyCsv resource. 
+        ReleaseNotes = '*  Moved auditpol call in the helper module to an external process to better control output
+* auditpol output is now converted to CSV to remove the need to parse the text output
+* All resources have been updated to use the new helper module functionality
+* Added the Ensure parameter default value of Present to the AuditPolicySubcategory resource Test-TargetResource function
 
 '
 
@@ -119,4 +122,5 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 

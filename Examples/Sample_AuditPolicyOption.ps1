@@ -7,8 +7,8 @@ Configuration Sample_AuditOption
     param
     (
         [String] $NodeName = 'localhost'
-    )    
-   
+    )
+
     Import-DscResource -ModuleName AuditPolicyDsc
 
     Node $NodeName

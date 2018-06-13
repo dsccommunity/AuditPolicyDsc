@@ -1,4 +1,3 @@
-
 $script:DSCModuleName   = 'AuditPolicyDsc'
 $script:DSCResourceName = 'MSFT_AuditPolicyOption'
 
@@ -17,7 +16,7 @@ Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHel
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $script:DSCModuleName `
     -DSCResourceName $script:DSCResourceName `
-    -TestType Unit 
+    -TestType Unit
 #endregion
 
 # Begin Testing
@@ -26,6 +25,9 @@ try
     #region Pester Tests
 
     InModuleScope $script:DSCResourceName {
+
+        # The script scope does not pierce the InModuleScope
+        $script:DSCResourceName = 'MSFT_AuditPolicyOption'
 
         #region Pester Test Initialization
 
@@ -41,12 +43,12 @@ try
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
 
             Context 'Option Enabled' {
-                
-                Mock -CommandName Get-AuditOption -MockWith { 
+
+                Mock -CommandName Get-AuditOption -MockWith {
                     return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
-                
+
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -55,20 +57,20 @@ try
                     $script:getTargetResourceResult.Value | Should Be $testParameters.Value
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
-                } 
+                }
             }
 
             Context 'Option Disabled' {
 
                 $testParameters.Value = 'Disabled'
-                Mock -CommandName Get-AuditOption -MockWith { 
+                Mock -CommandName Get-AuditOption -MockWith {
                     return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } | 
+                    { $script:getTargetResourceResult = Get-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -77,26 +79,26 @@ try
                     $script:getTargetResourceResult.Value | Should Be $testParameters.Value
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
-                } 
+                }
             }
         }
         #endregion
 
         #region Function Test-TargetResource
         Describe "$($script:DSCResourceName)\Test-TargetResource" {
-            
+
             $testParameters.Value = 'Enabled'
 
             Context 'Option set to enabled and should be' {
 
-                Mock -CommandName Get-AuditOption -MockWith { 
+                Mock -CommandName Get-AuditOption -MockWith {
                     return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -104,19 +106,19 @@ try
                     $script:testTargetResourceResult | Should Be $true
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
-                } 
+                }
             }
 
             Context 'Option set to enabled and should not be' {
 
-                Mock -CommandName Get-AuditOption -MockWith { 
+                Mock -CommandName Get-AuditOption -MockWith {
                     return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -124,41 +126,41 @@ try
                     $script:testTargetResourceResult | Should Be $false
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
-                } 
+                }
             }
 
             $testParameters.Value = 'Disabled'
 
             Context 'Option set to disabled and should be' {
 
-                Mock -CommandName Get-AuditOption -MockWith { 
+                Mock -CommandName Get-AuditOption -MockWith {
                     return 'Disabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
-                
+
                 It 'Should return true' {
                     $script:testTargetResourceResult | Should Be $true
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
-                } 
+                }
             }
 
             Context 'Option set to disabled and should not be' {
 
-                Mock -CommandName Get-AuditOption -MockWith { 
+                Mock -CommandName Get-AuditOption -MockWith {
                     return 'Enabled' } -ModuleName MSFT_AuditPolicyOption -Verifiable
-                
+
                 It 'Should not throw an exception' {
-                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } | 
+                    { $script:testTargetResourceResult = Test-TargetResource @testParameters } |
                         Should Not Throw
                 }
 
@@ -166,32 +168,32 @@ try
                     $script:testTargetResourceResult | Should Be $false
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditOption -Exactly 1
-                } 
+                }
             }
         }
         #endregion
 
         #region Function Set-TargetResource
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
-            
+
             $testParameters.Value = 'Enabled'
 
             Context 'Option to Enabled' {
 
                 Mock -CommandName Set-AuditOption -MockWith { } `
                      -ModuleName MSFT_AuditPolicyOption -Verifiable
-                    
+
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
-                } 
+                }
             }
 
             $testParameters.Value = 'Disabled'
@@ -200,78 +202,86 @@ try
 
                 Mock -CommandName Set-AuditOption -MockWith { } `
                      -ModuleName MSFT_AuditPolicyOption -Verifiable
-                    
+
                 It 'Should not throw an exception' {
                     { Set-TargetResource @testParameters } | Should Not Throw
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditOption -Exactly 1
-                } 
+                }
             }
         }
         #endregion
 
         #region Helper Cmdlets
-        Describe 'Private function Get-AuditOption' { 
-            
+        Describe 'Private function Get-AuditOption' {
+
             [String] $name = 'CrashOnAuditFail'
-            
+
             Context 'Get audit policy option enabled' {
-                
+
                 [String] $value = 'Enabled'
-                <# 
-                    the return is 3 lines Header, blank line, data
-                    ComputerName,System,Subcategory,GUID,AuditFlags
-                #>
-                Mock -CommandName Invoke-Auditpol -MockWith { 
-                    @("","","$env:COMPUTERNAME,,Option:$name,,$value,,") 
+
+                Mock -CommandName Invoke-Auditpol -MockWith {
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = ''
+                        'Subcategory' = "Option:$name"
+                        'Subcategory GUID' = ''
+                        'Inclusion Setting' = $value
+                        'Exclusion Setting' = ''
+                    }
                 } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } | 
+                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } |
                         Should Not Throw
-                } 
+                }
 
                 It 'Should return the correct value' {
                     $script:getAuditOptionResult | Should Be $value
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
             Context 'Get audit policy option disabled' {
-                
+
                 [String] $value = 'Disabled'
-                <# 
-                    the return is 3 lines Header, blank line, data
-                    ComputerName,System,Subcategory,GUID,AuditFlags
-                #>
-                Mock -CommandName Invoke-Auditpol -MockWith { 
-                    @("","","$env:COMPUTERNAME,,Option:$name,,$value,,") 
+
+                Mock -CommandName Invoke-Auditpol -MockWith {
+                    @{
+                        'Machine Name'= $env:COMPUTERNAME
+                        'Policy Target' = ''
+                        'Subcategory' = "Option:$name"
+                        'Subcategory GUID' = ''
+                        'Inclusion Setting' = $value
+                        'Exclusion Setting' = ''
+                    }
                 } -ParameterFilter { $Command -eq 'Get' } -Verifiable
 
                 It 'Should not throw an exception' {
-                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } | 
+                    { $script:getAuditOptionResult = Get-AuditOption -Name $name } |
                         Should Not Throw
-                } 
+                }
 
                 It 'Should return the correct value' {
                     $script:getAuditOptionResult | Should Be $value
                 }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
         }
 
-        Describe 'Private function Set-AuditOption' { 
+        Describe 'Private function Set-AuditOption' {
 
             [String] $name  = "CrashOnAuditFail"
 
@@ -284,12 +294,12 @@ try
 
                 It 'Should not throw an exception' {
                     { Set-AuditOption -Name $name -Value $value } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
 
             Context "Set audit policy option to disabled" {
@@ -301,12 +311,12 @@ try
 
                 It 'Should not throw an exception' {
                     { Set-AuditOption -Name $name -Value $value } | Should Not Throw
-                }   
+                }
 
-                It 'Should call expected Mocks' {    
-                    Assert-VerifiableMocks
+                It 'Should call expected Mocks' {
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1
-                } 
+                }
             }
         }
         #endregion
