@@ -121,11 +121,12 @@ None
 
 ### Unreleased
 
-* Moved auditpol call in the helper module to an external process to better control output
+### 1.2.0.0
+
+*  Moved auditpol call in the helper module to an external process to better control output
 * auditpol output is now converted to CSV to remove the need to parse the text output
 * All resources have been updated to use the new helper module functionality
-* Added the Ensure parameter default value of Present to the AuditPolicySubcategory resource
-* Test-TargetResource function
+* Added the Ensure parameter default value of Present to the AuditPolicySubcategory resource Test-TargetResource function
 
 ### 1.1.0.0
 
