@@ -5,4 +5,3 @@ ConvertFrom-StringData -StringData @'
         UnknownError             = (ERROR) An unknown error has occured: {0}
         ExecuteAuditpolCommand   = Executing 'auditpol.exe {0}'
 '@
-
