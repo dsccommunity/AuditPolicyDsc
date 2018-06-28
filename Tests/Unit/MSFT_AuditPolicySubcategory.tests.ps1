@@ -102,9 +102,9 @@ try
                 }
             }
 
-            Context "Single word subcategory submit 'Success' and return 'SuccessandFailure'" {
+            Context "Single word subcategory submit 'Success' and return 'Success and Failure'" {
 
-                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success and Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -192,9 +192,9 @@ try
                 }
             }
 
-            Context "Single word subcategory submit 'Failure' and return 'SuccessandFailure'" {
+            Context "Single word subcategory submit 'Failure' and return 'Success and Failure'" {
 
-                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success and Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -283,9 +283,9 @@ try
                 }
             }
 
-            Context "Mulit-word subcategory submit 'Success' and return 'SuccessandFailure'" {
+            Context "Mulit-word subcategory submit 'Success' and return 'Success and Failure'" {
 
-                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success and Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -373,9 +373,9 @@ try
                 }
             }
 
-            Context "Mulit-word subcategory submit 'Failure' and return 'SuccessandFailure'" {
+            Context "Mulit-word subcategory submit 'Failure' and return 'Success and Failure'" {
 
-                Mock -CommandName Get-AuditSubcategory -MockWith { return 'SuccessandFailure' } `
+                Mock -CommandName Get-AuditSubcategory -MockWith { return 'Success and Failure' } `
                      -ModuleName MSFT_AuditPolicySubcategory -Verifiable
 
                 It 'Should not throw an exception' {
@@ -955,11 +955,82 @@ try
 
         Describe 'Function Test-AuditSubcategory' {
 
+            Context 'Sucess' {
+
+                $auditFlag = 'Success'
+                It "Should return false when 'No Auditing' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'No Auditing' -AuditFlag $auditFlag |
+                    Should Be $false
+                }
+
+                It "Should return true when 'Success' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'Success' -AuditFlag $auditFlag |
+                    Should Be $true
+                }
+
+                It "Should return false when 'Failure' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'Failure' -AuditFlag $auditFlag |
+                    Should Be $false
+                }
+
+                It "Should return true when 'Success and Failure' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'Success and Failure' -AuditFlag $auditFlag |
+                    Should Be $true
+                }
+            }
+
+            Context 'Failure' {
+
+                $auditFlag = 'Failure'
+                It "Should return false when 'No Auditing' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'No Auditing' -AuditFlag $auditFlag |
+                    Should Be $false
+                }
+
+                It "Should return false when 'Success' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'Success' -AuditFlag $auditFlag |
+                    Should Be $false
+                }
+
+                It "Should return true when 'Failure' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'Failure' -AuditFlag $auditFlag |
+                    Should Be $true
+                }
+
+                It "Should return true when 'Success and Failure' is present on the system" {
+                    Test-AuditSubcategoryBitPresent -CurrentAuditFlag 'Success and Failure' -AuditFlag $auditFlag |
+                    Should Be $true
+                }
+            }
+
         }
 
         Describe 'Localization Files' {
 
-            Join-Path -Path $script:moduleRoot -ChildPath $script:DSCResourceName
+            $modulePath = Join-Path -Path $moduleRoot -ChildPath "DscResources\$script:DSCResourceName"
+            $localizationFiles = Get-ChildItem -Path $modulePath -Filter "$script:DSCResourceName.strings.psd1" -Recurse
+
+            foreach ($file in $localizationFiles)
+            {
+                $culture = $file.PSParentPath.Substring($file.PSParentPath.LastIndexOf("\")+1)
+
+                Context "Culture $culture" {
+
+                    Import-LocalizedData `
+                        -BindingVariable 'testLocalizedData' `
+                        -FileName "$script:DSCResourceName.strings.psd1" `
+                        -BaseDirectory $file.Directory.FullName
+
+                    $requiredStrings = @('NoAuditing','Success','Failure','SuccessAndFailure')
+
+                    foreach ($requiredString in $requiredStrings)
+                    {
+                        It "Should have $requiredString" {
+                            $testLocalizedData.$requiredString | Should Not BeNullOrEmpty
+                        }
+                    }
+                }
+            }
         }
     }
     #endregion

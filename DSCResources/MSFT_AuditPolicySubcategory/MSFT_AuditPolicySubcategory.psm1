@@ -5,6 +5,19 @@ Import-Module -Name (Join-Path -Path ( Split-Path $PSScriptRoot -Parent ) `
 # Localized messages for Write-Verbose statements in this resource
 $script:localizedData = Get-LocalizedData -ResourceName 'MSFT_AuditPolicySubcategory'
 
+# A keymap for the localized audit policy flag name lookup
+$script:localizedAuditFlagBitTable = @{
+    $localizedData.NoAuditing = 0
+    $localizedData.Success = 1
+    $localizedData.Failure = 2
+    $localizedData.SuccessandFailure = 3
+}
+
+$script:AuditFlagParmaterBitTable = @{
+    'Success' = 1
+    'Failure' = 2
+}
+
 <#
     .SYNOPSIS
         Returns the current audit flag for the given subcategory.
@@ -39,12 +52,7 @@ function Get-TargetResource
         Write-Verbose -Message ( $localizedData.GetAuditPolSubcategoryFailed -f $Name, $AuditFlag )
     }
 
-    <#
-        The auditType property returned from Get-AuditSubCategory can be 'None','Success',
-        'Failure', or 'Success and Failure'. Using the match operator will return the correct
-        state if both are set.
-    #>
-    if ( $currentAuditFlag -match $AuditFlag )
+    if ( Test-AuditSubcategoryBitPresent -CurrentAuditFlag $currentAuditFlag -AuditFlag $AuditFlag )
     {
         $currentAuditFlag = $AuditFlag
         $ensure = 'Present'
@@ -147,24 +155,17 @@ function Test-TargetResource
         Throw ( $localizedData.InvalidSubcategory -f $Name )
     }
 
-    try
-    {
-        [String] $currentAuditFlag = Get-AuditSubCategory -Name $Name
-        Write-Verbose -Message ( $localizedData.GetAuditpolSubcategorySucceed -f $Name, $AuditFlag )
-    }
-    catch
-    {
-        Write-Verbose -Message ( $localizedData.GetAuditPolSubcategoryFailed -f $Name, $AuditFlag )
-    }
+    [String] $currentAuditFlag = (Get-TargetResource -Name $Name -AuditFlag $AuditFlag).AuditFlag
 
     # If the setting should be present look for a match, otherwise look for a notmatch
     if ( $Ensure -eq 'Present' )
     {
-        $isInDesiredState = $currentAuditFlag -match $AuditFlag
+        $isInDesiredState = Test-AuditSubcategoryBitPresent -CurrentAuditFlag $currentAuditFlag -AuditFlag $AuditFlag
     }
     else
     {
-        $isInDesiredState = $currentAuditFlag -notmatch $AuditFlag
+        $isInDesiredState = ( -not ( Test-AuditSubcategoryBitPresent -CurrentAuditFlag $currentAuditFlag `
+                                                                     -AuditFlag $AuditFlag ) )
     }
 
     <#
@@ -260,7 +261,7 @@ function Set-AuditSubcategory
     #>
     if ( $pscmdlet.ShouldProcess( "$Name","Set AuditFlag '$AuditFlag'" ) )
     {
-        # translate $ensure=present to enable and $ensure=absent to disable
+        # Translate $ensure=present to enable and $ensure=absent to disable
         $auditState = @{
             'Present' = 'enable'
             'Absent'  = 'disable'
@@ -277,6 +278,40 @@ function Set-AuditSubcategory
         }
 
         Invoke-AuditPol -Command 'Set' -subCommand $subcommand | Out-Null
+    }
+}
+
+function Test-AuditSubcategoryBitPresent
+{
+    [CmdletBinding()]
+    [OutputType([Boolean])]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [String]
+        $CurrentAuditFlag,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet('Success', 'Failure')]
+        [String]
+        $AuditFlag
+    )
+
+    <#
+        Since the subcategory flags are localized on the system that generates the configuration
+        string comparisons may not be reliable.
+        The localizedAuditFlagBitTable is loaded from the locaization strings, so the same
+        2 bits can be evaluated reguardless of the language.
+    #>
+
+    $bitSet = $localizedAuditFlagBitTable.$CurrentAuditFlag -band $AuditFlagParmaterBitTable.$AuditFlag
+    if ( $bitSet -eq $AuditFlagParmaterBitTable.$AuditFlag )
+    {
+        return $true
+    }
+    else
+    {
+        return $false
     }
 }
 

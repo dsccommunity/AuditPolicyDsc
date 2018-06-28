@@ -121,6 +121,9 @@ None
 
 ### Unreleased
 
+* Added localization support
+  * Spanish
+
 ### 1.2.0.0
 
 *  Moved auditpol call in the helper module to an external process to better control output
