@@ -93,19 +93,21 @@ function Set-TargetResource
 
     if ( -Not ( Test-ValidSubcategory -Name $Name ) )
     {
-        Throw ( $localizedData.InvalidSubcategory -f $Name )
+        Write-Warning -Message ( $localizedData.InvalidSubcategory -f $Name )
     }
-
-    try
+    else
     {
-        Set-AuditSubcategory -Name $Name -AuditFlag $AuditFlag -Ensure $Ensure
-        Write-Verbose -Message ( $localizedData.SetAuditpolSubcategorySucceed `
-                        -f $Name, $AuditFlag, $Ensure )
-    }
-    catch
-    {
-        Write-Verbose -Message ( $localizedData.SetAuditpolSubcategoryFailed `
-                        -f $Name, $AuditFlag, $Ensure )
+        try
+        {
+            Set-AuditSubcategory -Name $Name -AuditFlag $AuditFlag -Ensure $Ensure
+            Write-Verbose -Message ( $localizedData.SetAuditpolSubcategorySucceed `
+                            -f $Name, $AuditFlag, $Ensure )
+        }
+        catch
+        {
+            Write-Verbose -Message ( $localizedData.SetAuditpolSubcategoryFailed `
+                            -f $Name, $AuditFlag, $Ensure )
+        }
     }
 }
 
@@ -144,29 +146,30 @@ function Test-TargetResource
 
     if ( -Not ( Test-ValidSubcategory -Name $Name ) )
     {
-        Throw ( $localizedData.InvalidSubcategory -f $Name )
-    }
-
-    try
-    {
-        [String] $currentAuditFlag = Get-AuditSubCategory -Name $Name
-        Write-Verbose -Message ( $localizedData.GetAuditpolSubcategorySucceed -f $Name, $AuditFlag )
-    }
-    catch
-    {
-        Write-Verbose -Message ( $localizedData.GetAuditPolSubcategoryFailed -f $Name, $AuditFlag )
-    }
-
-    # If the setting should be present look for a match, otherwise look for a notmatch
-    if ( $Ensure -eq 'Present' )
-    {
-        $isInDesiredState = $currentAuditFlag -match $AuditFlag
+        Write-Warning -Message ( $localizedData.InvalidSubcategory -f $Name )
     }
     else
     {
-        $isInDesiredState = $currentAuditFlag -notmatch $AuditFlag
-    }
+        try
+        {
+            [String] $currentAuditFlag = Get-AuditSubCategory -Name $Name
+            Write-Verbose -Message ( $localizedData.GetAuditpolSubcategorySucceed -f $Name, $AuditFlag )
+        }
+        catch
+        {
+            Write-Verbose -Message ( $localizedData.GetAuditPolSubcategoryFailed -f $Name, $AuditFlag )
+        }
 
+        # If the setting should be present look for a match, otherwise look for a notmatch
+        if ( $Ensure -eq 'Present' )
+        {
+            $isInDesiredState = $currentAuditFlag -match $AuditFlag
+        }
+        else
+        {
+            $isInDesiredState = $currentAuditFlag -notmatch $AuditFlag
+        }
+    }
     <#
         The audit type can be true in either a match or non-match state. If the audit type
         matches the ensure property return the setting correct message, else return the
