@@ -168,6 +168,362 @@ function Invoke-AuditPol
 }
 
 <#
+ .SYNOPSIS
+    Get-FixedLanguageAuditCSV is a private function that returns the contents of a CSV with US-English names, even if input is not US English
+ .PARAMETER Path
+    The path to stage the auditCSV to (defaulted to the temp directory).
+    FILE MUST EXIST AND BE A VALID AUDIT.CSV FILE, AND THE FIRST LINE MUST BE THE CSV HEADER.
+ .OUTPUTS
+    Content from the file converted from CSV to custom objects with US-English property names.
+ .EXAMPLE
+    $csv = Get-StagedAuditPolicy
+#>
+function Get-FixedLanguageAuditCSV
+{
+    [OutputType([System.Object[]])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [System.String]$Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv")
+    )
+
+    $headerSet =
+        "Machine Name",
+        "Policy Target",
+        "Subcategory",
+        "Subcategory GUID",
+        "Inclusion Setting",
+        "Exclusion Setting",
+        "Setting Value"
+
+    return (Get-Content $Path | Select-Object -Skip 1 | ConvertFrom-Csv -Header $headerSet)
+}
+
+<#
+ .SYNOPSIS
+    Get-StagedAuditPol is a private function that creates staged AuditPolicy CSVs for usage over several resource blocks
+ .DESCRIPTION
+    The function tests if a staged AuditPolicyCSV is available and not out of date.  If needed, it creates a new staged CSV
+ .PARAMETER Path
+    The path to stage the auditCSV to (defaulted to the temp directory)
+ .OUTPUTS
+    The current or newly created Staged CSV.
+ .EXAMPLE
+    $csv = Get-StagedAuditPolicy
+#>
+function Get-StagedAuditCSV
+{
+    [OutputType([System.Object[]])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [System.String]$Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv")
+    )
+
+    # Localized messages for Write-Verbose statements in this resource
+    $localizedData = Get-LocalizedData -HelperName 'AuditPolicyResourceHelper'
+
+    $auditCSV = Get-Item $Path -ErrorAction SilentlyContinue
+    if ($auditCSV -ne $Null)
+    {
+        # Determine if the CSV was created more than 5 minutes ago, if it was, delete it and create a new one.
+        if (([datetime]::Now - $auditCSV.CreationTime) -gt "00:05:00")
+        {
+            Write-Debug -Message ( $localizedData.AuditCSVOutdated -f $path, $auditCSV.CreationTime)
+            Try
+            {
+                Remove-Item $auditCSV -Force
+                Write-Debug -Message ( $localizedData.AuditCSVDeleted -f $Path)
+            }
+            Catch
+            {
+                Write-Debug -Message ( $localizedData.AuditCSVLocked -f $Path)
+                # TODO: Find out what to do here.
+                Continue
+            }
+
+        }
+        else 
+        {
+            Write-Debug -Message ( $localizedData.AuditCSVLocked -f $Path)
+            return Get-FixedLanguageAuditCSV -Path $auditCSV
+        }
+    }
+     
+    
+    Write-Debug -Message ( $localizedData.AuditCSVNotFound -f $Path)
+    Invoke-AuditPol -Command Backup -SubCommand "file:$Path"
+    Write-Debug -Message ( $localizedData.AuditCSVCreated -f $auditCSV )
+    $auditCSV = Get-Item $Path
+    # TODO: Need to test if auditCSV exists and do error handling if it doesn't.
+    return Get-FixedLanguageAuditCSV $auditCSV
+}
+
+# Static Name translation to ensure GUIDS are the source of truth.
+### Hash table to map audit subcategory names (US English) to GUIDs
+$AuditSubcategoryToGUIDHash = @{
+###### Edited from "auditpol /list /subcategory:* /v"
+######
+######Category/Subcategory                  GUID
+######System                                = "69979848-797A-11D9-BED3-505054503030";
+  "Security State Change"                     = "0CCE9210-69AE-11D9-BED3-505054503030";
+  "Security System Extension"                 = "0CCE9211-69AE-11D9-BED3-505054503030";
+  "System Integrity"                          = "0CCE9212-69AE-11D9-BED3-505054503030";
+  "IPsec Driver"                              = "0CCE9213-69AE-11D9-BED3-505054503030";
+  "Other System Events"                       = "0CCE9214-69AE-11D9-BED3-505054503030";
+######Logon/Logoff                          = "69979849-797A-11D9-BED3-505054503030";
+  "Logon"                                     = "0CCE9215-69AE-11D9-BED3-505054503030";
+  "Logoff"                                    = "0CCE9216-69AE-11D9-BED3-505054503030";
+  "Account Lockout"                           = "0CCE9217-69AE-11D9-BED3-505054503030";
+  "IPsec Main Mode"                           = "0CCE9218-69AE-11D9-BED3-505054503030";
+  "IPsec Quick Mode"                          = "0CCE9219-69AE-11D9-BED3-505054503030";
+  "IPsec Extended Mode"                       = "0CCE921A-69AE-11D9-BED3-505054503030";
+  "Special Logon"                             = "0CCE921B-69AE-11D9-BED3-505054503030";
+  "Other Logon/Logoff Events"                 = "0CCE921C-69AE-11D9-BED3-505054503030";
+  "Network Policy Server"                     = "0CCE9243-69AE-11D9-BED3-505054503030";
+  "User / Device Claims"                      = "0CCE9247-69AE-11D9-BED3-505054503030";
+  "Group Membership"                          = "0CCE9249-69AE-11D9-BED3-505054503030";
+######Object Access                         = "6997984A-797A-11D9-BED3-505054503030";
+  "File System"                               = "0CCE921D-69AE-11D9-BED3-505054503030";
+  "Registry"                                  = "0CCE921E-69AE-11D9-BED3-505054503030";
+  "Kernel Object"                             = "0CCE921F-69AE-11D9-BED3-505054503030";
+  "SAM"                                       = "0CCE9220-69AE-11D9-BED3-505054503030";
+  "Certification Services"                    = "0CCE9221-69AE-11D9-BED3-505054503030";
+  "Application Generated"                     = "0CCE9222-69AE-11D9-BED3-505054503030";
+  "Handle Manipulation"                       = "0CCE9223-69AE-11D9-BED3-505054503030";
+  "File Share"                                = "0CCE9224-69AE-11D9-BED3-505054503030";
+  "Filtering Platform Packet Drop"            = "0CCE9225-69AE-11D9-BED3-505054503030";
+  "Filtering Platform Connection"             = "0CCE9226-69AE-11D9-BED3-505054503030";
+  "Other Object Access Events"                = "0CCE9227-69AE-11D9-BED3-505054503030";
+  "Detailed File Share"                       = "0CCE9244-69AE-11D9-BED3-505054503030";
+  "Removable Storage"                         = "0CCE9245-69AE-11D9-BED3-505054503030";
+  "Central Policy Staging"                    = "0CCE9246-69AE-11D9-BED3-505054503030";
+######Privilege Use                         = "6997984B-797A-11D9-BED3-505054503030";
+  "Sensitive Privilege Use"                   = "0CCE9228-69AE-11D9-BED3-505054503030";
+  "Non Sensitive Privilege Use"               = "0CCE9229-69AE-11D9-BED3-505054503030";
+  "Other Privilege Use Events"                = "0CCE922A-69AE-11D9-BED3-505054503030";
+######Detailed Tracking                     = "6997984C-797A-11D9-BED3-505054503030";
+  "Process Creation"                          = "0CCE922B-69AE-11D9-BED3-505054503030";
+  "Process Termination"                       = "0CCE922C-69AE-11D9-BED3-505054503030";
+  "DPAPI Activity"                            = "0CCE922D-69AE-11D9-BED3-505054503030";
+  "RPC Events"                                = "0CCE922E-69AE-11D9-BED3-505054503030";
+  "Plug and Play Events"                      = "0CCE9248-69AE-11D9-BED3-505054503030";
+  "Token Right Adjusted Events"               = "0CCE924A-69AE-11D9-BED3-505054503030";
+######Policy Change                         = "6997984D-797A-11D9-BED3-505054503030";
+  "Audit Policy Change"                       = "0CCE922F-69AE-11D9-BED3-505054503030";
+  "Authentication Policy Change"              = "0CCE9230-69AE-11D9-BED3-505054503030";
+  "Authorization Policy Change"               = "0CCE9231-69AE-11D9-BED3-505054503030";
+  "MPSSVC Rule-Level Policy Change"           = "0CCE9232-69AE-11D9-BED3-505054503030";
+  "Filtering Platform Policy Change"          = "0CCE9233-69AE-11D9-BED3-505054503030";
+  "Other Policy Change Events"                = "0CCE9234-69AE-11D9-BED3-505054503030";
+######Account Management                    = "6997984E-797A-11D9-BED3-505054503030";
+  "User Account Management"                   = "0CCE9235-69AE-11D9-BED3-505054503030";
+  "Computer Account Management"               = "0CCE9236-69AE-11D9-BED3-505054503030";
+  "Security Group Management"                 = "0CCE9237-69AE-11D9-BED3-505054503030";
+  "Distribution Group Management"             = "0CCE9238-69AE-11D9-BED3-505054503030";
+  "Application Group Management"              = "0CCE9239-69AE-11D9-BED3-505054503030";
+  "Other Account Management Events"           = "0CCE923A-69AE-11D9-BED3-505054503030";
+######DS Access                             = "6997984F-797A-11D9-BED3-505054503030";
+  "Directory Service Access"                  = "0CCE923B-69AE-11D9-BED3-505054503030";
+  "Directory Service Changes"                 = "0CCE923C-69AE-11D9-BED3-505054503030";
+  "Directory Service Replication"             = "0CCE923D-69AE-11D9-BED3-505054503030";
+  "Detailed Directory Service Replication"    = "0CCE923E-69AE-11D9-BED3-505054503030";
+######Account Logon                         = "69979850-797A-11D9-BED3-505054503030";
+  "Credential Validation"                     = "0CCE923F-69AE-11D9-BED3-505054503030";
+  "Kerberos Service Ticket Operations"        = "0CCE9240-69AE-11D9-BED3-505054503030";
+  "Other Account Logon Events"                = "0CCE9241-69AE-11D9-BED3-505054503030";
+  "Kerberos Authentication Service"           = "0CCE9242-69AE-11D9-BED3-505054503030";
+}
+
+### Hash table to map GUIDs to audit subcategory names (US English)
+$AuditGUIDToSubCategoryHash = @{}
+$AuditSubcategoryToGUIDHash.Keys | foreach {
+    $AuditGUIDToSubCategoryHash.Add($AuditSubcategoryToGUIDHash[$_], $_)
+}
+
+
+$AuditFlagToSettingValue = @{
+    'No Auditing' = 0
+    'Success' = 1
+    'Failure' = 2
+    'Success and Failure' = 3
+    # TODO: What is this value?
+    'WHAT IS THIS' = 4
+}
+
+$AuditSettingValueToFlag = @(
+'No Auditing',
+'Success',
+'Failure',
+'Success and Failure',
+# TODO: What is this value?
+'WHAT IS THIS'
+)
+
+<#
+ .SYNOPSIS
+    Write-StagedAuditCSV is a private function that writes new values to the Staged Audit.CSV and imports them using auditpol
+ .DESCRIPTION
+    The function takes a new value to write and combines it with the staged csv.
+ .PARAMETER Name
+    The subcategory.
+ .PARAMETER Flag
+    The flag the subcategory should be set to.
+ .PARAMETER Path
+    The path to stage the auditCSV to (defaulted to the temp directory)
+ .OUTPUTS
+    The current or newly created Staged CSV.
+ .EXAMPLE
+    Write-StagedAuditCSV -Name 
+#>
+function Write-StagedAuditCSV
+{
+    [OutputType([System.Object[]])]
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $GUID,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateRange(0, 4)]
+        [System.Int32]
+        $SettingValue,
+
+        [Parameter()]
+        [System.String]$Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv"),
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Present", "Absent")]
+        [System.String]$Ensure
+    )
+    
+    if ($AuditGUIDToSubCategoryHash.ContainsKey($GUID))
+    {
+        $Name = $AuditGUIDToSubCategoryHash[$GUID]
+    }
+    else
+    {
+        # TODO: Localize
+        Throw "Cannot find Subcategory translation for $GUID"
+    }
+
+    # translate Present/Absent to inclusion settings
+    # TODO: Is this the right way to do this?
+    $auditState = @{
+        'Inclusion Setting' = ''
+        'Exclusion Setting'  = ''
+    }
+
+    $auditFlag = $AuditSettingValueToFlag[$SettingValue]
+    
+    # Localized messages for Write-Verbose statements in this resource
+    $localizedData = Get-LocalizedData -HelperName 'AuditPolicyResourceHelper'
+
+    $auditCSV = Get-StagedAuditCSV
+
+    $currentValue = $auditCSV | ?{$_.'SubCategory GUID' -eq "{$GUID}"}
+    $currentSetting = 0
+    if ($currentValue -eq $null)
+    {
+        Write-Debug -Message ($localizedData.CurrentCSVValueMissing -f $GUID)
+        $currentSetting = 0
+    }
+    else
+    {
+        $currentSetting = $currentValue.'Setting Value'
+    }
+        
+    if ($Ensure -eq "Present")
+    {
+        $auditState['Inclusion Setting'] = $auditFlag
+    }
+    else
+    {
+        switch ($currentSetting)
+        {
+            0 { 
+               # There's no way to set the Absent of No Auditing.
+               # Should it be Success? Failure? Both?
+               return
+            } 
+
+            1 {
+                   if ($currentSetting -eq 1) {
+                        # If Success is absent and the current value is Success, the result is "No Auditing"
+                        $SettingValue = 0
+                   }
+                   elseif ($currentSetting -eq 3) {
+                        # If Success is absent and the current value is Succes and Failure, the result is Failure.
+                        $SettingValue = 2
+                   }
+                   else {
+                        $SettingValue = $currentSetting
+                   }
+            }
+
+            2 {
+                if ($currentSetting -eq 2) {
+                        # If Failure is absent and the current value is Failure, the result is "No Auditing"
+                        $SettingValue = 0
+                   }
+                   elseif ($currentSetting -eq 3) {
+                        # If Success is absent and the current value is Succes and Failure, the result is Success.
+                        $SettingValue = 1
+                   }
+                   else {
+                        $SettingValue = $currentSetting
+                   }
+            }
+
+            3 {
+                # if Success And Failure should be absent, the result is No Auditing
+                $SettingValue = 0
+            }
+        }
+
+        $auditState['Exclusion Setting'] = $auditFlag
+    }
+
+    # for ($i = 0; $i -lt $auditCSV.count) 
+    # TODO: Does auditCSV need to be in a specific order? If so, use a for loop
+    $auditCSV = $auditCSV | Where-Object {$_.'Subcategory GUID' -ne "{$GUID}" -and !([string]::IsNullOrEmpty($_.'Subcategory GUID'))}
+    $tmpValue = [ordered]@{
+        'Machine Name' = $env:ComputerName
+        'Policy Target' = "System"
+        # TODO: Do we want to add Audit to the name for them?
+        Subcategory = "Audit $Name"
+        # TODO: Do we want to add the braces for them?
+        'SubCategory GUID' = "{$GUID}"
+        # TODO: Can I use Success and Failure?
+        'Inclusion Setting' = $auditState['Inclusion Setting']
+        # TODO: What is THIS?
+        'ExclusionSetting' = $auditState['Exclusion Setting']
+        'Setting Value' = $SettingValue
+    }
+
+    $auditCSV += [pscustomobject]$tmpValue
+
+    Write-Debug -Message ( $localizedData.WriteStagedCSV -f $Guid, $AuditFlag )
+    
+    Try 
+    {
+        $auditCSV | ConvertTo-Csv -NoTypeInformation | % {$_.Replace('"','')} | Out-File $Path -Force
+    }
+    Catch 
+    {
+        # TODO: What do we do here
+        Throw "Unable to save audit.csv at path $Path"
+    }
+    
+    Invoke-AuditPol -Command Restore -SubCommand "file:$Path"
+    Write-Debug -Message ( $localizedData.RestoredAuditCSV )
+}
+
+<#
     .SYNOPSIS
         Returns the list of valid Subcategories.
     .DESCRIPTION
@@ -221,4 +577,5 @@ function Test-ValidSubcategory
     }
 }
 
-Export-ModuleMember -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Test-ValidSubcategory' )
+Export-ModuleMember -Variable AuditSubCategorytoGUIDHash, AuditGUIDTOSubCategoryHash, AuditFlagToSettingValue, AuditSettingValueToFlag -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Write-StagedAuditCSV', 'Get-StagedAuditCSV', 'Get-FixedLanguageAuditCSV',
+    'Test-ValidSubcategory' ) 
