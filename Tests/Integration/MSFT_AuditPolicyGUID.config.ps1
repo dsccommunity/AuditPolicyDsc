@@ -1,23 +1,22 @@
-
-configuration 'MSFT_AuditPolicyGUID_Config' 
+configuration 'MSFT_AuditPolicyGUID_Config'
 {
     param 
     (
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $Name,
-        
+
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $AuditFlag,
 
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $AuditFlagEnsure
     )
 
     Import-DscResource -ModuleName 'AuditPolicyDsc'
-    
+
     node localhost 
     {
         AuditPolicyGUID Integration_Test

@@ -21,19 +21,19 @@ function Get-TargetResource
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Success', 'Failure', 'No Auditing', 'Success And Failure')]
-        [System.String]
+        [String]
         $AuditFlag
     )
-    
+
     # Work in GUIDS and Setting Values the rest of the way
     $GUID = Get-AuditSubCategoryGuid -Name $Name
     $SettingValue = $AuditFlagToSettingValue[$AuditFlag]
-    
+
     try
     {
         $currentAuditSetting = Get-AuditSubCategory -GUID $GUID
@@ -82,24 +82,24 @@ function Set-TargetResource
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Success', 'Failure', 'No Auditing', 'Success And Failure')]
-        [System.String]
+        [String]
         $AuditFlag,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [System.String]
+        [String]
         $Ensure = 'Present'
     )
 
     # Work in GUIDS and Setting Values the rest of the way
     $GUID = Get-AuditSubCategoryGuid -Name $Name
     $SettingValue = $AuditFlagToSettingValue[$AuditFlag]
-    
+
     try
     {
         Set-AuditSubcategory -GUID $GUID -SettingValue $SettingValue -Ensure $Ensure
@@ -130,17 +130,17 @@ function Test-TargetResource
     param
     (
         [Parameter(Mandatory = $true)]    
-        [System.String]
+        [String]
         $Name,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('Success', 'Failure', 'No Auditing', 'Success And Failure')]
-        [System.String]
+        [String]
         $AuditFlag,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
-        [System.String]
+        [String]
         $Ensure="Present"
     )
 
@@ -149,7 +149,7 @@ function Test-TargetResource
     # Work in GUIDS and Setting Values the rest of the way
     $GUID = Get-AuditSubCategoryGuid -Name $Name
     [int]$SettingValue = $AuditFlagToSettingValue[$AuditFlag]
-    
+
     try
     {
         [int]$currentAuditSetting = Get-AuditSubCategory -GUID $GUID
@@ -213,7 +213,7 @@ function Get-AuditSubCategory
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [GUID]
         $GUID
     )
     <#
@@ -221,16 +221,15 @@ function Get-AuditSubCategory
         will be placed here to use native PowerShell cmdlets to set the option details. 
     #>
     # get the auditpol raw csv output
-    $returnCsv = Get-StagedAuditCSV | Where-Object {$_.'SubCategory GUID' -eq "{$GUID}"}
-    
+    $returnCsv = Get-StagedAuditPolicyCSV | Where-Object {$_.'SubCategory GUID' -eq "{$($GUID.guid)}"}
+
     if ($returnCsv)
     {
         return $returnCsv.'Setting Value'
     }
     else
     {
-        # TODO Localize this
-        Throw "Could not retrieve current setting for $GUID"
+        Throw ($localizedData.RetrieveSettingFailure -f $GUID)
     }
 }
 
@@ -254,27 +253,25 @@ function Set-AuditSubcategory
     param
     (
         [Parameter( Mandatory = $true )]
-        [System.String]
+        [GUID]
         $GUID,
-        
+
         [Parameter( Mandatory = $true )]
         [ValidateRange(0, 4)]
-        [System.Int32]
+        [Int]
         $SettingValue,
-        
+
         [Parameter( Mandatory = $true )]
-        [System.String]
+        [String]
         $Ensure
     )
 
     <#
-        When PowerShell cmdlets are released for individual audit policy settings a condition 
-        will be placed here to use native PowerShell cmdlets to set the option details. 
+        When PowerShell cmdlets are released for individual audit policy settings a condition
+        will be placed here to use native PowerShell cmdlets to set the option details.
     #>
-    if ( $pscmdlet.ShouldProcess( "$GUID","Set AuditFlag '$SettingValue'" ) ) 
-    {
-        Write-StagedAuditCSV -Guid $GUID -SettingValue $SettingValue -Ensure $Ensure            
-    }
+
+    Write-StagedAuditCSV -Guid $GUID -SettingValue $SettingValue -Ensure $Ensure
 }
 
 <#
@@ -294,7 +291,7 @@ Function Get-AuditSubCategoryGuid
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.String]$Name
+        [String]$Name
     )
 
     if ($AuditSubCategoryToGUIDHash.ContainsKey($Name))
@@ -305,9 +302,7 @@ Function Get-AuditSubCategoryGuid
     }
     else
     {
-        # TODO: Throw Exception and LOCALIZE
-        Throw "$Name was not found in the approved list of Audit SubCategories"
-        Write-Verbose -Message ( $localizedData.AuditSubCategoryGUIDNotFound -f $Name )
+        Throw ( $localizedData.AuditSubCategoryGUIDNotFound -f $Name )
     }
 }
 

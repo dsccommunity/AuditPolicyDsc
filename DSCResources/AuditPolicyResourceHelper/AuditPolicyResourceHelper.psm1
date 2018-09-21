@@ -185,7 +185,8 @@ function Get-FixedLanguageAuditCSV
     param
     (
         [Parameter()]
-        [System.String]$Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv")
+        [String]
+        $Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv")
     )
 
     $headerSet =
@@ -197,7 +198,7 @@ function Get-FixedLanguageAuditCSV
         "Exclusion Setting",
         "Setting Value"
 
-    return (Get-Content $Path | Select-Object -Skip 1 | ConvertFrom-Csv -Header $headerSet)
+    return (Get-Content -Path $Path | Select-Object -Skip 1 | ConvertFrom-Csv -Header $headerSet)
 }
 
 <#
@@ -212,29 +213,30 @@ function Get-FixedLanguageAuditCSV
  .EXAMPLE
     $csv = Get-StagedAuditPolicy
 #>
-function Get-StagedAuditCSV
+function Get-StagedAuditPolicyCSV
 {
     [OutputType([System.Object[]])]
     [CmdletBinding()]
     param
     (
         [Parameter()]
-        [System.String]$Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv")
+        [String]
+        $Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv")
     )
 
     # Localized messages for Write-Verbose statements in this resource
     $localizedData = Get-LocalizedData -HelperName 'AuditPolicyResourceHelper'
 
-    $auditCSV = Get-Item $Path -ErrorAction SilentlyContinue
+    $auditCSV = Get-Item -Path $Path -ErrorAction SilentlyContinue
     if ($auditCSV -ne $Null)
     {
         # Determine if the CSV was created more than 5 minutes ago, if it was, delete it and create a new one.
-        if (([datetime]::Now - $auditCSV.CreationTime) -gt "00:05:00")
+        if ((New-TimeSpan -Start $auditCSV.CreationTime -End ([datetime]::Now)).Minutes -ge 5)
         {
             Write-Debug -Message ( $localizedData.AuditCSVOutdated -f $path, $auditCSV.CreationTime)
             Try
             {
-                Remove-Item $auditCSV -Force
+                Remove-Item -Path $auditCSV -Force
                 Write-Debug -Message ( $localizedData.AuditCSVDeleted -f $Path)
             }
             Catch
@@ -243,7 +245,6 @@ function Get-StagedAuditCSV
                 # TODO: Find out what to do here.
                 Continue
             }
-
         }
         else 
         {
@@ -251,13 +252,17 @@ function Get-StagedAuditCSV
             return Get-FixedLanguageAuditCSV -Path $auditCSV
         }
     }
-     
-    
+
     Write-Debug -Message ( $localizedData.AuditCSVNotFound -f $Path)
     Invoke-AuditPol -Command Backup -SubCommand "file:$Path"
     Write-Debug -Message ( $localizedData.AuditCSVCreated -f $auditCSV )
-    $auditCSV = Get-Item $Path
-    # TODO: Need to test if auditCSV exists and do error handling if it doesn't.
+    if (!(Test-Path -Path $Path))
+    {
+        $inf =  [System.Management.Automation.ItemNotFoundException]::new( ($localizedData.FileNotFound -f $Path), $fnf)
+        Throw $inf
+    }
+    $auditCSV = Get-Item -Path $Path
+
     return Get-FixedLanguageAuditCSV $auditCSV
 }
 
@@ -385,49 +390,51 @@ function Write-StagedAuditCSV
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.String]
+        [GUID]
         $GUID,
 
         [Parameter(Mandatory = $true)]
         [ValidateRange(0, 4)]
-        [System.Int32]
+        [Int]
         $SettingValue,
 
         [Parameter()]
-        [System.String]$Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv"),
+        [String]
+        $Path = $(Join-Path -Path $env:Temp -ChildPath "audit.csv"),
 
         [Parameter(Mandatory = $true)]
         [ValidateSet("Present", "Absent")]
-        [System.String]$Ensure
+        [String]
+        $Ensure
     )
-    
-    if ($AuditGUIDToSubCategoryHash.ContainsKey($GUID))
+
+    if ($AuditGUIDToSubCategoryHash.ContainsKey($GUID.Guid))
     {
-        $Name = $AuditGUIDToSubCategoryHash[$GUID]
+        $Name = $AuditGUIDToSubCategoryHash[$GUID.Guid]
     }
     else
     {
         # TODO: Localize
-        Throw "Cannot find Subcategory translation for $GUID"
+        Throw ($localizedData.SubCategoryTranslationFailed -f $GUID)
     }
 
     # translate Present/Absent to inclusion settings
     # TODO: Is this the right way to do this?
-    $auditState = @{
+    $auditState = [pscustomobject]@{
         'Inclusion Setting' = ''
         'Exclusion Setting'  = ''
     }
 
     $auditFlag = $AuditSettingValueToFlag[$SettingValue]
-    
+
     # Localized messages for Write-Verbose statements in this resource
     $localizedData = Get-LocalizedData -HelperName 'AuditPolicyResourceHelper'
 
-    $auditCSV = Get-StagedAuditCSV
+    $auditCSV = Get-StagedAuditPolicyCSV
 
-    $currentValue = $auditCSV | ?{$_.'SubCategory GUID' -eq "{$GUID}"}
+    $currentValue = $auditCSV.Where({$_.'SubCategory GUID' -eq "{$($GUID.guid)}"})
     $currentSetting = 0
-    if ($currentValue -eq $null)
+    if ($null -eq $currentValue)
     {
         Write-Debug -Message ($localizedData.CurrentCSVValueMissing -f $GUID)
         $currentSetting = 0
@@ -436,10 +443,10 @@ function Write-StagedAuditCSV
     {
         $currentSetting = $currentValue.'Setting Value'
     }
-        
+
     if ($Ensure -eq "Present")
     {
-        $auditState['Inclusion Setting'] = $auditFlag
+        $auditState.'Inclusion Setting' = $auditFlag
     }
     else
     {
@@ -449,34 +456,40 @@ function Write-StagedAuditCSV
                # There's no way to set the Absent of No Auditing.
                # Should it be Success? Failure? Both?
                return
-            } 
+            }
 
             1 {
-                   if ($currentSetting -eq 1) {
+                   if ($currentSetting -eq 1)
+                   {
                         # If Success is absent and the current value is Success, the result is "No Auditing"
                         $SettingValue = 0
                    }
-                   elseif ($currentSetting -eq 3) {
+                   elseif ($currentSetting -eq 3)
+                   {
                         # If Success is absent and the current value is Succes and Failure, the result is Failure.
                         $SettingValue = 2
                    }
-                   else {
+                   else
+                   {
                         $SettingValue = $currentSetting
                    }
             }
 
             2 {
-                if ($currentSetting -eq 2) {
-                        # If Failure is absent and the current value is Failure, the result is "No Auditing"
-                        $SettingValue = 0
-                   }
-                   elseif ($currentSetting -eq 3) {
-                        # If Success is absent and the current value is Succes and Failure, the result is Success.
-                        $SettingValue = 1
-                   }
-                   else {
-                        $SettingValue = $currentSetting
-                   }
+                if ($currentSetting -eq 2)
+                {
+                    # If Failure is absent and the current value is Failure, the result is "No Auditing"
+                    $SettingValue = 0
+                }
+                elseif ($currentSetting -eq 3)
+                {
+                    # If Success is absent and the current value is Succes and Failure, the result is Success.
+                    $SettingValue = 1
+                }
+                else
+                {
+                    $SettingValue = $currentSetting
+                }
             }
 
             3 {
@@ -485,40 +498,33 @@ function Write-StagedAuditCSV
             }
         }
 
-        $auditState['Exclusion Setting'] = $auditFlag
+        $auditState.'Exclusion Setting' = $auditFlag
     }
 
-    # for ($i = 0; $i -lt $auditCSV.count) 
-    # TODO: Does auditCSV need to be in a specific order? If so, use a for loop
-    $auditCSV = $auditCSV | Where-Object {$_.'Subcategory GUID' -ne "{$GUID}" -and !([string]::IsNullOrEmpty($_.'Subcategory GUID'))}
-    $tmpValue = [ordered]@{
+    $auditCSV = $auditCSV | Where-Object {$_.'Subcategory GUID' -ne "{$($GUID.guid)}" -and !([string]::IsNullOrEmpty($_.'Subcategory GUID'))}
+    $tmpValue = [pscustomobject][ordered]@{
         'Machine Name' = $env:ComputerName
         'Policy Target' = "System"
-        # TODO: Do we want to add Audit to the name for them?
         Subcategory = "Audit $Name"
-        # TODO: Do we want to add the braces for them?
-        'SubCategory GUID' = "{$GUID}"
-        # TODO: Can I use Success and Failure?
-        'Inclusion Setting' = $auditState['Inclusion Setting']
-        # TODO: What is THIS?
-        'ExclusionSetting' = $auditState['Exclusion Setting']
+        'SubCategory GUID' = "{$($GUID.guid)}"
+        'Inclusion Setting' = $auditState.'Inclusion Setting'
+        'ExclusionSetting' = $auditState.'Exclusion Setting'
         'Setting Value' = $SettingValue
     }
 
-    $auditCSV += [pscustomobject]$tmpValue
+    $auditCSV += $tmpValue
 
     Write-Debug -Message ( $localizedData.WriteStagedCSV -f $Guid, $AuditFlag )
-    
+
     Try 
     {
-        $auditCSV | ConvertTo-Csv -NoTypeInformation | % {$_.Replace('"','')} | Out-File $Path -Force
+        $auditCSV | ConvertTo-Csv -NoTypeInformation | ForEach-Object {$_.Replace('"','')} | Out-File -FilePath $Path -Force
     }
     Catch 
     {
-        # TODO: What do we do here
-        Throw "Unable to save audit.csv at path $Path"
+        Throw ($localizedata.SaveAuditCSVFailure -f $Path)
     }
-    
+
     Invoke-AuditPol -Command Restore -SubCommand "file:$Path"
     Write-Debug -Message ( $localizedData.RestoredAuditCSV )
 }
@@ -577,5 +583,5 @@ function Test-ValidSubcategory
     }
 }
 
-Export-ModuleMember -Variable AuditSubCategorytoGUIDHash, AuditGUIDTOSubCategoryHash, AuditFlagToSettingValue, AuditSettingValueToFlag -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Write-StagedAuditCSV', 'Get-StagedAuditCSV', 'Get-FixedLanguageAuditCSV',
+Export-ModuleMember -Variable AuditSubCategorytoGUIDHash, AuditGUIDTOSubCategoryHash, AuditFlagToSettingValue, AuditSettingValueToFlag -Function @( 'Invoke-AuditPol', 'Get-LocalizedData', 'Write-StagedAuditCSV', 'Get-StagedAuditPolicyCSV', 'Get-FixedLanguageAuditCSV',
     'Test-ValidSubcategory' ) 

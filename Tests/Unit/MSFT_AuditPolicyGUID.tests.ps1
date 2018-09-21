@@ -743,7 +743,7 @@ try
                 $stagedCSV.'Inclusion Setting' = $auditFlag
                 $stagedCSV.'Setting Value' = $($AuditFlagToSettingValue[$auditFlag])
 
-                Mock -CommandName Get-StagedAuditCSV -MockWith { 
+                Mock -CommandName Get-StagedAuditPolicyCSV -MockWith { 
                      $stagedCSV } -Verifiable
 
                 It 'Should not throw an exception' {
@@ -757,7 +757,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-StagedAuditCSV -Exactly 1
+                    Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 } 
             }
 
@@ -771,7 +771,7 @@ try
                     The return is 3 lines Header, blank line, data
                     ComputerName,System,Subcategory,GUID,AuditFlags
                  #>
-                Mock -CommandName Get-StagedAuditCSV -MockWith { 
+                Mock -CommandName Get-StagedAuditPolicyCSV -MockWith { 
                     $stagedCSV } -Verifiable
 
                 It 'Should not throw an exception' {
@@ -785,7 +785,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-StagedAuditCSV -Exactly 1
+                    Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 } 
             }
 
@@ -799,7 +799,7 @@ try
 
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
-                Mock -CommandName Get-StagedAuditCSV -MockWith { 
+                Mock -CommandName Get-StagedAuditPolicyCSV -MockWith { 
                     $stagedCSV } -Verifiable
 
                 It 'Should not throw an exception' {
@@ -813,7 +813,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-StagedAuditCSV -Exactly 1
+                    Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 } 
             }
 
@@ -825,7 +825,7 @@ try
 
                 # the return is 3 lines Header, blank line, data
                 # ComputerName,System,Subcategory,GUID,AuditFlags
-                Mock -CommandName Get-StagedAuditCSV -MockWith { 
+                Mock -CommandName Get-StagedAuditPolicyCSV -MockWith { 
                     $stagedCSV } -Verifiable
 
                 It 'Should not throw an exception' {
@@ -839,7 +839,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-StagedAuditCSV -Exactly 1
+                    Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 } 
             }
         }
@@ -927,14 +927,14 @@ try
             }
         }
 
-        Describe 'Function Get-StagedAuditCSV' {
+        Describe 'Function Get-StagedAuditPolicyCSV' {
             Copy-Item $(Join-Path $PSScriptRoot "audit.csv") $(Join-Path $env:Temp "audit.csv")
             Context 'Retrieve stored AuditCSV' {
                 
                 Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
                                 
                 It 'Should not throw an error' {
-                    { Get-StagedAuditCSV } | Should Not Throw 
+                    { Get-StagedAuditPolicyCSV } | Should Not Throw 
                 }
 
                 It 'Should call expected Mocks' {    
@@ -950,7 +950,7 @@ try
                 Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
                                 
                 It 'Should not throw an error' {
-                    { Get-StagedAuditCSV -Path $(Join-Path $PSScriptRoot "audit.csv")} | Should Not Throw 
+                    { Get-StagedAuditPolicyCSV -Path $(Join-Path $PSScriptRoot "audit.csv")} | Should Not Throw 
                 }
 
                 It 'Should call expected Mocks' {    
@@ -967,13 +967,13 @@ try
 
             Context 'Write new CSV data' {
                 
-                Mock -CommandName Get-StagedAuditCSV -MockWith { Get-FixedLanguageAuditCSV $(Join-Path $env:Temp "audit.csv") } -Verifiable -ModuleName AuditPolicyResourceHelper
+                Mock -CommandName Get-StagedAuditPolicyCSV -MockWith { Get-FixedLanguageAuditCSV $(Join-Path $env:Temp "audit.csv") } -Verifiable -ModuleName AuditPolicyResourceHelper
                 Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $command -eq "Restore" } -Verifiable -ModuleName AuditPolicyResourceHelper
                 
                 $command = @{
                     GUID      = $AuditSubcategoryToGUIDHash["Logon"];
                     SettingValue = $AuditFlagToSettingValue["Success"];
-                    Ensure    = "Absent";
+                    Ensure    = "Present";
                 }
 
                 It 'Should not throw an error' {
@@ -988,7 +988,7 @@ try
 
                 It 'Should call expected Mocks' {    
                     Assert-VerifiableMocks
-                    Assert-MockCalled -CommandName Get-StagedAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
+                    Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 } 
             }
