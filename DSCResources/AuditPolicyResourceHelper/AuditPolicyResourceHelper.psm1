@@ -414,12 +414,10 @@ function Write-StagedAuditCSV
     }
     else
     {
-        # TODO: Localize
         Throw ($localizedData.SubCategoryTranslationFailed -f $GUID)
     }
 
     # translate Present/Absent to inclusion settings
-    # TODO: Is this the right way to do this?
     $auditState = [pscustomobject]@{
         'Inclusion Setting' = ''
         'Exclusion Setting'  = ''
