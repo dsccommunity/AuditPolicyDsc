@@ -121,6 +121,8 @@ None
 
 ### Unreleased
 
+* Update LICENSE file to match the Microsoft Open Source Team standard.
+
 ### 1.2.0.0
 
 *  Moved auditpol call in the helper module to an external process to better control output
