@@ -56,7 +56,7 @@ try
             }
 
             Context "Subcategory submit 'Success' and return 'Failure'" {
-                
+
                 Mock -CommandName Get-AuditSubCategory -MockWith { return $AuditFlagToSettingValue['Failure'] } `
                      -ModuleName MSFT_AuditPolicyGUID -Verifiable
 
@@ -384,7 +384,7 @@ try
                 Name      = 'Invalid'
                 AuditFlag = 'Success'
                 Ensure    = 'Present'
-            }    
+            }
 
             Context 'Invalid subcategory' {
 
@@ -571,7 +571,7 @@ try
         }
 
         Describe "$($script:DSCResourceName)\Set-TargetResource" {
-            
+
             $testParameters = @{
                 Name      = 'Logon'
                 AuditFlag = 'Success'
@@ -819,7 +819,7 @@ try
         Describe 'Function Set-AuditSubcategory' {
 
             Context 'Set single word audit category Success flag to Present' {
-                
+
                 Mock -CommandName Write-StagedAuditCSV -MockWith { } -Verifiable
 
                 $command = @{
@@ -904,7 +904,7 @@ try
             Context 'Retrieve stored AuditCSV' {
 
                 Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
-                                
+
                 It 'Should not throw an error' {
                     { Get-StagedAuditPolicyCSV } | Should Not Throw 
                 }
