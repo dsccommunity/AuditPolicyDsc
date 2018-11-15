@@ -50,7 +50,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -71,7 +71,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -92,7 +92,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -113,7 +113,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -136,7 +136,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -157,7 +157,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -178,7 +178,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -199,7 +199,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -223,7 +223,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -244,7 +244,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -265,7 +265,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -286,7 +286,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -309,7 +309,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -330,7 +330,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -351,7 +351,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -372,7 +372,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -416,7 +416,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -436,7 +436,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -459,7 +459,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -479,7 +479,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -502,7 +502,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -522,7 +522,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -544,7 +544,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -564,7 +564,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-AuditSubCategory -Exactly 1
                 }
             }
@@ -587,7 +587,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -602,7 +602,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -618,7 +618,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -633,7 +633,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -650,7 +650,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -665,7 +665,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -681,7 +681,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -696,7 +696,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Set-AuditSubcategory -Exactly 1
                 }
             }
@@ -734,7 +734,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 }
             }
@@ -760,7 +760,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 }
             }
@@ -786,7 +786,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 }
             }
@@ -810,7 +810,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1
                 }
             }
@@ -833,7 +833,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Write-StagedAuditCSV -Exactly 1
                 }
             }
@@ -853,7 +853,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Write-StagedAuditCSV -Exactly 1
                 }
             }
@@ -873,7 +873,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Write-StagedAuditCSV -Exactly 1
                 }
             }
@@ -893,7 +893,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Write-StagedAuditCSV -Exactly 1
                 }
             }
@@ -910,7 +910,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
             }
@@ -926,7 +926,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Remove-Item -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
@@ -959,7 +959,7 @@ try
                 }
 
                 It 'Should call expected Mocks' {
-                    Assert-VerifiableMocks
+                    Assert-VerifiableMock
                     Assert-MockCalled -CommandName Get-StagedAuditPolicyCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
