@@ -901,6 +901,8 @@ try
 
         Describe 'Function Get-StagedAuditPolicyCSV' {
             Copy-Item $(Join-Path $PSScriptRoot "audit.csv") $(Join-Path $env:Temp "audit.csv")
+            $file = Get-Item $(Join-Path $env:Temp "audit.csv")
+            $file.CreationTime = (Get-Date).AddMinutes(-6)
             Context 'Retrieve stored AuditCSV' {
 
                 Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
