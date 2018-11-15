@@ -17,7 +17,7 @@ Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHel
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $script:DSCModuleName `
     -DSCResourceName $script:DSCResourceName `
-    -TestType Unit 
+    -TestType Unit
 #endregion
 
 # Begin Testing
@@ -28,7 +28,7 @@ try
     InModuleScope $script:DSCResourceName {
 
         Describe "$($script:DSCResourceName)\Get-TargetResource" {
-            
+
             $testParameters = @{
                 Name      = 'Logon'
                 AuditFlag = 'Success'
@@ -187,7 +187,7 @@ try
 
                 Mock -CommandName Get-AuditSubCategory -MockWith { return $AuditFlagToSettingValue['Success And Failure'] } `
                      -ModuleName MSFT_AuditPolicyGUID -Verifiable
-            
+
                 It 'Should not throw an exception' {
                     { $script:getTargetResourceResult = Get-TargetResource @testParameters } | Should Not Throw
                 }
@@ -315,7 +315,7 @@ try
             }
 
             Context "Mulit-word subcategory submit 'Failure' and return 'Failure'" {
-                
+
                 Mock -CommandName Get-AuditSubCategory -MockWith { return $AuditFlagToSettingValue['Failure'] } `
                      -ModuleName MSFT_AuditPolicyGUID -Verifiable
 
@@ -422,7 +422,7 @@ try
             }
 
             Context 'Subcategory Success flag present and should not be' {
-                
+
                 $testParameters.Ensure = 'Absent'
                 Mock -CommandName Get-AuditSubCategory -MockWith { return $AuditFlagToSettingValue['Success'] } `
                      -ModuleName MSFT_AuditPolicyGUID -Verifiable
@@ -753,7 +753,7 @@ try
 
                 It 'Should not throw an exception' {
                     { $script:getAuditCategoryResult = Get-AuditSubCategory -GUID $GUID } | Should Not Throw
-                } 
+                }
 
                 It 'Should return the correct value' {
                     $script:getAuditCategoryResult | Should Be $AuditFlagToSettingValue[$auditFlag]
@@ -829,7 +829,7 @@ try
                 }
 
                 It 'Should not throw an error' {
-                    { Set-AuditSubcategory @command } | Should Not Throw 
+                    { Set-AuditSubcategory @command } | Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {
@@ -889,7 +889,7 @@ try
                 }
 
                 It 'Should not throw an exception' {
-                    { Set-AuditSubcategory @command } | Should Not Throw 
+                    { Set-AuditSubcategory @command } | Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {
@@ -906,7 +906,7 @@ try
                 Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
                 It 'Should not throw an error' {
-                    { Get-StagedAuditPolicyCSV } | Should Not Throw 
+                    { Get-StagedAuditPolicyCSV } | Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {
@@ -922,7 +922,7 @@ try
                 Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
                 It 'Should not throw an error' {
-                    { Get-StagedAuditPolicyCSV -Path $(Join-Path $PSScriptRoot "audit.csv")} | Should Not Throw 
+                    { Get-StagedAuditPolicyCSV -Path $(Join-Path $PSScriptRoot "audit.csv")} | Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {
@@ -949,7 +949,7 @@ try
                 }
 
                 It 'Should not throw an error' {
-                    { Write-StagedAuditCSV @command } | Should Not Throw 
+                    { Write-StagedAuditCSV @command } | Should Not Throw
                 }
 
                 It "Should update the proper values" {

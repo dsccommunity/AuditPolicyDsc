@@ -1,6 +1,6 @@
 configuration 'MSFT_AuditPolicyGUID_Config'
 {
-    param 
+    param
     (
         [Parameter(Mandatory = $true)]
         [String]
@@ -17,7 +17,7 @@ configuration 'MSFT_AuditPolicyGUID_Config'
 
     Import-DscResource -ModuleName 'AuditPolicyDsc'
 
-    node localhost 
+    node localhost
     {
         AuditPolicyGUID Integration_Test
         {

@@ -44,10 +44,10 @@ function Get-TargetResource
         Write-Verbose -Message ( $localizedData.GetAuditPolSubcategoryFailed -f $Name, $AuditFlag )
     }
 
-    <# 
-        The auditType property returned from Get-AuditSubCategory can be 'None','Success', 
-        'Failure', or 'Success and Failure'. Using the match operator will return the correct 
-        state if both are set. 
+    <#
+        The auditType property returned from Get-AuditSubCategory can be 'None','Success',
+        'Failure', or 'Success and Failure'. Using the match operator will return the correct
+        state if both are set.
     #>
     $currentAuditFlag = $AuditSettingValueToFlag[$currentAuditSetting]
     if ( $currentAuditSetting -eq $SettingValue )
@@ -61,7 +61,7 @@ function Get-TargetResource
 
     return @{
         Name      = $Name
-        AuditFlag = $currentAuditFlag 
+        AuditFlag = $currentAuditFlag
         Ensure    = $ensure
     }
 }
@@ -106,7 +106,7 @@ function Set-TargetResource
         Write-Verbose -Message ( $localizedData.SetAuditpolSubcategorySucceed `
                         -f $Name, $AuditFlag, $Ensure )
     }
-    catch 
+    catch
     {
         Write-Verbose -Message ( $localizedData.SetAuditpolSubcategoryFailed `
                         -f $Name, $AuditFlag, $Ensure )
@@ -129,7 +129,7 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
-        [Parameter(Mandatory = $true)]    
+        [Parameter(Mandatory = $true)]
         [String]
         $Name,
 
@@ -166,13 +166,13 @@ function Test-TargetResource
         $isInDesiredState = $currentAuditSetting -eq $SettingValue
     }
     else
-    { 
+    {
         $isInDesiredState = $currentAuditSetting -ne $SettingValue
     }
 
-    <# 
-        The audit type can be true in either a match or non-match state. If the audit type 
-        matches the ensure property return the setting correct message, else return the 
+    <#
+        The audit type can be true in either a match or non-match state. If the audit type
+        matches the ensure property return the setting correct message, else return the
         setting incorrect message
     #>
     if ( $isInDesiredState )
@@ -195,14 +195,14 @@ function Test-TargetResource
 # Support functions to handle auditpol I/O
 
 <#
-    .SYNOPSIS 
-        Gets the audit flag state for a specifc subcategory. 
+    .SYNOPSIS
+        Gets the audit flag state for a specifc subcategory.
     .DESCRIPTION
-        This function enforces parameters that will be passed to Invoke-Auditpol. 
-    .PARAMETER GUID 
+        This function enforces parameters that will be passed to Invoke-Auditpol.
+    .PARAMETER GUID
         The GUID of the subcategory to get the audit flags from.
     .OUTPUTS
-        A string with the flags that are set for the specificed subcategory 
+        A string with the flags that are set for the specificed subcategory
     .EXAMPLE
         Get-AuditSubCategory -Name 'Logon'
 #>
@@ -217,8 +217,8 @@ function Get-AuditSubCategory
         $GUID
     )
     <#
-        When PowerShell cmdlets are released for individual audit policy settings a condition 
-        will be placed here to use native PowerShell cmdlets to set the option details. 
+        When PowerShell cmdlets are released for individual audit policy settings a condition
+        will be placed here to use native PowerShell cmdlets to set the option details.
     #>
     # get the auditpol raw csv output
     $returnCsv = Get-StagedAuditPolicyCSV | Where-Object {$_.'SubCategory GUID' -eq "{$($GUID.guid)}"}
@@ -234,22 +234,22 @@ function Get-AuditSubCategory
 }
 
 <#
-    .SYNOPSIS 
-        Sets the audit flag state for a specifc subcategory. 
+    .SYNOPSIS
+        Sets the audit flag state for a specifc subcategory.
     .DESCRIPTION
         Calls the private function to execute a set operation on the given subcategory
     .PARAMETER GUID
         The GUID of the audit subcategory to set
     .PARAMETER SettingValue
         The Flag to set as an integer
-    .PARAMETER Ensure 
+    .PARAMETER Ensure
         The action to take on the flag
     .EXAMPLE
         Set-AuditSubcategory -GUID {0CCE923A-69AE-11D9-BED3-505054503030} -SettingValue 3 -Ensure 'Present'
 #>
 function Set-AuditSubcategory
 {
-    [CmdletBinding( SupportsShouldProcess=$true )]
+    [CmdletBinding()]
     param
     (
         [Parameter( Mandatory = $true )]
@@ -257,7 +257,7 @@ function Set-AuditSubcategory
         $GUID,
 
         [Parameter( Mandatory = $true )]
-        [ValidateRange(0, 4)]
+        [ValidateRange(0, 3)]
         [Int]
         $SettingValue,
 
@@ -275,7 +275,7 @@ function Set-AuditSubcategory
 }
 
 <#
-    .SYNOPSIS 
+    .SYNOPSIS
         Gets the guild for a specified subcategory
     .DESCRIPTION
         Uses an imported hashtable of static values
