@@ -905,7 +905,7 @@ try
             $path = "file:$(Join-Path $env:Temp "audit.csv")"
             $file.CreationTime = (Get-Date).AddMinutes(-6)
 
-            Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
+            Mock -CommandName Invoke-Auditpol -MockWith { } -Verfiable -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
@@ -927,6 +927,7 @@ try
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMock
+                    Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Remove-Item -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
