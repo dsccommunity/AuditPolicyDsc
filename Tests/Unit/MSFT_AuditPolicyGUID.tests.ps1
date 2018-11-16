@@ -904,10 +904,12 @@ try
             $file = Get-Item $(Join-Path $env:Temp "audit.csv")
             $path = "file:$(Join-Path $env:Temp "audit.csv")"
             $file.CreationTime = (Get-Date).AddMinutes(-6)
+
+            Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
+            Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
+            Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
+
             Context 'Retrieve stored AuditCSV' {
-
-                Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
-
                 It 'Should not throw an error' {
                     { Get-StagedAuditPolicyCSV } | Should Not Throw
                 }
@@ -917,12 +919,7 @@ try
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
             }
-
             Context 'Remove OLD AuditCSV' {
-
-                Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
-                Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
-                Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
                 It 'Should not throw an error' {
                     { Get-StagedAuditPolicyCSV -Path $(Join-Path $PSScriptRoot "audit.csv")} | Should Not Throw
@@ -930,6 +927,7 @@ try
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMock
+                    Assert-MockCalled -CommandName Invoke-AuditPol -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Remove-Item -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
