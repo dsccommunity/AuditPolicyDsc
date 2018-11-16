@@ -901,12 +901,12 @@ try
 
         Describe 'Function Get-StagedAuditPolicyCSV' {
             Copy-Item $(Join-Path $PSScriptRoot "audit.csv") $(Join-Path $env:Temp "audit.csv")
-            $file = Get-Item $(Join-Path $env:Temp "audit.csv")
+            $file = Get-Item $(Join-Path $PSScriptRoot "audit.csv")
             $path = "file:$(Join-Path $env:Temp "audit.csv")"
             $file.CreationTime = (Get-Date).AddMinutes(-6)
 
-            Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
-            Mock -CommandName Remove-Item -MockWith { } -ModuleName AuditPolicyResourceHelper
+            Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
+            Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
             Context 'Retrieve stored AuditCSV' {
@@ -921,12 +921,13 @@ try
             }
             Context 'Remove OLD AuditCSV' {
 
-                It 'Should not throw an error' {
+                It "Should not throw an error $($file.CreationTime)" {
                     { Get-StagedAuditPolicyCSV -Path $(Join-Path $PSScriptRoot "audit.csv")} | Should Not Throw
                 }
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMock
+                    Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Remove-Item -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
