@@ -905,7 +905,7 @@ try
             $path = "file:$(Join-Path $env:Temp "audit.csv")"
             $file.CreationTime = (Get-Date).AddMinutes(-6)
 
-            Mock -CommandName Invoke-Auditpol -MockWith { } -Verfiable -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
+            Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
