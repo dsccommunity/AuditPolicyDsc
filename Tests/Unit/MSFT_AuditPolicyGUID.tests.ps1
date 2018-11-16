@@ -930,7 +930,6 @@ try
 
                 It 'Should call expected Mocks' {
                     Assert-VerifiableMock
-                    Assert-MockCalled -CommandName Invoke-Auditpol -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Remove-Item -Exactly 1 -ModuleName AuditPolicyResourceHelper
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
