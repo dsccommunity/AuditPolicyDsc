@@ -906,7 +906,7 @@ try
             $file.CreationTime = (Get-Date).AddMinutes(-6)
 
             Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
-            Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
+            Mock -CommandName Remove-Item -MockWith { } -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
             Context 'Retrieve stored AuditCSV' {
