@@ -920,7 +920,7 @@ try
 
             Context 'Remove OLD AuditCSV' {
 
-                Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $Command -eq "Backup" } -Verifiable -ModuleName AuditPolicyResourceHelper
+                Mock -CommandName Invoke-Auditpol -MockWith { } -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
                 Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
                 Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
