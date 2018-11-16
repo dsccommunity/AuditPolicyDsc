@@ -233,7 +233,7 @@ function Get-StagedAuditPolicyCSV {
     }
 
     Write-Debug -Message ( $localizedData.AuditCSVNotFound -f $Path)
-    Invoke-AuditPol -Command Backup -SubCommand "file:$Path"
+    Invoke-AuditPol -Command "Backup" -SubCommand "file:$Path"
     Write-Debug -Message ( $localizedData.AuditCSVCreated -f $auditCSV )
     if (!(Test-Path -Path $Path)) {
         $inf = [System.Management.Automation.ItemNotFoundException]::new( ($localizedData.FileNotFound -f $Path), $fnf)
