@@ -905,7 +905,6 @@ try
             $path = "file:$(Join-Path $env:Temp "audit.csv")"
             $file.CreationTime = (Get-Date).AddMinutes(-6)
 
-            Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Remove-Item -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
             Mock -CommandName Get-FixedLanguageAuditCSV -MockWith { } -Verifiable -ModuleName AuditPolicyResourceHelper
 
@@ -919,9 +918,12 @@ try
                     Assert-MockCalled -CommandName Get-FixedLanguageAuditCSV -Exactly 1 -ModuleName AuditPolicyResourceHelper
                 }
             }
-            Context 'Remove OLD AuditCSV' {
 
-                It "Should not throw an error $($file.CreationTime)" {
+            Mock -CommandName Invoke-Auditpol -MockWith { } -Verifiable -ParameterFilter { $Command -eq "Backup" } -ModuleName AuditPolicyResourceHelper
+
+            Context "Remove OLD AuditCSV with time stamp: $($file.CreationTime)" {
+
+                It "Should not throw an error" {
                     { Get-StagedAuditPolicyCSV -Path $(Join-Path $PSScriptRoot "audit.csv")} | Should Not Throw
                 }
 
