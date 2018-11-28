@@ -148,6 +148,8 @@ None
 
 ### Unreleased
 
+### 1.3.0.0
+
 * Update LICENSE file to match the Microsoft Open Source Team standard.
 * Added the AuditPolicyGuid resource.
 
