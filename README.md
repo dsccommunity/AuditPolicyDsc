@@ -43,6 +43,8 @@ Please check out common DSC Resources [contributing guidelines](
 
 * [AuditPolicyCsv](#AuditPolicyCsv): Provides a mechanism to restore an audit policy backup from a CSV file.
 
+* [AuditPolicyGUID](#AuditPolicyGuid): Provides a version of AuditPolicySubcategory that works around localization issues with auditpol.
+
 ### AuditPolicySubcategory
 
 Provides a mechanism to manage advanced audit policy subcategory audit flags.
@@ -117,9 +119,39 @@ None
 * [Apply audit policy backup from a CSV file](
   https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyCsv.ps1)
 
+### AuditPolicyGuid
+
+Provides a version of AuditPolicySubcategory that works around localization issues with auditpol.
+
+#### Requirements
+
+None
+
+#### Parameters
+
+* **[String] Name _(Key)_**: The name of the subcategory in the advanced audit policy to manage.
+
+* **[String] AuditFlag _(Key)_**: The name of the audit flag to apply to the subcategory. { Success | Failure }.
+
+* **[String] Ensure _(Write)_**: Indicates whether the service is present or absent. Defaults to Present. { *Present* | Absent }.
+
+#### Read-Only Properties from Get-TargetResource
+
+None
+
+#### Examples
+
+* [Set Audit Policy Subcategory Audit Flags](
+  https://github.com/PowerShell/AuditPolicyDsc/blob/master/Examples/Sample_AuditPolicyGuid.ps1)
+
 ## Versions
 
 ### Unreleased
+
+### 1.3.0.0
+
+* Update LICENSE file to match the Microsoft Open Source Team standard.
+* Added the AuditPolicyGuid resource.
 
 ### 1.2.0.0
 
