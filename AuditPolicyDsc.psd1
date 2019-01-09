@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-moduleVersion = '1.3.0.0'
+moduleVersion = '1.4.0.0'
 
 # ID used to uniquely identify this module
 GUID = '644501e3-ebc7-451e-9155-366a4f8d4a9a'
@@ -104,8 +104,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Update LICENSE file to match the Microsoft Open Source Team standard.
-* Added the AuditPolicyGuid resource.
+        ReleaseNotes = '* Explicitly removed extra hidden files from release package
 
 '
 
@@ -120,6 +119,7 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
 
 
 
