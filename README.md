@@ -148,6 +148,8 @@ None
 
 ### Unreleased
 
+### 1.4.0.0
+
 * Explicitly removed extra hidden files from release package
 
 ### 1.3.0.0
